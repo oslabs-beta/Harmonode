@@ -1,11 +1,17 @@
-import React, { Component } from 'react';
-
+import React from 'react';
+// import all components here
+import { Sidebar } from 'react-pro-sidebar';
+import LandingPage from './pages/LandingPage/LandingPage';
+import NavBar from './components/Sidebar';
 
 const App = () => {
-
-
-    return <div>I will be a cool div in an app component, soon to disappear</div>
-
+  return (
+    <div>
+      <LandingPage />
+      
+      <NavBar />
+    </div>
+  );
 };
 
 export default App;
