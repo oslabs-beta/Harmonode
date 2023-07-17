@@ -2,3 +2,4 @@ node_modules
 public/*.js
 npm-debug.log
 .DS_Store
+.env
