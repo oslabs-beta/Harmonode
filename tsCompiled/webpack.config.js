@@ -38,7 +38,7 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            title: 'Harmonode'
+            title: 'Harmonode',
         }),
     ],
     devServer: {

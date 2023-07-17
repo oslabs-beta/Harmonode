@@ -1,5 +1,15 @@
 "use strict";
-const { BrowserWindow, Menu, app } = require('electron');
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const electron_1 = require("electron");
 const dev = process.env.NODE_ENV === 'development';
 const path = require('path');
 const url = require('url');
@@ -9,7 +19,7 @@ process.on('uncaughtException', (error) => {
     console.error('Uncaught Exception:', error);
 });
 function createWindow() {
-    mainWindow = new BrowserWindow({
+    mainWindow = new electron_1.BrowserWindow({
         width: 1800,
         height: 1400,
         minWidth: 900,
@@ -17,7 +27,6 @@ function createWindow() {
         title: 'Harmonode',
         show: false,
         webPreferences: { nodeIntegration: true, contextIsolation: false },
-        icon: path.join(__dirname, ''),
     });
     //   if (process.platform === 'darwin' || process.platform === 'win32') {
     //     app.dock.setIcon(path.join(__dirname, ''));
@@ -46,19 +55,25 @@ function createWindow() {
             mainWindow.show();
     });
 }
-app.on('ready', createWindow);
-app.on('window-all-closed', () => {
+electron_1.app.on('ready', createWindow);
+electron_1.app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-        app.quit();
+        electron_1.app.quit();
     }
     else {
         mainWindow = null;
     }
 });
-app.on('activate', () => {
+electron_1.app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open.
     if (mainWindow === null) {
         createWindow();
     }
 });
+electron_1.ipcMain.handle('openFolderDialog', () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield electron_1.dialog.showOpenDialog({
+        properties: ['openDirectory'],
+    });
+    return result.filePaths[0];
+}));
 //# sourceMappingURL=main.js.map

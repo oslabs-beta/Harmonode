@@ -1,11 +1,10 @@
-
-const { BrowserWindow, Menu, app } = require('electron')
+import {BrowserWindow, Menu, app, ipcMain, dialog} from 'electron';
 
 const dev: boolean = process.env.NODE_ENV === 'development';
 const path = require('path');
 const url = require('url');
 
-let mainWindow: typeof BrowserWindow | null;
+let mainWindow: BrowserWindow | null;
 
 process.on('uncaughtException', (error) => {
   // Hiding the error on the terminal as well
@@ -20,13 +19,13 @@ function createWindow() {
     minHeight: 720,
     title: 'Harmonode',
     show: false,
-    webPreferences: { nodeIntegration: true, contextIsolation: false },
-    icon: path.join(__dirname, ''),
+
+    webPreferences: {nodeIntegration: true, contextIsolation: false},
   });
 
-//   if (process.platform === 'darwin' || process.platform === 'win32') {
-//     app.dock.setIcon(path.join(__dirname, ''));
-//   }
+  //   if (process.platform === 'darwin' || process.platform === 'win32') {
+  //     app.dock.setIcon(path.join(__dirname, ''));
+  //   }
 
   let indexPath: string;
   if (dev) {
@@ -68,4 +67,11 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
   }
+});
+
+ipcMain.handle('openFolderDialog', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+  });
+  return result.filePaths[0];
 });
