@@ -24,7 +24,7 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 exclude: /(node_modules)/,
-                use: 'ts-loader'
+                use: 'ts-loader',
             },
             {
                 test: /\.s[ac]ss$/i,
@@ -33,11 +33,12 @@ module.exports = {
         ],
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js']
+        extensions: ['.ts', '.tsx', '.js'],
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './client/src/index.html',
+            filename: 'index.html',
+            title: 'Harmonode'
         }),
     ],
     devServer: {
