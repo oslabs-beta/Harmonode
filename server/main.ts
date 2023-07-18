@@ -1,7 +1,6 @@
 import {BrowserWindow, Menu, app, ipcMain, dialog} from 'electron';
 import {stringCodeBase} from './utils/stringifyCode';
 import {getDirectories} from './utils/getFileDirectories';
-const {getCodeFiles} = require('./stringifyCode');
 import {DirObj, FileObj} from './types';
 
 const dev: boolean = process.env.NODE_ENV === 'development';
