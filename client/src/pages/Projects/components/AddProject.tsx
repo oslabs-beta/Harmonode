@@ -54,6 +54,9 @@ function AddProject() {
             {serverPath && (
               <>
                 <h3>Server File: {serverPath}</h3>
+                <div>
+                  <h3>Ignore Directories</h3>
+                </div>
                 <div style={{display: 'flex'}}>
                   <h3>Project Name: </h3>
                   <input

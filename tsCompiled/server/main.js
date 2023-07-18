@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const stringifyCode_1 = require("./utils/stringifyCode");
 const getFileDirectories_1 = require("./utils/getFileDirectories");
-const { getCodeFiles } = require('./stringifyCode');
 const dev = process.env.NODE_ENV === 'development';
 const path = require('path');
 const url = require('url');
