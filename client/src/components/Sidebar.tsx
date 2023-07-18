@@ -26,11 +26,11 @@ function NavBar() {
       <Sidebar collapsed={sidebarCollapse}>
         {/* <SidebarHeader> */}
         <div className='nametext'>
-          {/* small and big change using menucollapse state */}
+          {/* small and big changes using sidebarCollapse state */}
           <p>{sidebarCollapse ? 'Hn' : 'Harmonode'}</p>
         </div>
         <div onClick={sidebarIconClick}>
-          {/* changing menu collapse icon on click */}
+          {/* changing sidebar collapse icon on click */}
           {sidebarCollapse ? (
             <KeyboardDoubleArrowRightOutlinedIcon />
           ) : (
