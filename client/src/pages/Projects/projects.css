@@ -1,0 +1,5 @@
+.nested-directory {
+  margin-left: 20px; /* Adjust the desired indentation value */
+  position: relative;
+  border: 1px solid red;
+}
