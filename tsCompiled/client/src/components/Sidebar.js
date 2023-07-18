@@ -38,7 +38,7 @@ const PolylineOutlined_1 = __importDefault(require("@mui/icons-material/Polyline
 const SettingsOutlined_1 = __importDefault(require("@mui/icons-material/SettingsOutlined"));
 const KeyboardDoubleArrowRightOutlined_1 = __importDefault(require("@mui/icons-material/KeyboardDoubleArrowRightOutlined"));
 const KeyboardDoubleArrowLeftOutlined_1 = __importDefault(require("@mui/icons-material/KeyboardDoubleArrowLeftOutlined"));
-function NavBar() {
+function Sidebar() {
     //sidebarCollapse state using useState hook
     const [sidebarCollapse, setSidebarCollapse] = (0, react_1.useState)(false);
     //func that will change sidebarCollapse state from false to true and true to false
@@ -59,5 +59,5 @@ function NavBar() {
                 react_1.default.createElement(react_pro_sidebar_1.MenuItem, { icon: react_1.default.createElement(PolylineOutlined_1.default, null) }, "Diagram"),
                 react_1.default.createElement(react_pro_sidebar_1.MenuItem, { icon: react_1.default.createElement(SettingsOutlined_1.default, null) }, "Settings")))));
 }
-exports.default = NavBar;
+exports.default = Sidebar;
 //# sourceMappingURL=Sidebar.js.map

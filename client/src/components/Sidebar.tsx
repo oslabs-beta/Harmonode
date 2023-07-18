@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 //import react pro sidebar
-import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
+import { Sidebar as ReactSidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 //import mui icons for sidebar
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
@@ -11,7 +11,7 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import KeyboardDoubleArrowRightOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowRightOutlined';
 import KeyboardDoubleArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowLeftOutlined';
 
-function NavBar() {
+function Sidebar() {
   //sidebarCollapse state using useState hook
   const [sidebarCollapse, setSidebarCollapse] = useState(false);
 
@@ -23,7 +23,7 @@ function NavBar() {
 
   return (
     <div>
-      <Sidebar collapsed={sidebarCollapse}>
+      <ReactSidebar collapsed={sidebarCollapse}>
         {/* <SidebarHeader> */}
         <div className='nametext'>
           {/* small and big changes using sidebarCollapse state */}
@@ -46,9 +46,9 @@ function NavBar() {
           <MenuItem icon={<PolylineOutlinedIcon />}>Diagram</MenuItem>
           <MenuItem icon={<SettingsOutlinedIcon />}>Settings</MenuItem>
         </Menu>
-      </Sidebar>
+      </ReactSidebar>
     </div>
   );
 }
 
-export default NavBar;
+export default Sidebar;

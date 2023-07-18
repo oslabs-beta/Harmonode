@@ -6,12 +6,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
 const react_router_1 = require("react-router");
 const ProjectsPage_1 = __importDefault(require("./pages/Projects/ProjectsPage"));
+const Sidebar_1 = __importDefault(require("./components/Sidebar"));
 const App = () => {
     const navigate = (0, react_router_1.useNavigate)();
     function navClick(path) {
         navigate(path);
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(Sidebar_1.default, null),
         react_1.default.createElement(react_router_1.Routes, null,
             react_1.default.createElement(react_router_1.Route, { path: '/projects', element: react_1.default.createElement(ProjectsPage_1.default, null) })),
         react_1.default.createElement("button", { onClick: () => navClick('/projects') }, "Projects Page")));
