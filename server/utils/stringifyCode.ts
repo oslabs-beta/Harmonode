@@ -1,7 +1,8 @@
-const fs = require('fs');
+import * as fs from 'fs';
 const path = require('path');
+import {FileObj} from '../types';
 
-// function to grab all the file paths for code to convert to stringify
+// function to grab all the white listed files and convert contents to string for AST handling
 // dirPath = root directory to grab the code files
 // dirIgnoreList is an array of the directory names that we want to ignore
 // extensionIgnoreList is an array of the file extensions we will want to ignore to reduce AST parsing overhead
@@ -10,34 +11,41 @@ export async function getCodeFiles(
   dirIgnoreList: string[],
   extensionIgnoreList: string[]
 ) {
-  dirIgnoreList = ['node_modules', '.git'];
-
+  // always ignore node_modules and .git
+  dirIgnoreList = [...dirIgnoreList, 'node_modules', '.git'];
   // create a fileArray to put the path of each file
-  const fileArray: string[] = [];
+  const fileArray: FileObj[] = [];
 
   // recursive function to collect all the file paths into the array
-  function recurseFiles(directoryPath = dirPath as string) {
+  function recurseFiles(directoryPath: string = dirPath) {
     // get all of the file paths into an array so we can iterate and recurse through them
     const files = fs.readdirSync(directoryPath) as string[];
 
     // iterate over all the files
     files.forEach((file: string) => {
       // skip if the file path is in the ignore list
-      if (dirIgnoreList.includes(file)) return; // **Eventually want this to be implemented**
+      if (dirIgnoreList.includes(file)) return;
 
       // skip if the extension is in the ignore list
-      const fileSplit = file.split('.');
+      const fileSplit: string[] = file.split('.');
       if (extensionIgnoreList.includes(fileSplit[fileSplit.length - 1])) return;
 
       // get the full file path
-      const filePath = path.join(directoryPath, file);
+      const filePath: string = path.join(directoryPath, file);
 
       // get the files stats - tells us meta details of the file
-      const fsStats = fs.statSync(filePath);
+      const fsStats: fs.Stats = fs.statSync(filePath);
 
-      // if it's a string, let's push it to our filePath array
-      if (fsStats.isFile()) fileArray.push(filePath);
-      // if it's a directory, let's recurse again
+      // if it's a file, let's push the information to our filePath array
+      if (fsStats.isFile()) {
+        const fileObj: FileObj = {} as FileObj;
+        fileObj.fileName = file;
+        fileObj.filePath = directoryPath;
+        fileObj.fullPath = filePath;
+        fileObj.contents = '';
+        fileArray.push(fileObj);
+      }
+      // if it's a directory, let's recurse again with the directory as the new path
       else if (fsStats.isDirectory()) recurseFiles(filePath);
     });
   }
@@ -48,7 +56,7 @@ export async function getCodeFiles(
   return fileArray;
 }
 
-export async function stringFile(filePath: string) {
+export async function stringFileContents(filePath: string) {
   // stringify the file path in utf-8 encoding using the filesystem
   const stringedCode: string = fs.readFileSync(filePath, 'utf-8') as string;
   // return the stringified code
@@ -61,22 +69,24 @@ export async function stringCodeBase(
   extensionIgnoreList: string[]
 ) {
   // grab all of the file paths of the code base
-  const fileArray: string[] = await getCodeFiles(
+  const fileArray: object[] = await getCodeFiles(
     dirPath,
     dirIgnoreList,
     extensionIgnoreList
   );
 
   // set an empty array to put all of our stringified code objects inside
-  const stringifiedCodeObject: object[] = [];
+  const stringifiedCodeObjectArray: FileObj[] = [];
 
   // for each file in the fileArray, stringify the code with the filesystem and set it as a value to an object with the key as the value of the filepath
-  for (const file of fileArray) {
-    const stringifiedCode = {};
-    stringifiedCode[file] = await stringFile(file);
-    stringifiedCodeObject.push(stringifiedCode);
+  for (const fileObj of fileArray) {
+    const stringifiedCodeObject: FileObj = {...fileObj} as FileObj;
+    stringifiedCodeObject.contents = await stringFileContents(
+      (fileObj as FileObj).fullPath
+    );
+    stringifiedCodeObjectArray.push(stringifiedCodeObject);
   }
 
   // return our object
-  return stringifiedCodeObject;
+  return stringifiedCodeObjectArray;
 }
