@@ -1,6 +1,7 @@
 import React from 'react';
 import {Route, Routes, useNavigate} from 'react-router';
 import ProjectsPage from './pages/Projects/ProjectsPage';
+import DiagramPage from './pages/Diagram/DiagramPage';
 
 const App = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const App = () => {
     <>
       <Routes>
         <Route path='/projects' element={<ProjectsPage />} />
+        <Route path='/diagram' element={<DiagramPage />} />
       </Routes>
       <button onClick={() => navClick('/projects')}>Projects Page</button>
     </>
