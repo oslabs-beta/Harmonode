@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
 //import react pro sidebar
 import {
@@ -7,7 +7,7 @@ import {
   MenuItem,
   SubMenu,
 } from 'react-pro-sidebar';
-import { useNavigate } from 'react-router';
+import {useNavigate} from 'react-router';
 //import mui icons for sidebar
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
@@ -40,9 +40,12 @@ function Sidebar() {
       <ReactSidebar
         rootStyles={{
           backgroundColor: 'var(--secondary-color)',
-          height: '100vh',
-          position: 'fixed',
+          padding: '1em',
+          color: 'white',
+          height: 'calc(100% - 2em)', // 2 * padding
+          overflow: 'hidden',
         }}
+        backgroundColor='var(--secondary-color)'
         collapsed={sidebarCollapse}
       >
         {/* <SidebarHeader> */}
@@ -50,7 +53,7 @@ function Sidebar() {
           {/* small and big changes using sidebarCollapse state */}
           <p>{sidebarCollapse ? 'Hn' : 'Harmonode'}</p>
         </div>
-        <div onClick={sidebarIconClick}>
+        <div onClick={sidebarIconClick} style={{cursor: 'pointer'}}>
           {/* changing sidebar collapse icon on click */}
           {sidebarCollapse ? (
             <KeyboardDoubleArrowRightOutlinedIcon />
@@ -59,7 +62,11 @@ function Sidebar() {
           )}
         </div>
         {/* </SidebarHeader> */}
-        <Menu>
+        <Menu
+          menuItemStyles={{
+            button: {'&:hover': {backgroundColor: 'var(--primary-color)'}},
+          }}
+        >
           <MenuItem icon={<HomeOutlinedIcon />}>Home</MenuItem>
           <MenuItem
             icon={<FolderOutlinedIcon />}

@@ -1,3 +1,7 @@
+.projects-page {
+  color: rgb(240, 239, 239);
+}
+
 .nested-directory {
   margin-left: 20px; /* Adjust the desired indentation value */
   position: relative;

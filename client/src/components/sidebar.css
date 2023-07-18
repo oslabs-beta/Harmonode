@@ -1,4 +1,9 @@
-.sidebar-container {
-    padding: 1em;
+.pro-menu-item a.active {
+  color: var(--primary-color); /* put any color you want */
+  font-weight: 500;
+}
 
+.nav-member .react-slidedown .pro-menu-item a.active {
+  color: #003642; /* put any color you want */
+  font-weight: 500;
 }
