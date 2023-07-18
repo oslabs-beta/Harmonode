@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import ProjectDirectories from './ProjectDirectories';
 const {ipcRenderer} = window.require('electron');
 
 // Component to add a new project
@@ -56,6 +57,7 @@ function AddProject() {
                 <h3>Server File: {serverPath}</h3>
                 <div>
                   <h3>Ignore Directories</h3>
+                  <ProjectDirectories dirPath={projectFolder} />
                 </div>
                 <div style={{display: 'flex'}}>
                   <h3>Project Name: </h3>
