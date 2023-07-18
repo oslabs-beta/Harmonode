@@ -38,20 +38,12 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            title: 'Harmonode'
+            title: 'Harmonode',
         }),
     ],
     devServer: {
-        historyApiFallback: true,
-        static: {
-            directory: path.resolve(__dirname, './client'),
-        },
-        port: 8080,
-        open: true,
-        hot: true,
-        compress: true,
-        proxy: {
-            '/': 'http://localhost:3000',
+        historyApiFallback: {
+            index: '/index.html', // Specify the entry point HTML file
         },
     },
     stats: {

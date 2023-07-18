@@ -30,18 +30,9 @@ export namespace resolve {
 }
 export let plugins: HtmlWebpackPlugin[];
 export namespace devServer {
-    export let historyApiFallback: boolean;
-    export namespace _static {
-        let directory: string;
+    namespace historyApiFallback {
+        let index: string;
     }
-    export { _static as static };
-    export let port: number;
-    export let open: boolean;
-    export let hot: boolean;
-    export let compress: boolean;
-    export let proxy: {
-        '/': string;
-    };
 }
 export namespace stats {
     let children: boolean;
