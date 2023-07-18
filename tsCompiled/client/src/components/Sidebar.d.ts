@@ -1,3 +1,4 @@
 import React from 'react';
-declare function NavBar(): React.JSX.Element;
-export default NavBar;
+import './sidebar.css';
+declare function Sidebar(): React.JSX.Element;
+export default Sidebar;
