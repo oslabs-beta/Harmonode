@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
+
 //import react pro sidebar
-import { Sidebar as ReactSidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
+import {
+  Sidebar as ReactSidebar,
+  Menu,
+  MenuItem,
+  SubMenu,
+} from 'react-pro-sidebar';
+import { useNavigate } from 'react-router';
 //import mui icons for sidebar
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
@@ -21,9 +28,23 @@ function Sidebar() {
     sidebarCollapse ? setSidebarCollapse(false) : setSidebarCollapse(true);
   };
 
+  const navigate = useNavigate();
+
+  const handleClick = (path) => {
+    navigate(path);
+    // console.log(window.location.href, 'url');
+  };
+
   return (
-    <div>
-      <ReactSidebar collapsed={sidebarCollapse}>
+    <div className='sidebar-container'>
+      <ReactSidebar
+        rootStyles={{
+          backgroundColor: 'var(--secondary-color)',
+          height: '100vh',
+          position: 'fixed',
+        }}
+        collapsed={sidebarCollapse}
+      >
         {/* <SidebarHeader> */}
         <div className='nametext'>
           {/* small and big changes using sidebarCollapse state */}
@@ -39,12 +60,37 @@ function Sidebar() {
         </div>
         {/* </SidebarHeader> */}
         <Menu>
-          <MenuItem icon={<HomeOutlinedIcon />}>Homne</MenuItem>
-          <MenuItem icon={<FolderOutlinedIcon />}> Projects</MenuItem>
-          <MenuItem icon={<DashboardOutlinedIcon />}>Dashboard</MenuItem>
-          <MenuItem icon={<ListAltOutlinedIcon />}>List</MenuItem>
-          <MenuItem icon={<PolylineOutlinedIcon />}>Diagram</MenuItem>
-          <MenuItem icon={<SettingsOutlinedIcon />}>Settings</MenuItem>
+          <MenuItem icon={<HomeOutlinedIcon />}>Home</MenuItem>
+          <MenuItem
+            icon={<FolderOutlinedIcon />}
+            onClick={() => handleClick('/projects')}
+          >
+            Projects
+          </MenuItem>
+          <MenuItem
+            icon={<DashboardOutlinedIcon />}
+            onClick={() => handleClick('/')}
+          >
+            Dashboard
+          </MenuItem>
+          <MenuItem
+            icon={<ListAltOutlinedIcon />}
+            onClick={() => handleClick('/list')}
+          >
+            List
+          </MenuItem>
+          <MenuItem
+            icon={<PolylineOutlinedIcon />}
+            onClick={() => handleClick('/diagram')}
+          >
+            Diagram
+          </MenuItem>
+          <MenuItem
+            icon={<SettingsOutlinedIcon />}
+            onClick={() => handleClick('/settings')}
+          >
+            Settings
+          </MenuItem>
         </Menu>
       </ReactSidebar>
     </div>
