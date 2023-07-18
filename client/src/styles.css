@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+}
+
+.content {
+  margin: 1em;
+  padding: 1em;
+}
+
+.app {
+  display: flex;
+}

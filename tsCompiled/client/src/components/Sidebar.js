@@ -38,26 +38,36 @@ const PolylineOutlined_1 = __importDefault(require("@mui/icons-material/Polyline
 const SettingsOutlined_1 = __importDefault(require("@mui/icons-material/SettingsOutlined"));
 const KeyboardDoubleArrowRightOutlined_1 = __importDefault(require("@mui/icons-material/KeyboardDoubleArrowRightOutlined"));
 const KeyboardDoubleArrowLeftOutlined_1 = __importDefault(require("@mui/icons-material/KeyboardDoubleArrowLeftOutlined"));
+const react_router_1 = require("react-router");
+require("./sidebar.css");
 function Sidebar() {
     //sidebarCollapse state using useState hook
     const [sidebarCollapse, setSidebarCollapse] = (0, react_1.useState)(false);
+    const navigate = (0, react_router_1.useNavigate)();
     //func that will change sidebarCollapse state from false to true and true to false
     const sidebarIconClick = () => {
         //condition checking to change state from true to false and vice versa
         sidebarCollapse ? setSidebarCollapse(false) : setSidebarCollapse(true);
     };
-    return (react_1.default.createElement("div", null,
-        react_1.default.createElement(react_pro_sidebar_1.Sidebar, { collapsed: sidebarCollapse },
+    return (react_1.default.createElement("div", { className: 'sidebar-container' },
+        react_1.default.createElement(react_pro_sidebar_1.Sidebar, { rootStyles: {
+                padding: '1em',
+                backgroundColor: 'rgb(94, 202, 75)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'space-between',
+                overflow: 'hidden',
+            }, backgroundColor: 'rgb(94, 202, 75)', collapsed: sidebarCollapse, className: 'sidebar' },
             react_1.default.createElement("div", { className: 'nametext' },
                 react_1.default.createElement("p", null, sidebarCollapse ? 'Hn' : 'Harmonode')),
             react_1.default.createElement("div", { onClick: sidebarIconClick }, sidebarCollapse ? (react_1.default.createElement(KeyboardDoubleArrowRightOutlined_1.default, null)) : (react_1.default.createElement(KeyboardDoubleArrowLeftOutlined_1.default, null))),
-            react_1.default.createElement(react_pro_sidebar_1.Menu, null,
-                react_1.default.createElement(react_pro_sidebar_1.MenuItem, { icon: react_1.default.createElement(HomeOutlined_1.default, null) }, "Homne"),
-                react_1.default.createElement(react_pro_sidebar_1.MenuItem, { icon: react_1.default.createElement(FolderOutlined_1.default, null) }, " Projects"),
-                react_1.default.createElement(react_pro_sidebar_1.MenuItem, { icon: react_1.default.createElement(DashboardOutlined_1.default, null) }, "Dashboard"),
-                react_1.default.createElement(react_pro_sidebar_1.MenuItem, { icon: react_1.default.createElement(ListAltOutlined_1.default, null) }, "List"),
-                react_1.default.createElement(react_pro_sidebar_1.MenuItem, { icon: react_1.default.createElement(PolylineOutlined_1.default, null) }, "Diagram"),
-                react_1.default.createElement(react_pro_sidebar_1.MenuItem, { icon: react_1.default.createElement(SettingsOutlined_1.default, null) }, "Settings")))));
+            react_1.default.createElement(react_pro_sidebar_1.Menu, { className: 'sidebar-menu' },
+                react_1.default.createElement(react_pro_sidebar_1.MenuItem, { onClick: () => navigate('/'), icon: react_1.default.createElement(HomeOutlined_1.default, null) }, "Home"),
+                react_1.default.createElement(react_pro_sidebar_1.MenuItem, { onClick: () => navigate('/projects'), icon: react_1.default.createElement(FolderOutlined_1.default, null) }, "Projects"),
+                react_1.default.createElement(react_pro_sidebar_1.MenuItem, { onClick: () => navigate('/dash'), icon: react_1.default.createElement(DashboardOutlined_1.default, null) }, "Dashboard"),
+                react_1.default.createElement(react_pro_sidebar_1.MenuItem, { onClick: () => navigate('/list'), icon: react_1.default.createElement(ListAltOutlined_1.default, null) }, "List"),
+                react_1.default.createElement(react_pro_sidebar_1.MenuItem, { onClick: () => navigate('/diagram'), icon: react_1.default.createElement(PolylineOutlined_1.default, null) }, "Diagram"),
+                react_1.default.createElement(react_pro_sidebar_1.MenuItem, { onClick: () => navigate('/settings'), icon: react_1.default.createElement(SettingsOutlined_1.default, null) }, "Settings")))));
 }
 exports.default = Sidebar;
 //# sourceMappingURL=Sidebar.js.map

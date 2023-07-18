@@ -2,13 +2,17 @@ import React, {useState} from 'react';
 import AddProject from './components/AddProject';
 const {ipcRenderer} = window.require('electron');
 
+import './projects.css';
+import ListProjects from './components/ListProjects';
+
 function ProjectsPage() {
   const [showNew, setShowNew] = useState(false);
   return (
-    <>
-      <button onClick={() => setShowNew(true)}>Add new project</button>
+    <div className='projects-page'>
+      <ListProjects />
       {showNew && <AddProject />}
-    </>
+      <button onClick={() => setShowNew(true)}>Add new project</button>
+    </div>
   );
 }
 

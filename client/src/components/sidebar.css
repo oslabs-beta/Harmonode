@@ -1,0 +1,16 @@
+/*
+===============
+Sidebar Styling
+===============
+*/
+
+.sidebar-container {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.side-bar {
+  height: 100%;
+  padding: 1em;
+  border: 1px solid red;
+}
