@@ -48,7 +48,4 @@ module.exports = {
       index: '/index.html', // Specify the entry point HTML file
     },
   },
-  stats: {
-    children: true, // Enable detailed stats for child compilations
-  },
 };

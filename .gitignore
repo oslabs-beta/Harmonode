@@ -3,3 +3,4 @@ public/*.js
 npm-debug.log
 .DS_Store
 .env
+tsCompiled
