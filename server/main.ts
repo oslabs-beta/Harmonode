@@ -1,4 +1,6 @@
 import {BrowserWindow, Menu, app, ipcMain, dialog} from 'electron';
+import {stringCodeBase} from './stringifyCode';
+const {getCodeFiles} = require('./stringifyCode');
 
 const dev: boolean = process.env.NODE_ENV === 'development';
 const path = require('path');
@@ -82,4 +84,9 @@ ipcMain.handle('openFileDialog', async (_, dirPath) => {
     defaultPath: dirPath,
   });
   return result.filePaths[0];
+});
+
+ipcMain.handle('readCodeFiles', async (_, dirPath, serverPath) => {
+  const codeFiles = await stringCodeBase(dirPath, [], []);
+  return codeFiles;
 });

@@ -34,8 +34,8 @@ function AddProject() {
   // what to do when the user saves the project and loads it
   async function formSubmit(e) {
     e.preventDefault();
-
-    console.log(e.target.projectName.value);
+    const files = await ipcRenderer.invoke('readCodeFiles', projectFolder);
+    console.log(files);
   }
 
   return (

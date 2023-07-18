@@ -1,5 +1,5 @@
 import React from 'react';
-import {render} from 'react-dom';
+import ReactDOM from 'react-dom/client';
 
 import {BrowserRouter as Router} from 'react-router-dom';
 
@@ -9,9 +9,10 @@ const root = document.createElement('div');
 root.id = 'root';
 document.body.appendChild(root);
 
-render(
+const htmlRoot = ReactDOM.createRoot(document.getElementById('root'));
+
+htmlRoot.render(
   <Router>
     <App />
-  </Router>,
-  document.getElementById('root')
+  </Router>
 );
