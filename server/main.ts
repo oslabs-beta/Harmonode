@@ -75,3 +75,11 @@ ipcMain.handle('openFolderDialog', async () => {
   });
   return result.filePaths[0];
 });
+
+ipcMain.handle('openFileDialog', async (_, dirPath) => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    defaultPath: dirPath,
+  });
+  return result.filePaths[0];
+});

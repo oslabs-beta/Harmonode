@@ -76,4 +76,11 @@ electron_1.ipcMain.handle('openFolderDialog', () => __awaiter(void 0, void 0, vo
     });
     return result.filePaths[0];
 }));
+electron_1.ipcMain.handle('openFileDialog', (_, dirPath) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield electron_1.dialog.showOpenDialog({
+        properties: ['openFile'],
+        defaultPath: dirPath,
+    });
+    return result.filePaths[0];
+}));
 //# sourceMappingURL=main.js.map
