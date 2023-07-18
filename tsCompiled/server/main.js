@@ -10,6 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
+const stringifyCode_1 = require("./utils/stringifyCode");
+const getFileDirectories_1 = require("./utils/getFileDirectories");
+const { getCodeFiles } = require('./stringifyCode');
 const dev = process.env.NODE_ENV === 'development';
 const path = require('path');
 const url = require('url');
@@ -82,5 +85,13 @@ electron_1.ipcMain.handle('openFileDialog', (_, dirPath) => __awaiter(void 0, vo
         defaultPath: dirPath,
     });
     return result.filePaths[0];
+}));
+electron_1.ipcMain.handle('readCodeFiles', (_, dirPath, serverPath) => __awaiter(void 0, void 0, void 0, function* () {
+    const codeFiles = yield (0, stringifyCode_1.stringCodeBase)(dirPath, [], []);
+    return codeFiles;
+}));
+electron_1.ipcMain.handle('getDirectories', (_, dirPath) => __awaiter(void 0, void 0, void 0, function* () {
+    const directories = yield (0, getFileDirectories_1.getDirectories)(dirPath);
+    return directories;
 }));
 //# sourceMappingURL=main.js.map

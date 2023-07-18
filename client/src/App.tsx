@@ -16,20 +16,12 @@ const App = () => {
   }
 
   return (
-    <div className='app'>
-      <Sidebar />
-      <div className='content'>
-        <Routes>
-          <Route path='/' element={<>Home Page</>} />
-          <Route path='/projects' element={<ProjectsPage />} />
-          <Route path='/dash' element={<DashboardPage />} />
-          <Route path='/list' element={<ListPage />} />
-          <Route path='/diagram' element={<DiagramPage />} />
-          <Route path='/settings' element={<SettingsPage />} />
-        </Routes>
-      </div>
-      {/* <button onClick={() => navClick('/projects')}>Projects Page</button> */}
-    </div>
+    <>
+      <Routes>
+        <Route path='/projects' element={<ProjectsPage />} />
+      </Routes>
+      <button onClick={() => navClick('/projects')}>Projects Page</button>
+    </>
   );
 };
 
