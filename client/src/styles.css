@@ -23,7 +23,6 @@ body {
   padding: 4em 10vw;
 }
 
-/* This will apply the style to every button on your site */
 button {
   background-color: #4CAF50;
   color: white; 
@@ -34,7 +33,6 @@ button {
   width: 100%; 
 }
 
-/* This will change the style when you hover over the button */
 button:hover {
-  opacity: 0.8; /* Add an opacity change (transparency) */
+  opacity: 0.8; 
 }
