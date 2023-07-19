@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import ProjectDirectories from './ProjectDirectories';
 const {ipcRenderer} = window.require('electron');
-import 
 
 // Component to add a new project
 function AddProject() {
