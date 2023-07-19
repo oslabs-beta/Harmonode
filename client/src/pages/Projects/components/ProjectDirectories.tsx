@@ -66,14 +66,19 @@ function ProjectDirectories({dirPath, ignoreList = {} as DirectoryTree}) {
         );
         // set the filepath as the path without the part we don't care about
         directory.filePath = path;
+
+        // setting the base of the rootDirectory tree
         let currentLevel = rootDirectory.directories;
+        // creating a full path string so that we can include that as a property in dirs
         let currentFullPath = '';
         const pathParts = directory.filePath.split('/').filter((part) => part);
 
         pathParts.forEach((part, index) => {
+          // add the '/' back in to the full path so we can display it
           currentFullPath += `/${part}`;
+          // see if the path exists already
           let existingPath = currentLevel.find((dir) => dir.name === part);
-
+          // if it doesn't exist, let's push the new path
           if (!existingPath) {
             const newPath: Directory = {
               name: part,
