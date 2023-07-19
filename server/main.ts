@@ -87,10 +87,18 @@ ipcMain.handle('openFileDialog', async (_, dirPath) => {
   return result.filePaths[0];
 });
 
-ipcMain.handle('readCodeFiles', async (_, dirPath, serverPath) => {
-  const codeFiles: FileObj[] = await stringCodeBase(dirPath, [], []);
-  return codeFiles;
-});
+ipcMain.handle(
+  'readCodeFiles',
+  async (_, dirPath, ignoreList, approvedExt, serverPath) => {
+    const codeFiles: FileObj[] = await stringCodeBase(
+      dirPath,
+      ignoreList,
+      approvedExt,
+      serverPath
+    );
+    return codeFiles;
+  }
+);
 
 ipcMain.handle('getDirectories', async (_, dirPath) => {
   const directories: DirObj[] = await getDirectories(dirPath);
