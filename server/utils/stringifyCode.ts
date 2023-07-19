@@ -12,7 +12,7 @@ export async function getCodeFiles(
   extensionIgnoreList: string[]
 ) {
   // always ignore node_modules and .git
-  dirIgnoreList = [...dirIgnoreList, 'node_modules', '.git'];
+  dirIgnoreList = [...dirIgnoreList, '/node_modules', '/.git'];
   // create a fileArray to put the path of each file
   const fileArray: FileObj[] = [];
 
@@ -32,6 +32,7 @@ export async function getCodeFiles(
 
       // get the full file path
       const filePath: string = path.join(directoryPath, file);
+      if (dirIgnoreList.includes(filePath.replace(dirPath, ''))) return;
 
       // get the files stats - tells us meta details of the file
       const fsStats: fs.Stats = fs.statSync(filePath);
@@ -66,7 +67,8 @@ export async function stringFileContents(filePath: string) {
 export async function stringCodeBase(
   dirPath: string,
   dirIgnoreList: string[],
-  extensionIgnoreList: string[]
+  extensionIgnoreList: string[],
+  serverPath: string
 ) {
   // grab all of the file paths of the code base
   const fileArray: object[] = await getCodeFiles(

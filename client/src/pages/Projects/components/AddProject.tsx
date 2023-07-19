@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import ProjectDirectories from './ProjectDirectories';
+import {DirectoryTree, Directory} from '../../../types';
+import ApprovedExtensions from './ApprovedExtensions';
 const {ipcRenderer} = window.require('electron');
 
 // Component to add a new project
@@ -7,6 +9,11 @@ function AddProject() {
   const [projectFolder, setProjectFolder] = useState('');
   const [projectName, setProjectName] = useState('');
   const [serverPath, setServerPath] = useState('');
+  const [ignoredDirs, setIgnoredDirs] = useState<string[]>([]);
+  const [dirDetails, setDirDetails] = useState<DirectoryTree>(
+    {} as DirectoryTree
+  );
+  const [approvedExts, setApprovedExts] = useState<string[]>([]);
 
   // function to get the directory path of the project folder
   async function getDir(e) {
@@ -33,9 +40,24 @@ function AddProject() {
   // what to do when the user saves the project and loads it
   async function formSubmit(e) {
     e.preventDefault();
-    const files = await ipcRenderer.invoke('readCodeFiles', projectFolder);
+    // grab the files from electron backend
+    const files = await ipcRenderer.invoke(
+      'readCodeFiles',
+      projectFolder,
+      ignoredDirs,
+      approvedExts,
+      serverPath
+    );
     console.log(files);
-    console.log(files.length)
+  }
+
+  function setIgnore(ignoreList: string[], dirs: DirectoryTree) {
+    setIgnoredDirs(ignoreList);
+    setDirDetails(dirs);
+  }
+
+  function setApproved(approvedArray: string[]) {
+    setApprovedExts(approvedArray);
   }
 
   return (
@@ -47,13 +69,18 @@ function AddProject() {
           <>
             <h3>Project Folder: {projectFolder}</h3>
             <button onClick={getFile}>Choose Server File</button>
-              {serverPath && (
-                <>
-                 <form className='project-form' onSubmit={formSubmit} >
+            {serverPath && (
+              <>
+                <form className='project-form' onSubmit={formSubmit}>
                   <h3>Server File: {serverPath}</h3>
-                  <div>
-                    <h3>Ignore Directories</h3>
-                    <ProjectDirectories dirPath={projectFolder} />
+                  <div
+                    style={{display: 'flex', justifyContent: 'space-around'}}
+                  >
+                    <ProjectDirectories
+                      dirPath={projectFolder}
+                      setIgnore={setIgnore}
+                    />
+                    <ApprovedExtensions setApproved={setApproved} />
                   </div>
                   <div className='project-name-container'>
                     <h3 className='project-name-header'> Project Name: </h3>
@@ -64,9 +91,9 @@ function AddProject() {
                     />
                   </div>
                   <button>Save and Load Project</button>
-                  </form>
-                </>
-              )}
+                </form>
+              </>
+            )}
           </>
         )}
       </div>
