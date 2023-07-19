@@ -16,6 +16,8 @@ function AddProject() {
   const [approvedExts, setApprovedExts] = useState<string[]>([]);
   const [fileCount, setFileCount] = useState(0);
 
+  // function that finds all the files that will be loaded so we can display
+  // the file count on the project load page
   async function fileLoad() {
     const files = await ipcRenderer.invoke(
       'readCodeFiles',
@@ -27,6 +29,9 @@ function AddProject() {
     setFileCount(files.length);
   }
 
+  // monitoring when these sets of state change so we can invoke fileLoad
+  // needs to be useEffect and conditionally after approvedExts actually has
+  // data thrown into it so we don't have file read errors in backend
   useEffect(() => {
     if (approvedExts.length > 0) {
       fileLoad();
@@ -50,6 +55,8 @@ function AddProject() {
     setServerPath(filePath);
   }
 
+  // we automatically infer the project name based on the folder it sits in
+  // func to capitalize the first letter of the file just to make it look nice
   function projectNameFormat(name: string) {
     const capitalizeFirst = name[0].toUpperCase();
     return capitalizeFirst + name.slice(1);
@@ -69,14 +76,15 @@ function AddProject() {
     console.log(files);
   }
 
+  // callback passed down to ProjectDirectories component
   function setIgnore(ignoreList: string[], dirs: DirectoryTree) {
     setIgnoredDirs(ignoreList);
     setDirDetails(dirs);
   }
 
+  // callback passed down to ApprovedExtensions component
   function setApproved(approvedArray: string[]) {
     setApprovedExts(approvedArray);
-    fileLoad();
   }
 
   return (
