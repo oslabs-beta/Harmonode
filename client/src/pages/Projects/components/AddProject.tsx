@@ -15,7 +15,6 @@ function AddProject() {
     const folderPath = await ipcRenderer.invoke('openFolderDialog');
     if (!folderPath) return;
     const folderPathSplit = folderPath.split('/');
-    console.log(folderPathSplit[folderPathSplit.length - 1]);
     setProjectName(folderPathSplit[folderPathSplit.length - 1]);
     setProjectFolder(folderPath);
   }
@@ -25,7 +24,6 @@ function AddProject() {
     e.preventDefault();
     const filePath = await ipcRenderer.invoke('openFileDialog', projectFolder);
     setServerPath(filePath);
-    console.log(filePath);
   }
 
   function projectNameFormat(name: string) {
@@ -47,32 +45,30 @@ function AddProject() {
       <div>
         <button onClick={getDir}>Choose Project Directory</button>
         {projectFolder && (
-          <form
-            style={{display: 'flex', flexDirection: 'column', width: '350px'}}
-            onSubmit={formSubmit}
-          >
+          <>
             <h3>Project Folder: {projectFolder}</h3>
-
             <button onClick={getFile}>Choose Server File</button>
-            {serverPath && (
-              <>
-                <h3>Server File: {serverPath}</h3>
-                <div>
-                  <h3>Ignore Directories</h3>
-                  <ProjectDirectories dirPath={projectFolder} />
-                </div>
-                <div style={{display: 'flex'}}>
-                  <h3>Project Name: </h3>
-                  <input
-                    name='projectName'
-                    placeholder='Project name...'
-                    defaultValue={projectNameFormat(projectName)}
-                  />
-                </div>
-                <button>Save and Load Project</button>
-              </>
-            )}
-          </form>
+              {serverPath && (
+                <>
+                 <form className='project-form' onSubmit={formSubmit} >
+                  <h3>Server File: {serverPath}</h3>
+                  <div>
+                    <h3>Ignore Directories</h3>
+                    <ProjectDirectories dirPath={projectFolder} />
+                  </div>
+                  <div className='project-name-container'>
+                    <h3 className='project-name-header'> Project Name: </h3>
+                    <input
+                      name='projectName'
+                      placeholder='Project name...'
+                      defaultValue={projectNameFormat(projectName)}
+                    />
+                  </div>
+                  <button>Save and Load Project</button>
+                  </form>
+                </>
+              )}
+          </>
         )}
       </div>
     </>
