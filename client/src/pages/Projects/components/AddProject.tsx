@@ -75,10 +75,6 @@ function AddProject() {
       approvedExts,
       serverPath
     );
-    console.log(files);
-
-    console.log(files[3].contents)
-    console.log(fetchParser(files[3].contents))
   }
 
   // callback passed down to ProjectDirectories component
