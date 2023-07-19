@@ -96,3 +96,33 @@ ipcMain.handle('getDirectories', async (_, dirPath) => {
   const directories: DirObj[] = await getDirectories(dirPath);
   return directories;
 });
+
+ipcMain.handle('getDummyState', () => {
+  const randomNum1 = Math.random().toString();
+  const randomNum2 = Math.random().toString();
+  const randomNum3 = Math.random().toString();
+  const randomNum4 = Math.random().toString();
+  const randomNum5 = Math.random().toString();
+  const randomNum6 = Math.random().toString();
+  return {
+    fetches: [
+      {
+        path: randomNum1,
+        contents: randomNum2,
+        data: {params: [randomNum5], queries: [], body: []},
+        lastUpdated: Date.now(),
+      },
+    ],
+    endPoints: [
+      {
+        path: randomNum3,
+        contents: randomNum4,
+        data: {params: [], queries: [], body: [randomNum6]},
+        lastUpdated: Date.now(),
+      },
+    ],
+    settings: {
+      updateInterval: 1000,
+    },
+  };
+});
