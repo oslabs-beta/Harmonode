@@ -29,11 +29,11 @@ function AddProject() {
     setFileCount(files.length);
   }
 
-  // monitoring when these sets of state change so we can invoke fileLoad
-  // needs to be useEffect and conditionally after approvedExts actually has
-  // data thrown into it so we don't have file read errors in backend
+  // monitoring when extensions and ignoredDirs state change so we can invoke
+  // fileLoad .. needs to be useEffect and conditionally executed after serverPath
+  // is set so we don't have file read errors in backend with missing arguments
   useEffect(() => {
-    if (approvedExts.length > 0) {
+    if (serverPath) {
       fileLoad();
     }
   }, [approvedExts, ignoredDirs]);
