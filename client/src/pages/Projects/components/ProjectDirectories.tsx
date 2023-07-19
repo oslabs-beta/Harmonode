@@ -13,12 +13,13 @@ interface Directory {
   checked: boolean;
   children?: Directory[];
 }
-
-function ProjectDirectories({dirPath}) {
+// optional ignoreList passed in so we can use this elsewhere
+function ProjectDirectories({dirPath, ignoreList = {} as DirectoryTree}) {
   const [dirs, setDirs] = useState<DirectoryTree>({
     directories: [],
   } as DirectoryTree);
 
+  // checkBox toggle handling, recursively checking/unchecking nested dir paths
   function handleChange(e) {
     const {value, checked} = e.target;
 
@@ -34,9 +35,7 @@ function ProjectDirectories({dirPath}) {
       }
     }
     function recurseCheckSubs(children) {
-      console.log(children, 'CHILDREN');
       for (const subChild of children) {
-        console.log(subChild, 'SUBCHILD');
         subChild.checked = checked;
         if (subChild.children && subChild.children.length > 0)
           recurseCheckSubs(subChild.children);
@@ -49,16 +48,23 @@ function ProjectDirectories({dirPath}) {
 
   // call the ipcRenderer to get the directories of the filepath
   useEffect(() => {
+    // if an optional ignoreList was passed in, we can just load this instead
+    if (ignoreList.hasOwnProperty('directories')) {
+      return setDirs(ignoreList);
+    }
+    // grab the directories from the recursive file search
     async function getDirectories() {
       const directories = await ipcRenderer.invoke('getDirectories', dirPath);
 
-      // Build DirectoryTree structure
+      // build DirectoryTree structure
       const rootDirectory: DirectoryTree = {directories: []};
       directories.forEach((directory) => {
+        // remove parts of the filepath we don't care about
         const path = (directory as DirObj).filePath.replace(
           new RegExp(`^${dirPath}`),
           ''
         );
+        // set the filepath as the path without the part we don't care about
         directory.filePath = path;
         let currentLevel = rootDirectory.directories;
         let currentFullPath = '';
