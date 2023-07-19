@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ProjectDirectories from './ProjectDirectories';
 import {DirectoryTree, Directory} from '../../../types';
 import ApprovedExtensions from './ApprovedExtensions';
@@ -14,6 +14,24 @@ function AddProject() {
     {} as DirectoryTree
   );
   const [approvedExts, setApprovedExts] = useState<string[]>([]);
+  const [fileCount, setFileCount] = useState(0);
+
+  async function fileLoad() {
+    const files = await ipcRenderer.invoke(
+      'readCodeFiles',
+      projectFolder,
+      ignoredDirs,
+      approvedExts,
+      serverPath
+    );
+    setFileCount(files.length);
+  }
+
+  useEffect(() => {
+    if (approvedExts.length > 0) {
+      fileLoad();
+    }
+  }, [approvedExts, ignoredDirs]);
 
   // function to get the directory path of the project folder
   async function getDir(e) {
@@ -58,6 +76,7 @@ function AddProject() {
 
   function setApproved(approvedArray: string[]) {
     setApprovedExts(approvedArray);
+    fileLoad();
   }
 
   return (
@@ -82,6 +101,7 @@ function AddProject() {
                     />
                     <ApprovedExtensions setApproved={setApproved} />
                   </div>
+                  <h3>Number of Files to be Monitored: {fileCount}</h3>
                   <div className='project-name-container'>
                     <h3 className='project-name-header'> Project Name: </h3>
                     <input

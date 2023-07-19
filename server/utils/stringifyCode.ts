@@ -12,7 +12,12 @@ export async function getCodeFiles(
   extensionApproveList: string[]
 ) {
   // always ignore node_modules and .git
-  dirIgnoreList = [...dirIgnoreList, '/node_modules', '/.git'];
+  dirIgnoreList = [
+    ...dirIgnoreList,
+    '/node_modules',
+    '/.git',
+    '/webpack.config.js',
+  ];
   // create a fileArray to put the path of each file
   const fileArray: FileObj[] = [];
 
@@ -74,7 +79,6 @@ export async function stringCodeBase(
   extensionApproveList: string[],
   serverPath: string
 ) {
-  console.log(extensionApproveList, 'EXT APPR LIST');
   // grab all of the file paths of the code base
   const fileArray: object[] = await getCodeFiles(
     dirPath,
