@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import ProjectDirectories from './ProjectDirectories';
 const {ipcRenderer} = window.require('electron');
 
+import fetchParser from '../../../../../server/ast/clientParser';
+
 // Component to add a new project
 function AddProject() {
   const [projectFolder, setProjectFolder] = useState('');
@@ -35,7 +37,9 @@ function AddProject() {
     e.preventDefault();
     const files = await ipcRenderer.invoke('readCodeFiles', projectFolder);
     console.log(files);
-    console.log(files.length)
+
+    console.log(files[3].contents)
+    console.log(fetchParser(files[3].contents))
   }
 
   return (
