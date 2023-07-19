@@ -1,8 +1,17 @@
+/* 
+Original Color Palette
+--primary-color: #164B60;
+--secondary-color: #1B6B93;
+--tertiary-color: #4FC0D0;
+--quaternary-color: #A2FF86; 
+
+*/
+
 :root {
     --primary-color: #164B60;
-    /* --secondaryColor:var(--secondaryColor) */
     --secondary-color: #1B6B93;
     --tertiary-color: #4FC0D0;
     --quaternary-color: #A2FF86;
+    --font-main-color: #f6fff5;
 }
 

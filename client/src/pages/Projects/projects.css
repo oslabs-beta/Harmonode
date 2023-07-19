@@ -1,9 +1,23 @@
 .projects-page {
-  color: rgb(240, 239, 239);
+  color: var(--font-main-color);
+  background-color: var(--secondary-color);
+  border: 15px solid var(--secondary-color)
 }
 
-.nested-directory {
-  margin-left: 20px; /* Adjust the desired indentation value */
-  position: relative;
-  border: 1px solid red;
+
+/*
+=================
+AddProject Styles
+=================
+*/
+.project-form {
+  border: 15px solid var(--secondary-color);
+  background-color: var(--secondary-color);
+  
+}
+
+.project-name-header { 
+  background-color: (--tertiary-color);
+  color: var(--font-main-color)
+
 }
