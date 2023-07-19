@@ -1,7 +1,10 @@
 .projects-page {
   color: var(--font-main-color);
   background-color: var(--secondary-color);
-  border: 15px solid var(--secondary-color)
+  border: 15px solid var(--secondary-color);
+  
+  
+  
 }
 
 
@@ -13,6 +16,7 @@ AddProject Styles
 .project-form {
   border: 15px solid var(--secondary-color);
   background-color: var(--secondary-color);
+  
   
 }
 

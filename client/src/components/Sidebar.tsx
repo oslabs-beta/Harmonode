@@ -40,9 +40,9 @@ function Sidebar() {
     // console.log(window.location.href, 'url');
   };
 
-  const testClick = () => {
-    dirDispatcher({type: 'setDirTree', payload: 'leaf'})
-  }
+  // const testClick = () => {
+  //   dirDispatcher({type: 'setDirTree', payload: 'leaf'})
+  // }
 
   return (
     <div className='sidebar-container'>
@@ -71,10 +71,10 @@ function Sidebar() {
           )}
         </div>
         {/* </SidebarHeader> */}
-        <button onClick={() => {
+        {/* <button onClick={() => { 
           console.log('clicked', globalDir.dirTree)
         }} type='button'>clickMe2</button>
-        <button onClick={testClick} type='button'>clickMe</button>
+        <button onClick={testClick} type='button'>clickMe</button> */}
         <Menu
           menuItemStyles={{
             button: { '&:hover': { backgroundColor: 'var(--primary-color)' } },
@@ -89,7 +89,7 @@ function Sidebar() {
           </MenuItem>
           <MenuItem
             icon={<DashboardOutlinedIcon />}
-            onClick={() => handleClick('/')}
+            onClick={() => handleClick('/dashboard')}
           >
             Dashboard
           </MenuItem>
