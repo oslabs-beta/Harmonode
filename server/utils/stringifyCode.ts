@@ -5,11 +5,11 @@ import {FileObj} from '../types';
 // function to grab all the white listed files and convert contents to string for AST handling
 // dirPath = root directory to grab the code files
 // dirIgnoreList is an array of the directory names that we want to ignore
-// extensionIgnoreList is an array of the file extensions we will want to ignore to reduce AST parsing overhead
+// extensionApproveList is an array of the file extensions we will want to include to reduce AST parsing overhead
 export async function getCodeFiles(
   dirPath: string,
   dirIgnoreList: string[],
-  extensionIgnoreList: string[]
+  extensionApproveList: string[]
 ) {
   // always ignore node_modules and .git
   dirIgnoreList = [...dirIgnoreList, '/node_modules', '/.git'];
@@ -28,7 +28,6 @@ export async function getCodeFiles(
 
       // skip if the extension is in the ignore list
       const fileSplit: string[] = file.split('.');
-      if (extensionIgnoreList.includes(fileSplit[fileSplit.length - 1])) return;
 
       // get the full file path
       const filePath: string = path.join(directoryPath, file);
@@ -36,7 +35,12 @@ export async function getCodeFiles(
 
       // get the files stats - tells us meta details of the file
       const fsStats: fs.Stats = fs.statSync(filePath);
-
+      if (
+        fsStats.isFile() &&
+        !extensionApproveList.includes(`.${fileSplit[fileSplit.length - 1]}`)
+      ) {
+        return;
+      }
       // if it's a file, let's push the information to our filePath array
       if (fsStats.isFile()) {
         const fileObj: FileObj = {} as FileObj;
@@ -67,14 +71,15 @@ export async function stringFileContents(filePath: string) {
 export async function stringCodeBase(
   dirPath: string,
   dirIgnoreList: string[],
-  extensionIgnoreList: string[],
+  extensionApproveList: string[],
   serverPath: string
 ) {
+  console.log(extensionApproveList, 'EXT APPR LIST');
   // grab all of the file paths of the code base
   const fileArray: object[] = await getCodeFiles(
     dirPath,
     dirIgnoreList,
-    extensionIgnoreList
+    extensionApproveList
   );
 
   // set an empty array to put all of our stringified code objects inside
