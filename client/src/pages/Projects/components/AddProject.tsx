@@ -35,6 +35,7 @@ function AddProject() {
     e.preventDefault();
     const files = await ipcRenderer.invoke('readCodeFiles', projectFolder);
     console.log(files);
+    console.log(files.length)
   }
 
   return (
