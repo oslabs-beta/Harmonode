@@ -1,20 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {v4 as uuid} from 'uuid';
 import {DirObj} from '../../../../../server/types';
+import {DirectoryTree, Directory} from '../../../types';
 const {ipcRenderer} = window.require('electron');
 
-interface DirectoryTree {
-  directories: Directory[];
-}
-
-interface Directory {
-  name: string;
-  fullPath: string;
-  checked: boolean;
-  children?: Directory[];
-}
 // optional ignoreList passed in so we can use this elsewhere
-function ProjectDirectories({dirPath, ignoreList = {} as DirectoryTree}) {
+function ProjectDirectories({
+  dirPath,
+  setIgnore,
+  ignoreList = {} as DirectoryTree,
+}) {
   const [dirs, setDirs] = useState<DirectoryTree>({
     directories: [],
   } as DirectoryTree);
@@ -45,6 +40,27 @@ function ProjectDirectories({dirPath, ignoreList = {} as DirectoryTree}) {
 
     setDirs({...dirs});
   }
+
+  // useEffect to track changes to dirs so we can send the state back to the parent
+  useEffect(() => {
+    // have an array that we push the paths to
+    const ignoreArray: string[] = [];
+    // recurse through the directories to push the parent most directory to the ignore array
+    function recurseCheck(dir) {
+      for (const path of dir) {
+        if (path.checked) ignoreArray.push(path.fullPath);
+        else {
+          if (path.children && path.children.length > 0) {
+            recurseCheck(path.children);
+          }
+        }
+      }
+    }
+    recurseCheck(dirs.directories);
+
+    // send the ignore array back to the parent
+    setIgnore(ignoreArray, dirs);
+  }, [dirs]);
 
   // call the ipcRenderer to get the directories of the filepath
   useEffect(() => {
@@ -138,7 +154,12 @@ function ProjectDirectories({dirPath, ignoreList = {} as DirectoryTree}) {
   }
   createOptions(dirs.directories);
 
-  return <div>{options}</div>;
+  return (
+    <div>
+      <h3>Ignore Directories</h3>
+      {options}
+    </div>
+  );
 }
 
 export default ProjectDirectories;
