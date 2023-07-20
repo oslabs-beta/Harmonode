@@ -12,10 +12,12 @@ import {
 } from './types';
 import fetchParser from './ast/clientParser';
 import monitorFiles from './utils/monitorFileChanges';
+import Store from 'electron-store';
 
 const dev: boolean = process.env.NODE_ENV === 'development';
 const path = require('path');
 const url = require('url');
+const store = new Store();
 
 let mainWindow: BrowserWindow | null;
 
@@ -192,4 +194,30 @@ ipcMain.handle('getDummyState', () => {
 
 ipcMain.handle('astParse', () => {
   fetchParser();
+});
+
+// ==== Electron Store Stuff ====
+
+// ipcMain.handle('storeStuff', (event, data) => {
+//   console.log('storeStuff triggered');
+//   store.set('testData', data);
+// });
+
+// ipcMain.handle('getStoredStuff', (event) => {
+//   console.log('getStoredStuff');
+//   const storageData = store.get('testData');
+//   return storageData;
+// });
+
+ipcMain.handle('storeProjects', (event, projects) => {
+  store.set('projects', projects);
+});
+
+ipcMain.handle('getProjects', (event) => {
+  const storedProjects = store.get('projects');
+  return storedProjects;
+});
+
+ipcMain.handle('deleteProjects', (event) => {
+  store.delete('projects');
 });

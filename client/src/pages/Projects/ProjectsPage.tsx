@@ -9,7 +9,12 @@ function ProjectsPage() {
   const [showNew, setShowNew] = useState(false);
   return (
     <main className='projects-page'>
-      {!showNew && <button onClick={() => setShowNew(true)}>Add new project</button>}
+      {!showNew && (
+        <>
+          <ListProjects />
+          <button onClick={() => setShowNew(true)}>Add new project</button>
+        </>
+      )}
       {showNew && <AddProject />}
     </main>
   );

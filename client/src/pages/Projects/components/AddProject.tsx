@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import ProjectDirectories from './ProjectDirectories';
 import {DirectoryTree, Directory} from '../../../types';
 import ApprovedExtensions from './ApprovedExtensions';
+import {setProjects} from '../../../ipcRenderer';
 const {ipcRenderer} = window.require('electron');
 
 // Component to add a new project
@@ -73,7 +74,39 @@ function AddProject() {
       approvedExts,
       serverPath
     );
-    console.log(files);
+    /*
+    _________
+    
+    projectObj = {}
+    1. Project Folder
+    2. Server File
+    3. Ignore diectories
+    4. Extensions to include
+    5. Project Name
+    6. AST Object
+    
+    func storeProjects(projObj) {
+
+      const projects = store.get('projects') [{}, {}, {}]
+      check to see if projects property is in storage, if not, set it as an empty array
+      ... check each project to make sure the name doesn't already exist.. 
+      const newProjectList = [...projects, projObj]  
+      store.set('projects', newProjectList)  
+    }
+    */
+
+    const projectName = e.target.projectName.value;
+    const projectObj = {
+      folder: projectFolder,
+      server: serverPath,
+      ignore: ignoredDirs,
+      extensions: approvedExts,
+      name: projectName,
+      ast: files,
+    };
+
+    const response = await setProjects(projectObj);
+    console.log(response);
   }
 
   // callback passed down to ProjectDirectories component
