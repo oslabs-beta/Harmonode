@@ -4,31 +4,29 @@ import {DirectoryTree, Directory} from '../../../types';
 import ApprovedExtensions from './ApprovedExtensions';
 const {ipcRenderer} = window.require('electron');
 
-import fetchParser from '../../../../../server/ast/clientParser';
-
 // Component to add a new project
 function AddProject() {
-  const [projectFolder, setProjectFolder] = useState('');
-  const [projectName, setProjectName] = useState('');
-  const [serverPath, setServerPath] = useState('');
+  const [projectFolder, setProjectFolder] = useState<string>('');
+  const [projectName, setProjectName] = useState<string>('');
+  const [serverPath, setServerPath] = useState<string>('');
   const [ignoredDirs, setIgnoredDirs] = useState<string[]>([]);
   const [dirDetails, setDirDetails] = useState<DirectoryTree>(
     {} as DirectoryTree
   );
   const [approvedExts, setApprovedExts] = useState<string[]>([]);
-  const [fileCount, setFileCount] = useState(0);
+  const [fileCount, setFileCount] = useState<number>(0);
 
   // function that finds all the files that will be loaded so we can display
   // the file count on the project load page
   async function fileLoad() {
-    const files = await ipcRenderer.invoke(
-      'readCodeFiles',
+    const fileCount = await ipcRenderer.invoke(
+      'countCodeFiles',
       projectFolder,
       ignoredDirs,
       approvedExts,
       serverPath
     );
-    setFileCount(files.length);
+    setFileCount(fileCount);
   }
 
   // monitoring when extensions and ignoredDirs state change so we can invoke
@@ -75,6 +73,7 @@ function AddProject() {
       approvedExts,
       serverPath
     );
+    console.log(files);
   }
 
   // callback passed down to ProjectDirectories component

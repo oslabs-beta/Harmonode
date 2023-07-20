@@ -96,9 +96,26 @@ ipcMain.handle('openFileDialog', async (_, dirPath) => {
   return result.filePaths[0];
 });
 
+// TODO:
+// need to handle counting the code files instead of parsing them all
+// for performance reasons
+ipcMain.handle(
+  'countCodeFiles',
+  async (_, dirPath, ignoreList, approvedExt, serverPath) => {
+    const codeFiles: FileObj[] = await stringCodeBase(
+      dirPath,
+      ignoreList,
+      approvedExt,
+      serverPath
+    );
+    return codeFiles.length;
+  }
+);
+
 ipcMain.handle(
   'readCodeFiles',
   async (_, dirPath, ignoreList, approvedExt, serverPath) => {
+    console.log(serverPath, 'SERVER PATH');
     const codeFiles: FileObj[] = await stringCodeBase(
       dirPath,
       ignoreList,
@@ -112,7 +129,7 @@ ipcMain.handle(
       fetchFiles: [] as astFetchFile[],
       endpointFiles: [] as astEndpointFile[],
     };
-    // fetchParsing files
+    // // fetchParsing files
     for (const file of codeFiles) {
       const parsedArray = fetchParser(file.contents);
       if (parsedArray.length > 0) {
