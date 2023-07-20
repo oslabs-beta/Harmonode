@@ -3,11 +3,11 @@ const path = require('path');
 import {FileObj} from '../types';
 
 // function to grab all the white listed files and convert contents to string for AST handling
-// dirPath = root directory to grab the code files
+// projectDir = root directory to grab the code files
 // dirIgnoreList is an array of the directory names that we want to ignore
 // extensionApproveList is an array of the file extensions we will want to include to reduce AST parsing overhead
 export async function getCodeFiles(
-  dirPath: string,
+  projectDir: string,
   dirIgnoreList: string[],
   extensionApproveList: string[]
 ) {
@@ -22,7 +22,7 @@ export async function getCodeFiles(
   const fileArray: FileObj[] = [];
 
   // recursive function to collect all the file paths into the array
-  function recurseFiles(directoryPath: string = dirPath) {
+  function recurseFiles(directoryPath: string = projectDir) {
     // get all of the file paths into an array so we can iterate and recurse through them
     const files = fs.readdirSync(directoryPath) as string[];
 
@@ -36,7 +36,7 @@ export async function getCodeFiles(
 
       // get the full file path
       const filePath: string = path.join(directoryPath, file);
-      if (dirIgnoreList.includes(filePath.replace(dirPath, ''))) return;
+      if (dirIgnoreList.includes(filePath.replace(projectDir, ''))) return;
 
       // get the files stats - tells us meta details of the file
       const fsStats: fs.Stats = fs.statSync(filePath);
@@ -62,7 +62,7 @@ export async function getCodeFiles(
     });
   }
   // invoke the recursive function
-  recurseFiles(dirPath);
+  recurseFiles(projectDir);
 
   // return the fileArray of all the filepaths
   return fileArray;
@@ -76,14 +76,14 @@ export async function stringFileContents(filePath: string) {
 }
 
 export async function stringCodeBase(
-  dirPath: string,
+  projectDir: string,
   dirIgnoreList: string[],
   extensionApproveList: string[],
   serverPath: string
 ) {
   // grab all of the file paths of the code base
   const fileArray: object[] = await getCodeFiles(
-    dirPath,
+    projectDir,
     dirIgnoreList,
     extensionApproveList
   );

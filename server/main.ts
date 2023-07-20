@@ -121,10 +121,9 @@ ipcMain.handle(
 
 ipcMain.handle(
   'readCodeFiles',
-  async (_, dirPath, ignoreList, approvedExt, serverPath) => {
-    console.log(serverPath, 'SERVER PATH');
+  async (_, projectDir, ignoreList, approvedExt, serverPath) => {
     const codeFiles: FileObj[] = await stringCodeBase(
-      dirPath,
+      projectDir,
       ignoreList,
       approvedExt,
       serverPath
@@ -143,6 +142,7 @@ ipcMain.handle(
         componentObj.fetchFiles.push({
           fileName: file.fileName,
           fullPath: file.fullPath,
+          filePath: file.filePath,
           lastUpdated: file.mDate,
           fetches: parsedArray,
         });

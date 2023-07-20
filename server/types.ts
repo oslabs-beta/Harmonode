@@ -24,6 +24,7 @@ export interface astRoot {
 // produces information from ast parser with information on a per file basis for fetch requests
 export interface astFetchFile {
   fileName: string;
+  filePath: string;
   fullPath: string;
   lastUpdated: Date | undefined;
   fetches: string[];
