@@ -11,6 +11,7 @@ import {
   astRoot,
 } from './types';
 import fetchParser from './ast/clientParser';
+import monitorFiles from './utils/monitorFileChanges';
 
 const dev: boolean = process.env.NODE_ENV === 'development';
 const path = require('path');
@@ -81,6 +82,12 @@ app.on('activate', () => {
   }
 });
 
+/*
+=================
+  IPC Handlers
+=================
+*/
+
 ipcMain.handle('openFolderDialog', async () => {
   const result = await dialog.showOpenDialog({
     properties: ['openDirectory'],
@@ -125,7 +132,7 @@ ipcMain.handle(
 
     const componentObj: astRoot = {
       fetches: [] as astFetch[],
-      endPoints: [] as astEndpoint[],
+      endpoints: [] as astEndpoint[],
       fetchFiles: [] as astFetchFile[],
       endpointFiles: [] as astEndpointFile[],
     };
@@ -141,6 +148,7 @@ ipcMain.handle(
         });
       }
     }
+    monitorFiles(componentObj);
     return componentObj;
   }
 );
