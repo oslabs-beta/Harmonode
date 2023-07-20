@@ -11,6 +11,7 @@ import {
   astRoot,
 } from './types';
 import fetchParser from './ast/clientParser';
+import endpointParse from './ast/serverParser';
 import monitorFiles from './utils/monitorFileChanges';
 import Store from 'electron-store';
 
@@ -136,6 +137,7 @@ ipcMain.handle(
       endpoints: [] as astEndpoint[],
       fetchFiles: [] as astFetchFile[],
       endpointFiles: [] as astEndpointFile[],
+      ends: [],
     };
     // // fetchParsing files
     for (const file of codeFiles) {
@@ -149,7 +151,11 @@ ipcMain.handle(
           fetches: parsedArray,
         });
       }
+      if (file.fullPath === serverPath) {
+        componentObj.ends = endpointParse(file.contents);
+      }
     }
+
     monitorFiles(componentObj);
     return componentObj;
   }
