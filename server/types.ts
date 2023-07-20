@@ -16,7 +16,7 @@ export interface DirObj {
 // the root ast structure which has all the ast data collected in it
 export interface astRoot {
   fetches: astFetch[];
-  endPoints: astEndpoint[];
+  endpoints: astEndpoint[];
   fetchFiles: astFetchFile[];
   endpointFiles: astEndpointFile[];
 }
