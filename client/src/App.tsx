@@ -1,5 +1,5 @@
-import React from 'react';
-import {Route, Routes, useNavigate} from 'react-router';
+import React, { useReducer } from 'react';
+import { Route, Routes, useNavigate } from 'react-router';
 import ProjectsPage from './pages/Projects/ProjectsPage';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard/Dashboard';
@@ -8,45 +8,47 @@ import Diagram from './pages/Diagram/Diagram';
 import Settings from './pages/Settings/Settings';
 import { DirTreeHolder } from './contextStore/contextStore';
 
-const initialState = { dirTree: {} };
+//establishes initial state
+const initialState = { dirTree: {name: 'tree'} };
 
+//update and return new state
 const reducer = (state, action) => {
-  switch(action.type) {
-    case "setDirTree" : 
-      return {...state, dirTree: action.payload} 
-    default :
-      return {...state}
+  switch (action.type) {
+    case 'setDirTree':
+      return { ...state, dirTree: {name: action.payload} };
+    default:
+      return { ...state };
   }
-}
+};
 
 const App = () => {
-  // const [someVar, setSomeVar] = useState(7);
-  // const [globalNames, namesDispatcher] = useReducer(reducer, initialState)
+  const [globalDir, dirDispatcher] = useReducer(reducer, initialState);
+
+
 
   const navigate = useNavigate();
 
-// const reducer = (state, { type, payroll })
+  
   function navClick(path) {
     navigate(path);
   }
 
   return (
+      <DirTreeHolder.Provider value={{globalDir, dirDispatcher}}>
     <div className='app'>
-
-    {/* <NamesHolder.Provider value={{globalNames}}> */}
       <Sidebar />
       
       {/* </NamesHolder.Provider> */}
 
-        <Routes>
-          <Route path='/' element={<Dashboard />} />
-          <Route path='/projects' element={<ProjectsPage />} />
-          <Route path='/list' element={<List />} />
-          <Route path='/diagram' element={<Diagram />} />
-          <Route path='/settings' element={<Settings />} />
-        </Routes>
-
+      <Routes>
+        <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/projects' element={<ProjectsPage />} />
+        <Route path='/list' element={<List />} />
+        <Route path='/diagram' element={<Diagram />} />
+        <Route path='/settings' element={<Settings />} />
+      </Routes>
     </div>
+       </DirTreeHolder.Provider> 
   );
 };
 

@@ -6,34 +6,34 @@ const {ipcRenderer} = window.require('electron');
 
 // Component to add a new project
 function AddProject() {
-  const [projectFolder, setProjectFolder] = useState('');
-  const [projectName, setProjectName] = useState('');
-  const [serverPath, setServerPath] = useState('');
+  const [projectFolder, setProjectFolder] = useState<string>('');
+  const [projectName, setProjectName] = useState<string>('');
+  const [serverPath, setServerPath] = useState<string>('');
   const [ignoredDirs, setIgnoredDirs] = useState<string[]>([]);
   const [dirDetails, setDirDetails] = useState<DirectoryTree>(
     {} as DirectoryTree
   );
   const [approvedExts, setApprovedExts] = useState<string[]>([]);
-  const [fileCount, setFileCount] = useState(0);
+  const [fileCount, setFileCount] = useState<number>(0);
 
   // function that finds all the files that will be loaded so we can display
   // the file count on the project load page
   async function fileLoad() {
-    const files = await ipcRenderer.invoke(
-      'readCodeFiles',
+    const fileCount = await ipcRenderer.invoke(
+      'countCodeFiles',
       projectFolder,
       ignoredDirs,
       approvedExts,
       serverPath
     );
-    setFileCount(files.length);
+    setFileCount(fileCount);
   }
 
-  // monitoring when these sets of state change so we can invoke fileLoad
-  // needs to be useEffect and conditionally after approvedExts actually has
-  // data thrown into it so we don't have file read errors in backend
+  // monitoring when extensions and ignoredDirs state change so we can invoke
+  // fileLoad .. needs to be useEffect and conditionally executed after serverPath
+  // is set so we don't have file read errors in backend with missing arguments
   useEffect(() => {
-    if (approvedExts.length > 0) {
+    if (serverPath) {
       fileLoad();
     }
   }, [approvedExts, ignoredDirs]);
