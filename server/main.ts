@@ -1,7 +1,16 @@
 import {BrowserWindow, Menu, app, ipcMain, dialog} from 'electron';
 import {stringCodeBase} from './utils/stringifyCode';
 import {getDirectories} from './utils/getFileDirectories';
-import {DirObj, FileObj} from './types';
+import {
+  DirObj,
+  FileObj,
+  astEndpoint,
+  astEndpointFile,
+  astFetch,
+  astFetchFile,
+  astRoot,
+} from './types';
+import fetchParser from './ast/clientParser';
 
 const dev: boolean = process.env.NODE_ENV === 'development';
 const path = require('path');
@@ -96,7 +105,26 @@ ipcMain.handle(
       approvedExt,
       serverPath
     );
-    return codeFiles;
+
+    const componentObj: astRoot = {
+      fetches: [] as astFetch[],
+      endPoints: [] as astEndpoint[],
+      fetchFiles: [] as astFetchFile[],
+      endpointFiles: [] as astEndpointFile[],
+    };
+    // fetchParsing files
+    for (const file of codeFiles) {
+      const parsedArray = fetchParser(file.contents);
+      if (parsedArray.length > 0) {
+        componentObj.fetchFiles.push({
+          fileName: file.fileName,
+          fullPath: file.fullPath,
+          lastUpdated: file.mDate,
+          fetches: parsedArray,
+        });
+      }
+    }
+    return componentObj;
   }
 );
 
@@ -133,4 +161,10 @@ ipcMain.handle('getDummyState', () => {
       updateInterval: 1000,
     },
   };
+});
+
+// AST function stuf
+
+ipcMain.handle('astParse', () => {
+  fetchParser();
 });

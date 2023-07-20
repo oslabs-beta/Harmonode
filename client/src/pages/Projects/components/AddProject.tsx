@@ -4,6 +4,8 @@ import {DirectoryTree, Directory} from '../../../types';
 import ApprovedExtensions from './ApprovedExtensions';
 const {ipcRenderer} = window.require('electron');
 
+import fetchParser from '../../../../../server/ast/clientParser';
+
 // Component to add a new project
 function AddProject() {
   const [projectFolder, setProjectFolder] = useState('');
@@ -73,7 +75,6 @@ function AddProject() {
       approvedExts,
       serverPath
     );
-    console.log(files);
   }
 
   // callback passed down to ProjectDirectories component
