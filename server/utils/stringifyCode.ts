@@ -46,6 +46,7 @@ export async function getCodeFiles(
       ) {
         return;
       }
+
       // if it's a file, let's push the information to our filePath array
       if (fsStats.isFile()) {
         const fileObj: FileObj = {} as FileObj;
@@ -53,6 +54,7 @@ export async function getCodeFiles(
         fileObj.filePath = directoryPath;
         fileObj.fullPath = filePath;
         fileObj.contents = '';
+        fileObj.mDate = new Date(fsStats.mtime);
         fileArray.push(fileObj);
       }
       // if it's a directory, let's recurse again with the directory as the new path

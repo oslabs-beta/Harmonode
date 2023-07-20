@@ -1,7 +1,16 @@
 import {BrowserWindow, Menu, app, ipcMain, dialog} from 'electron';
 import {stringCodeBase} from './utils/stringifyCode';
 import {getDirectories} from './utils/getFileDirectories';
-import {DirObj, FileObj} from './types';
+import {
+  DirObj,
+  FileObj,
+  astEndpoint,
+  astEndpointFile,
+  astFetch,
+  astFetchFile,
+  astRoot,
+} from './types';
+import fetchParser from './ast/clientParser';
 
 const dev: boolean = process.env.NODE_ENV === 'development';
 const path = require('path');
@@ -87,8 +96,11 @@ ipcMain.handle('openFileDialog', async (_, dirPath) => {
   return result.filePaths[0];
 });
 
+// TODO:
+// need to handle counting the code files instead of parsing them all
+// for performance reasons
 ipcMain.handle(
-  'readCodeFiles',
+  'countCodeFiles',
   async (_, dirPath, ignoreList, approvedExt, serverPath) => {
     const codeFiles: FileObj[] = await stringCodeBase(
       dirPath,
@@ -96,7 +108,40 @@ ipcMain.handle(
       approvedExt,
       serverPath
     );
-    return codeFiles;
+    return codeFiles.length;
+  }
+);
+
+ipcMain.handle(
+  'readCodeFiles',
+  async (_, dirPath, ignoreList, approvedExt, serverPath) => {
+    console.log(serverPath, 'SERVER PATH');
+    const codeFiles: FileObj[] = await stringCodeBase(
+      dirPath,
+      ignoreList,
+      approvedExt,
+      serverPath
+    );
+
+    const componentObj: astRoot = {
+      fetches: [] as astFetch[],
+      endPoints: [] as astEndpoint[],
+      fetchFiles: [] as astFetchFile[],
+      endpointFiles: [] as astEndpointFile[],
+    };
+    // // fetchParsing files
+    for (const file of codeFiles) {
+      const parsedArray = fetchParser(file.contents);
+      if (parsedArray.length > 0) {
+        componentObj.fetchFiles.push({
+          fileName: file.fileName,
+          fullPath: file.fullPath,
+          lastUpdated: file.mDate,
+          fetches: parsedArray,
+        });
+      }
+    }
+    return componentObj;
   }
 );
 
@@ -133,4 +178,10 @@ ipcMain.handle('getDummyState', () => {
       updateInterval: 1000,
     },
   };
+});
+
+// AST function stuf
+
+ipcMain.handle('astParse', () => {
+  fetchParser();
 });

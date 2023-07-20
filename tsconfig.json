@@ -1,17 +1,3 @@
-// {
-//   "compilerOptions": {
-//     "module": "es6",
-//     "target": "es5",
-//     "jsx": "react",
-//     "esModuleInterop": true,
-//     "moduleResolution": "node",
-//     "sourceMap": true,
-//     "outDir": "./dist"
-//   }
-// }
-
-// COPIED FROM SEEQR
-
 {
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
