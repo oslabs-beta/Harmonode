@@ -35,6 +35,7 @@ const App = () => {
 
     {/* <NamesHolder.Provider value={{globalNames}}> */}
       <Sidebar />
+      <Diagram />
       {/* </NamesHolder.Provider> */}
 
         <Routes>
