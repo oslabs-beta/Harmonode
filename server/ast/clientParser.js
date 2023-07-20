@@ -41,6 +41,8 @@ const fetchParser = (codeString) => {
         const fetchArg = path.node.argument.arguments[0];
         if (fetchArg.type === "StringLiteral") {
           urlsList.push(path.node.argument.arguments[0].value);
+        } else if (fetchArg.type === "TemplateLiteral") {
+          urlsList.push(path.node.argument.arguments[0].quasis[0].value.raw);
         } else
           urlsList.push(findOriginalVal(path.node.argument.arguments[0].name));
       }
