@@ -1,13 +1,29 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import ProjectDirectories from './ProjectDirectories';
 import {DirectoryTree, Directory} from '../../../types';
 import ApprovedExtensions from './ApprovedExtensions';
 import {setProjects} from '../../../ipcRenderer';
 import {v4 as uuid} from 'uuid';
+import {ProjectsContext} from '../../../context/contextStore';
 const {ipcRenderer} = window.require('electron');
+
+interface projectObj {
+  folder: string;
+  server: string;
+  ignore: string[];
+  extensions: string[];
+  id: string;
+  name: string;
+  ast: object[];
+}
 
 // Component to add a new project
 function AddProject() {
+  const {
+    projects,
+    dispatchProjects,
+  }: {projects: projectObj[]; dispatchProjects: Function} =
+    useContext(ProjectsContext);
   const [projectFolder, setProjectFolder] = useState<string>('');
   const [projectName, setProjectName] = useState<string>('');
   const [serverPath, setServerPath] = useState<string>('');
@@ -77,7 +93,6 @@ function AddProject() {
     );
     /*
     _________
-    
     projectObj = {}
     1. Project Folder
     2. Server File
@@ -85,15 +100,7 @@ function AddProject() {
     4. Extensions to include
     5. Project Name
     6. AST Object
-    
-    func storeProjects(projObj) {
 
-      const projects = store.get('projects') [{}, {}, {}]
-      check to see if projects property is in storage, if not, set it as an empty array
-      ... check each project to make sure the name doesn't already exist.. 
-      const newProjectList = [...projects, projObj]  
-      store.set('projects', newProjectList)  
-    }
     */
 
     const projectName = e.target.projectName.value;
@@ -107,8 +114,14 @@ function AddProject() {
       ast: files,
     };
 
-    const response = await setProjects(projectObj);
-    console.log(response);
+    for (const project of projects) {
+      if (project.name === projectName) {
+        console.log('duplicate');
+        return;
+      }
+    }
+
+    dispatchProjects({type: 'add', payload: projectObj});
   }
 
   // callback passed down to ProjectDirectories component
