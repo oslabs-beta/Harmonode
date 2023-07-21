@@ -38,7 +38,7 @@ const App = () => {
     <div className='app'>
       <Sidebar />
       
-      {/* </NamesHolder.Provider> */}
+      {/* </DirTreeHolder.Provider> */}
 
       <Routes>
         <Route path='/dashboard' element={<Dashboard />} />
