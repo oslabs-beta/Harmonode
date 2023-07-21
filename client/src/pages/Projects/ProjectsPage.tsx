@@ -8,17 +8,15 @@ import ProjectsProvider from '../../context/ProjectsProvider';
 function ProjectsPage() {
   const [showNew, setShowNew] = useState(false);
   return (
-    <ProjectsProvider>
-      <main className='projects-page'>
-        {!showNew && (
-          <>
-            <ListProjects />
-            <button onClick={() => setShowNew(true)}>Add new project</button>
-          </>
-        )}
-        {showNew && <AddProject />}
-      </main>
-    </ProjectsProvider>
+    <main className='projects-page'>
+      {!showNew && (
+        <>
+          <ListProjects />
+          <button onClick={() => setShowNew(true)}>Add new project</button>
+        </>
+      )}
+      {showNew && <AddProject />}
+    </main>
   );
 }
 

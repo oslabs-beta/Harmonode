@@ -22,8 +22,14 @@ function AddProject() {
   const {
     projects,
     dispatchProjects,
-  }: {projects: projectObj[]; dispatchProjects: Function} =
-    useContext(ProjectsContext);
+    setActiveProject,
+    activeProject,
+  }: {
+    projects: projectObj[];
+    dispatchProjects: Function;
+    setActiveProject: Function;
+    activeProject: object;
+  } = useContext(ProjectsContext);
   const [projectFolder, setProjectFolder] = useState<string>('');
   const [projectName, setProjectName] = useState<string>('');
   const [serverPath, setServerPath] = useState<string>('');
@@ -34,6 +40,7 @@ function AddProject() {
   const [approvedExts, setApprovedExts] = useState<string[]>([]);
   const [fileCount, setFileCount] = useState<number>(0);
 
+  console.log(activeProject, 'ACTIVE PROJECT');
   // function that finds all the files that will be loaded so we can display
   // the file count on the project load page
   async function fileLoad() {
@@ -120,7 +127,7 @@ function AddProject() {
         return;
       }
     }
-
+    setActiveProject(projectObj);
     dispatchProjects({type: 'add', payload: projectObj});
   }
 

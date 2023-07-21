@@ -7,6 +7,8 @@ import List from './pages/List/List';
 import Diagram from './pages/Diagram/Diagram';
 import Settings from './pages/Settings/Settings';
 import {DirTreeHolder} from './context/contextStore';
+import ProjectsProvider from './context/ProjectsProvider';
+import Topbar from './components/Topbar';
 
 //establishes initial state
 const initialState = {dirTree: {name: 'tree'}};
@@ -32,17 +34,20 @@ const App = () => {
 
   return (
     // <DirTreeHolder.Provider value={{globalDir, dirDispatcher}}>
-    <div className='app'>
-      <Sidebar />
+    <>
+      <Topbar />
+      <div className='app'>
+        <Sidebar />
 
-      <Routes>
-        <Route path='/dashboard' element={<Dashboard />} />
-        <Route path='/projects' element={<ProjectsPage />} />
-        <Route path='/list' element={<List />} />
-        <Route path='/diagram' element={<Diagram />} />
-        <Route path='/settings' element={<Settings />} />
-      </Routes>
-    </div>
+        <Routes>
+          <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/projects' element={<ProjectsPage />} />
+          <Route path='/list' element={<List />} />
+          <Route path='/diagram' element={<Diagram />} />
+          <Route path='/settings' element={<Settings />} />
+        </Routes>
+      </div>
+    </>
     // </DirTreeHolder.Provider>
   );
 };
