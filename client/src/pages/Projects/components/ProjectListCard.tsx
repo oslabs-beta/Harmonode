@@ -1,6 +1,13 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import {ProjectsContext} from '../../../context/contextStore';
 
 function ProjectListCard({project}) {
+  const {dispatchProjects} = useContext(ProjectsContext);
+
+  function handleDelete(e) {
+    dispatchProjects({type: 'delete', payload: project});
+  }
+
   function formatPath(path) {
     const pathCutoff = 50;
     if (path.length > pathCutoff) {
@@ -20,7 +27,7 @@ function ProjectListCard({project}) {
         <h2>{project.name}</h2>
         <div className='project-header-btns'>
           <button>Load</button>
-          <button>Delete</button>
+          <button onClick={handleDelete}>Delete</button>
         </div>
       </div>
       <div className='project-card-body'>
