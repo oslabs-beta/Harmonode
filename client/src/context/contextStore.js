@@ -4,7 +4,7 @@ export const DirTreeHolder = React.createContext();
 
 export const ProjectsContext = React.createContext({
   projects: [],
-  setProjects: (projects) => {},
+  dispatchProjects: (projects) => {},
   activeProject: {},
   setActiveProject: (project) => {},
 });

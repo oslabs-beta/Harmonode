@@ -31,19 +31,19 @@ const App = () => {
   }
 
   return (
-    <DirTreeHolder.Provider value={{globalDir, dirDispatcher}}>
-      <div className='app'>
-        <Sidebar />
+    // <DirTreeHolder.Provider value={{globalDir, dirDispatcher}}>
+    <div className='app'>
+      <Sidebar />
 
-        <Routes>
-          <Route path='/dashboard' element={<Dashboard />} />
-          <Route path='/projects' element={<ProjectsPage />} />
-          <Route path='/list' element={<List />} />
-          <Route path='/diagram' element={<Diagram />} />
-          <Route path='/settings' element={<Settings />} />
-        </Routes>
-      </div>
-    </DirTreeHolder.Provider>
+      <Routes>
+        <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/projects' element={<ProjectsPage />} />
+        <Route path='/list' element={<List />} />
+        <Route path='/diagram' element={<Diagram />} />
+        <Route path='/settings' element={<Settings />} />
+      </Routes>
+    </div>
+    // </DirTreeHolder.Provider>
   );
 };
 

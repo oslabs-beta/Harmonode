@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router';
 import {getProjects} from '../../../ipcRenderer';
 import ProjectListCard from './ProjectListCard';
+import {ProjectsContext} from '../../../context/contextStore';
 
 interface projectObject {
   name: string;
@@ -13,20 +14,12 @@ interface projectObject {
 }
 // Component to list all of the projects that have been saved previously
 function ListProjects() {
-  const [projects, setProjects] = useState<projectObject[]>([]);
+  const {projects, dispatchProjects} = useContext(ProjectsContext);
   const navigate = useNavigate();
-
+  console.log(projects);
   const projectComponents = projects.map((project) => {
     return <ProjectListCard project={project} />;
   });
-
-  useEffect(() => {
-    async function loadProjects() {
-      const storedProjects = await getProjects();
-      setProjects(storedProjects);
-    }
-    loadProjects();
-  }, []);
 
   function navigateElsewhere() {
     navigate('/diagram');

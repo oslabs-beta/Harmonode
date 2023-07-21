@@ -3,6 +3,7 @@ import ProjectDirectories from './ProjectDirectories';
 import {DirectoryTree, Directory} from '../../../types';
 import ApprovedExtensions from './ApprovedExtensions';
 import {setProjects} from '../../../ipcRenderer';
+import {v4 as uuid} from 'uuid';
 const {ipcRenderer} = window.require('electron');
 
 // Component to add a new project
@@ -101,6 +102,7 @@ function AddProject() {
       server: serverPath,
       ignore: ignoredDirs,
       extensions: approvedExts,
+      id: uuid(),
       name: projectName,
       ast: files,
     };

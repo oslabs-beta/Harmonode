@@ -17,14 +17,8 @@ import PolylineOutlinedIcon from '@mui/icons-material/PolylineOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import KeyboardDoubleArrowRightOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowRightOutlined';
 import KeyboardDoubleArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowLeftOutlined';
-//import global state DirTreeHolder
-import {DirTreeHolder} from '../context/contextStore';
 
 function Sidebar() {
-  //assign globalDir and dirDispatcher using useContext
-  const {globalDir, dirDispatcher} = useContext(DirTreeHolder);
-  console.log(globalDir.dirTree.name);
-  //sidebarCollapse state using useState hook
   const [sidebarCollapse, setSidebarCollapse] = useState(false);
 
   //func that will change sidebarCollapse state from false to true and true to false
