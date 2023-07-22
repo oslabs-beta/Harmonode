@@ -137,22 +137,34 @@ ipcMain.handle(
       endpoints: [] as astEndpoint[],
       fetchFiles: [] as astFetchFile[],
       endpointFiles: [] as astEndpointFile[],
-      ends: [],
     };
     // // fetchParsing files
     for (const file of codeFiles) {
-      const parsedArray = fetchParser(file.contents);
-      if (parsedArray.length > 0) {
+      // if it's the server path, let's load the server stuff into an ast
+      if (file.fullPath === serverPath) {
+        const parsedEndpointsArray = endpointParse(file.contents);
+        if (parsedEndpointsArray.length > 0) {
+          componentObj.endpointFiles.push({
+            fileName: file.fileName,
+            fullPath: file.fullPath,
+            filePath: file.filePath,
+            lastUpdated: file.mDate,
+            isServer: true,
+            endpoints: parsedEndpointsArray,
+          });
+        }
+        continue; // skip the rest since we have what we need
+      }
+
+      const parsedFetchesArray = fetchParser(file.contents);
+      if (parsedFetchesArray.length > 0) {
         componentObj.fetchFiles.push({
           fileName: file.fileName,
           fullPath: file.fullPath,
           filePath: file.filePath,
           lastUpdated: file.mDate,
-          fetches: parsedArray,
+          fetches: parsedFetchesArray,
         });
-      }
-      if (file.fullPath === serverPath) {
-        componentObj.ends = endpointParse(file.contents);
       }
     }
 
