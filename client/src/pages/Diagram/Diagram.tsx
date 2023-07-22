@@ -1,5 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useContext } from 'react';
 import AddProject from '../Projects/components/AddProject';
+import ProjectsProvider from '../../context/ProjectsProvider';
+import { ProjectsContext } from '../../context/contextStore';
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -10,6 +12,14 @@ import ReactFlow, {
   Controls,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import { PlaylistAddOutlined } from '@mui/icons-material';
+// start with fetchFiles?
+// get data from interface astroot in types.ts
+// formSubmit in addproject.tsx
+// setActiveProject holds all data thats loaded for current project
+// ast:files
+// grab name from active project name and state
+
 // Need some function to be able to create nodes each time "save and load project" is clicked
 // Will also render the data being passed onto the nodes
 // How do we determine/measure the amount of nodes we need per project? fileLoad counter?
@@ -18,14 +28,12 @@ import 'reactflow/dist/style.css';
 // The next node(s) will have the data being sent to all the fetches
 
 function Diagram() {
-
   // onclick of "save project and load" button nodes are created
   // show all files EXCEPT the ones that were selected to be ignored
 
+  const { activeProject } = useContext(ProjectsContext);
+  console.log(activeProject);
 
-
-
-  
   const nodeColor = (node) => {
     switch (node.id) {
       case '1':
@@ -58,42 +66,70 @@ function Diagram() {
     background: '#FFF89C',
     borderRadius: 15,
   };
-  
+
   const defaultNodeStyle4 = {
     border: '3px solid #146C94',
     background: '#19A7CE',
     borderRadius: 15,
   };
 
-  const initialNodes = [
-    { id: '1', position: { x: 0, y: 0 }, data: { label: '1' }, style: defaultNodeStyle1 },
-    { id: '2', position: { x: 0, y: 100 }, data: { label: '2' }, style: defaultNodeStyle2 },
-    { id: '3', position: { x: 0, y: 200 }, data: { label: '3' }, style: defaultNodeStyle3 },
-    { id: '4', position: { x: 0, y: 300 }, data: { label: '4' }, style: defaultNodeStyle4 },
-  ];
+  const testObj = {
+    firstName: 'Hamza',
+    lastName: 'C',
+    age: 27,
+  };
+  /*
+  activeProject.ast.fetchFiles.map( (file, idx) => {
+    return {
+      id: idx,
+      position: {x: 0, y: idx * 100},
+      data: {label: file.fileName},
+      style: defaultNodeStyle1
+    }
+  }) */
+  const initialNodes = activeProject.ast.fetchFiles.map((file, idx) => {
+    return {
+      id: idx.toString(),
+      position: { x: 0, y: idx * 100 },
+      data: { label: file.fileName }, //each file needs an id and we'll use the id to connect the nodes
+      style: defaultNodeStyle1,
+    };
+  });
+
+  console.log(initialNodes);
   // Need to add functionality so that for each proj. load..
   // it will create nodes based on what is necesscary
   // We determine how many nodes are necesscary based on what user selected and on fileLoad for count?
   const initialEdges = [
-    { id: 'e1-2', source: '1', target: '2' },
-    { id: 'e2-3', source: '4', target: '5' },
-    { id: 'e3-4', source: '2', target: '3' },
-    { id: 'e4-5', source: '3', target: '4' },
+    { id: 'e0-1', source: '1', target: '2' }, //source MUST match id in order to connect
+    { id: 'e1-2', source: '4', target: '5' },
+    { id: 'e2-3', source: '2', target: '3' },
+    { id: 'e3-4', source: '3', target: '4' },
   ];
-
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges])
+  // combine nodes with spread?
+
+  // const connectNodes () => {
+  // const combinedNodes = [...initialNodes, ...setActiveProject]
+  //
+  // }
+
+  const onConnect = useCallback(
+    (params) => setEdges((eds) => addEdge(params, eds)),
+    [setEdges]
+  );
 
   const onNodeClick = useCallback((event, node) => {
-    console.log(node, 'node clicked')
-    
-  },[])
+    console.log(node, 'node clicked');
+  }, []);
 
   return (
-    <div style={{ width: '100vw', height: '100vh', backgroundColor: '#526D82' }}>
+    <div
+      style={{ width: '100vw', height: '100vh', backgroundColor: '#526D82' }}
+    >
       Diagram
       <ReactFlow
         nodes={nodes}
@@ -105,8 +141,19 @@ const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)
       >
         <Controls />
         <MiniMap nodeColor={nodeColor} zoomable pannable />
-        <Background id="1" gap={10} color="#f1f1f1" variant={BackgroundVariant.Dots} />
-        <Background id="2" gap={100} offset={1} color="#ccc" variant={BackgroundVariant.Cross} />
+        <Background
+          id='1'
+          gap={10}
+          color='#f1f1f1'
+          variant={BackgroundVariant.Dots}
+        />
+        <Background
+          id='2'
+          gap={100}
+          offset={1}
+          color='#ccc'
+          variant={BackgroundVariant.Cross}
+        />
       </ReactFlow>
     </div>
   );
