@@ -3,13 +3,32 @@
   font-family: 'Robot';
   font-style: 'normal';
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/roboto/v29/KFOmCnqEu92Fr1Mu4mxP.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/roboto/v29/KFOmCnqEu92Fr1Mu4mxP.ttf)
+    format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  src: url(https://fonts.gstatic.com/s/roboto/v29/KFOlCnqEu92Fr1MmWUlfBBc4AMP6lbBP.ttf)
+    format('truetype');
 }
 
 body {
   background-color: var(--primary-color);
   margin: 0;
   font-family: 'Roboto', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
 }
 
 .app {
@@ -24,16 +43,15 @@ body {
 }
 
 button {
-  background-color: #4CAF50;
-  color: white; 
-  padding: 14px 20px; 
-  margin: 8px 0; 
-  border: none; 
-  cursor: pointer; 
-  width: 100%; 
+  background-color: #4caf50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
 }
 
 button:hover {
-  opacity: 0.8; 
+  opacity: 0.8;
 }
-
