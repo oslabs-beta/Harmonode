@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router';
-import {getProjects} from '../../../ipcRenderer';
 import ProjectListCard from './ProjectListCard';
 import {ProjectsContext} from '../../../context/contextStore';
 
@@ -14,7 +13,7 @@ interface projectObject {
 }
 // Component to list all of the projects that have been saved previously
 function ListProjects() {
-  const {projects, dispatchProjects} = useContext(ProjectsContext);
+  const {projects} = useContext(ProjectsContext);
   const navigate = useNavigate();
   console.log(projects);
   const projectComponents = projects.map((project) => {
