@@ -24,7 +24,7 @@ export async function getCodeFiles(
   // recursive function to collect all the file paths into the array
   function recurseFiles(directoryPath: string = projectDir) {
     // get all of the file paths into an array so we can iterate and recurse through them
-    const files = fs.readdirSync(directoryPath) as string[];
+    const files: string[] = fs.readdirSync(directoryPath);
 
     // iterate over all the files
     files.forEach((file: string) => {

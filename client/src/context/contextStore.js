@@ -9,6 +9,10 @@ export const ProjectsContext = React.createContext({
   setActiveProject: (project) => {},
 });
 
+// we will want to kind of mimic what we did above
+// have an active theme, a function to set the active theme
+// a list of themes (to choose from)
+
 export const SettingsContext = React.createContext({
-  theme: {},
+  activeTheme: {},
 });
