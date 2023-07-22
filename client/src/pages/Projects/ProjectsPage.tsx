@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import AddProject from './components/AddProject';
 import ListProjects from './components/ListProjects';
-const {ipcRenderer} = window.require('electron');
 
 import './projects.css';
+import ProjectsProvider from '../../context/ProjectsProvider';
 
 function ProjectsPage() {
   const [showNew, setShowNew] = useState(false);

@@ -1,12 +1,35 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import ProjectDirectories from './ProjectDirectories';
 import {DirectoryTree, Directory} from '../../../types';
 import ApprovedExtensions from './ApprovedExtensions';
 import {setProjects} from '../../../ipcRenderer';
+import {v4 as uuid} from 'uuid';
+import {ProjectsContext} from '../../../context/contextStore';
 const {ipcRenderer} = window.require('electron');
+
+interface projectObj {
+  folder: string;
+  server: string;
+  ignore: string[];
+  extensions: string[];
+  id: string;
+  name: string;
+  ast: object[];
+}
 
 // Component to add a new project
 function AddProject() {
+  const {
+    projects,
+    dispatchProjects,
+    setActiveProject,
+    activeProject,
+  }: {
+    projects: projectObj[];
+    dispatchProjects: Function;
+    setActiveProject: Function;
+    activeProject: object;
+  } = useContext(ProjectsContext);
   const [projectFolder, setProjectFolder] = useState<string>('');
   const [projectName, setProjectName] = useState<string>('');
   const [serverPath, setServerPath] = useState<string>('');
@@ -17,6 +40,7 @@ function AddProject() {
   const [approvedExts, setApprovedExts] = useState<string[]>([]);
   const [fileCount, setFileCount] = useState<number>(0);
 
+  console.log(activeProject, 'ACTIVE PROJECT');
   // function that finds all the files that will be loaded so we can display
   // the file count on the project load page
   async function fileLoad() {
@@ -76,7 +100,6 @@ function AddProject() {
     );
     /*
     _________
-    
     projectObj = {}
     1. Project Folder
     2. Server File
@@ -84,15 +107,7 @@ function AddProject() {
     4. Extensions to include
     5. Project Name
     6. AST Object
-    
-    func storeProjects(projObj) {
 
-      const projects = store.get('projects') [{}, {}, {}]
-      check to see if projects property is in storage, if not, set it as an empty array
-      ... check each project to make sure the name doesn't already exist.. 
-      const newProjectList = [...projects, projObj]  
-      store.set('projects', newProjectList)  
-    }
     */
 
     const projectName = e.target.projectName.value;
@@ -101,12 +116,19 @@ function AddProject() {
       server: serverPath,
       ignore: ignoredDirs,
       extensions: approvedExts,
+      id: uuid(),
       name: projectName,
       ast: files,
     };
 
-    const response = await setProjects(projectObj);
-    console.log(response);
+    for (const project of projects) {
+      if (project.name === projectName) {
+        console.log('duplicate');
+        return;
+      }
+    }
+    setActiveProject(projectObj);
+    dispatchProjects({type: 'add', payload: projectObj});
   }
 
   // callback passed down to ProjectDirectories component

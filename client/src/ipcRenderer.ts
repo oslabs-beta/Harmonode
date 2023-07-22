@@ -8,22 +8,8 @@ const {ipcRenderer} = window.require('electron');
 //   return await ipcRenderer.invoke('getStoredStuff');
 // }
 
-export async function setProjects(project) {
-  const projects = await ipcRenderer.invoke('getProjects');
-  //
-  if (!Array.isArray(projects)) {
-    ipcRenderer.invoke('storeProjects', [project]);
-    return 'success';
-  }
-
-  for (let proj of projects) {
-    if (proj.name === project.name) {
-      return 'duplicate';
-    }
-  }
-  const newProjects = [...projects, project];
-  ipcRenderer.invoke('storeProjects', newProjects);
-  return 'success';
+export async function setProjects(projects) {
+  ipcRenderer.invoke('storeProjects', projects);
 }
 
 export async function getProjects() {
