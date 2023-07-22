@@ -19,7 +19,6 @@ export interface astRoot {
   endpoints: astEndpoint[];
   fetchFiles: astFetchFile[];
   endpointFiles: astEndpointFile[];
-  ends: string[]
 }
 
 // produces information from ast parser with information on a per file basis for fetch requests
@@ -36,6 +35,7 @@ export interface astEndpointFile {
   fileName: string;
   filePath: string;
   fullPath: string;
+  isServer: boolean;
   lastUpdated: Date | undefined;
   endpoints: string[];
 }
