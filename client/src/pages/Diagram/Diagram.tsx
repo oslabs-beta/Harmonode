@@ -10,15 +10,12 @@ import ReactFlow, {
   Controls,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-
-
 // Need some function to be able to create nodes each time "save and load project" is clicked
 // Will also render the data being passed onto the nodes
 // How do we determine/measure the amount of nodes we need per project? fileLoad counter?
 // One node will have name of endpoint
 // Possibly will need ANOTHER node to specifiy what kind of request it is (post, delete etc.)
 // The next node(s) will have the data being sent to all the fetches
-
 
 function Diagram() {
 
