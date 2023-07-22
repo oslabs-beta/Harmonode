@@ -35,16 +35,15 @@ const fetchParser = (codeString) => {
   trav(ast, {
     enter(path) {
       if (
-        path.node.type === "AwaitExpression" &&
-        path.node.argument.callee.name === "fetch"
+        path.node.type === "CallExpression" &&
+        path.node.callee.name === "fetch"
       ) {
-        const fetchArg = path.node.argument.arguments[0];
+        const fetchArg = path.node.arguments[0];
         if (fetchArg.type === "StringLiteral") {
-          urlsList.push(path.node.argument.arguments[0].value);
+          urlsList.push(fetchArg.value);
         } else if (fetchArg.type === "TemplateLiteral") {
-          urlsList.push(path.node.argument.arguments[0].quasis[0].value.raw);
-        } else
-          urlsList.push(findOriginalVal(path.node.argument.arguments[0].name));
+          urlsList.push(fetchArg.quasis[0].value.raw);
+        } else urlsList.push(findOriginalVal(fetchArg.name));
       }
     },
   });
