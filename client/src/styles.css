@@ -33,7 +33,7 @@ h6 {
 
 .app {
   display: flex;
-  min-height: 100vh;
+  min-height: calc(100vh - 3em);
   color: var(--font-main-color);
 }
 
@@ -42,9 +42,21 @@ h6 {
   padding: 4em 10vw;
 }
 
+.topbar {
+  background-color: var(--quaternary-color);
+  margin: 0;
+  height: 3em;
+  display: flex;
+  justify-content: center;
+}
+
+.topbar-inactive {
+  background-color: var(--inactive-color);
+}
+
 button {
-  background-color: #4caf50;
-  color: white;
+  background-color: var(--tertiary-color);
+  color: var(--font-main-color);
   padding: 14px 20px;
   margin: 8px 0;
   border: none;

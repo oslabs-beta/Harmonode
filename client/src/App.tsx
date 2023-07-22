@@ -34,7 +34,7 @@ const App = () => {
 
   return (
     // <DirTreeHolder.Provider value={{globalDir, dirDispatcher}}>
-    <>
+    <main className='main'>
       <Topbar />
       <div className='app'>
         <Sidebar />
@@ -47,7 +47,7 @@ const App = () => {
           <Route path='/settings' element={<Settings />} />
         </Routes>
       </div>
-    </>
+    </main>
     // </DirTreeHolder.Provider>
   );
 };

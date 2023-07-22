@@ -15,7 +15,7 @@ function ProjectsPage() {
           <button onClick={() => setShowNew(true)}>Add new project</button>
         </>
       )}
-      {showNew && <AddProject />}
+      {showNew && <AddProject hideNew={() => setShowNew(false)} />}
     </main>
   );
 }

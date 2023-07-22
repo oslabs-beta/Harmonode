@@ -10,7 +10,8 @@ Original Color Palette
 :root {
   --primary-color: #164b60;
   --secondary-color: #1b6b93;
-  --tertiary-color: #4fc0d0;
-  --quaternary-color: #a2ff86;
+  --tertiary-color: #4caf50;
+  --quaternary-color: #4caf50;
+  --inactive-color: #868484;
   --font-main-color: #f6fff5;
 }
