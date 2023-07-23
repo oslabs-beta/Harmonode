@@ -1,10 +1,10 @@
-const babelParser = require("@babel/parser");
-const trav = require("@babel/traverse").default;
+const babelParser = require('@babel/parser');
+const trav = require('@babel/traverse').default;
 
 const fetchParser = (codeString) => {
   const ast = babelParser.parse(codeString, {
-    sourceType: "module",
-    plugins: ["jsx"],
+    sourceType: 'module',
+    plugins: ['jsx'],
   });
 
   const urlsList = [];
@@ -13,8 +13,8 @@ const fetchParser = (codeString) => {
 
   trav(ast, {
     enter(path) {
-      if (path.node.type === "VariableDeclarator") {
-        if (path.node.init.type === "Identifier") {
+      if (path.node.type === 'VariableDeclarator') {
+        if (path.node.init.type === 'Identifier') {
           allScopedVars[path.node.id.name] = {
             assignedVar: path.node.init.name,
           };
@@ -26,7 +26,7 @@ const fetchParser = (codeString) => {
   const findOriginalVal = (variable) => {
     if (
       variable in allScopedVars &&
-      typeof allScopedVars[variable] === "string"
+      typeof allScopedVars[variable] === 'string'
     )
       return allScopedVars[variable];
     return findOriginalVal(allScopedVars[variable].assignedVar);
@@ -35,13 +35,13 @@ const fetchParser = (codeString) => {
   trav(ast, {
     enter(path) {
       if (
-        path.node.type === "CallExpression" &&
-        path.node.callee.name === "fetch"
+        path.node.type === 'CallExpression' &&
+        path.node.callee.name === 'fetch'
       ) {
         const fetchArg = path.node.arguments[0];
-        if (fetchArg.type === "StringLiteral") {
+        if (fetchArg.type === 'StringLiteral') {
           urlsList.push(fetchArg.value);
-        } else if (fetchArg.type === "TemplateLiteral") {
+        } else if (fetchArg.type === 'TemplateLiteral') {
           urlsList.push(fetchArg.quasis[0].value.raw);
         } else urlsList.push(findOriginalVal(fetchArg.name));
       }
