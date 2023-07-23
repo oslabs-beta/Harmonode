@@ -5,11 +5,14 @@ import {DirObj, FileObj} from './types';
 import monitorFiles from './utils/monitorFileChanges';
 import Store from 'electron-store';
 import createComponentObject from './utils/createComponentObject';
+import * as fs from 'fs';
 
 const dev: boolean = process.env.NODE_ENV === 'development';
-const path = require('path');
 const url = require('url');
 const store = new Store();
+
+// need to have all our file watchers in global so we can clear them
+let watchers: fs.FSWatcher[] = [];
 
 let mainWindow: BrowserWindow | null;
 
@@ -116,12 +119,43 @@ ipcMain.handle(
       serverPath
     );
 
+    // create the component object
     const componentObj = createComponentObject(codeFiles, serverPath);
 
-    monitorFiles(componentObj);
+    // clear all the watchers before adding new ones
+    for (const watcher of watchers) watcher.close();
+
+    // add the new file watchers
+    watchers = monitorFiles(componentObj);
+
+    // return the component object to front end
     return componentObj;
   }
 );
+
+// handler to load a folder
+// -rebuilds the AST for it to get most up to date info
+// -clears the watchers on the previous project
+// -adds new watchers on the loaded project
+ipcMain.handle('loadProject', async (_, project) => {
+  // need to restring the code base
+  const {folder, ignore, extensions, server} = project;
+  const codeFiles: FileObj[] = await stringCodeBase(
+    folder,
+    ignore,
+    extensions,
+    server
+  );
+  // create the component object
+  const componentObj = createComponentObject(codeFiles, server);
+
+  // clear any existing watchers
+  for (const watcher of watchers) watcher.close();
+  // set new watchers
+  watchers = monitorFiles(componentObj);
+  // return the component object
+  return componentObj;
+});
 
 ipcMain.handle('getDirectories', async (_, dirPath) => {
   const directories: DirObj[] = await getDirectories(dirPath);

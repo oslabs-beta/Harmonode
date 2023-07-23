@@ -9,7 +9,10 @@ import {
 } from '../types';
 import {v4 as uuid} from 'uuid';
 
+// module that creates the component object that will be sent to the front end
+
 export default function createComponentObject(codeFiles, serverPath) {
+  // the basic structure of the data object we use to drive everything in harmonode
   const componentObj: astRoot = {
     fetches: [] as astFetch[],
     endpoints: [] as astEndpoint[],
@@ -17,7 +20,10 @@ export default function createComponentObject(codeFiles, serverPath) {
     endpointFiles: [] as astEndpointFile[],
   };
 
+  // call the helper function to push the data we need to into our component object
   pushFilesToCompObj(codeFiles, componentObj, serverPath);
+
+  // this will be the object we eventually return to the front end
   return componentObj;
 }
 
@@ -25,6 +31,7 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
   for (const file of codeFiles) {
     // if it's the server path, let's load the server stuff into an ast
     if (file.fullPath === serverPath) {
+      // get the AST for the server
       const parsedEndpointsArray = endpointParse(file.contents);
       if (parsedEndpointsArray.length > 0) {
         componentObj.endpointFiles.push({
@@ -39,7 +46,7 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
       }
       continue; // skip the rest since we have what we need
     }
-
+    // getting the AST for fetches
     const parsedFetchesArray = fetchParser(file.contents);
     const fetchesArray = parsedFetchesArray.map((fetch) => {
       return {path: getEndpoint(fetch), id: uuid()};
@@ -57,8 +64,7 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
   }
 }
 
-// URL Sanitizing functions
-
+// URL Sanitizing functions for fetch request URL's to extract the endpoints
 function isLocalHost(url) {
   const localHostPatterns = [
     /^localhost(:\d+)?$/,
@@ -70,9 +76,17 @@ function isLocalHost(url) {
 }
 
 function getEndpoint(url) {
+  console.log(url, 'URL from getEndpoint');
   // Check if the URL starts with 'http' or '/' to determine if it's a non-local URL or just a path
   if (!url.startsWith('http') && !url.startsWith('/')) {
-    return url; // It's just a path, return it as is
+    if (isLocalHost(url.split('/')[0])) {
+      // It's a local URL without the protocol
+      // Extract the endpoint by removing the domain and protocol from the URL
+      const urlParts = url.split('/');
+      return `/${urlParts.slice(1).join('/')}`;
+    }
+    // It's just a path, return it as is
+    return url;
   }
 
   // Check if the URL is a local URL
