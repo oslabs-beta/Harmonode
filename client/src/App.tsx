@@ -8,6 +8,7 @@ import Diagram from './pages/Diagram/Diagram';
 import Settings from './pages/Settings/Settings';
 import {ProjectsContext} from './context/contextStore';
 import Topbar from './components/Topbar';
+import DiagramPage from './pages/Diagram/DiagramPage';
 const {ipcRenderer} = window.require('electron');
 
 const App = () => {
@@ -42,7 +43,7 @@ const App = () => {
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/projects' element={<ProjectsPage />} />
           <Route path='/list' element={<List />} />
-          <Route path='/diagram' element={<Diagram />} />
+          <Route path='/diagram' element={<DiagramPage />} />
           <Route path='/settings' element={<Settings />} />
         </Routes>
       </div>
