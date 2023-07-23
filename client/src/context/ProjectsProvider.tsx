@@ -37,7 +37,7 @@ async function initProjects() {
 export default function ProjectsProvider({children}) {
   const [projects, dispatchProjects] = useReducer(projectsReducer, []);
   const [activeProject, setActiveProject] = useState({});
-
+  console.log(projects);
   useEffect(() => {
     async function dispatchStoredProjects() {
       dispatchProjects({type: 'load', payload: await initProjects()});

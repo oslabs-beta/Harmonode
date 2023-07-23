@@ -1,7 +1,7 @@
-import React, { useCallback, useState, useContext } from 'react';
+import React, {useCallback, useState, useContext, useEffect} from 'react';
 import AddProject from '../Projects/components/AddProject';
 import ProjectsProvider from '../../context/ProjectsProvider';
-import { ProjectsContext } from '../../context/contextStore';
+import {ProjectsContext} from '../../context/contextStore';
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -12,7 +12,7 @@ import ReactFlow, {
   Controls,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { PlaylistAddOutlined } from '@mui/icons-material';
+import {PlaylistAddOutlined} from '@mui/icons-material';
 // start with fetchFiles?
 // get data from interface astroot in types.ts
 // formSubmit in addproject.tsx
@@ -31,8 +31,9 @@ function Diagram() {
   // onclick of "save project and load" button nodes are created
   // show all files EXCEPT the ones that were selected to be ignored
 
-  const { activeProject } = useContext(ProjectsContext);
-  console.log(activeProject);
+  const {activeProject} = useContext(ProjectsContext);
+
+  // console.log(activeProject);
 
   const nodeColor = (node) => {
     switch (node.id) {
@@ -90,26 +91,29 @@ function Diagram() {
   const initialNodes = activeProject.ast.fetchFiles.map((file, idx) => {
     return {
       id: idx.toString(),
-      position: { x: 0, y: idx * 100 },
-      data: { label: file.fileName }, //each file needs an id and we'll use the id to connect the nodes
+      position: {x: 0, y: idx * 100},
+      data: {label: file.fileName}, //each file needs an id and we'll use the id to connect the nodes
       style: defaultNodeStyle1,
     };
   });
 
-  console.log(initialNodes);
   // Need to add functionality so that for each proj. load..
   // it will create nodes based on what is necesscary
   // We determine how many nodes are necesscary based on what user selected and on fileLoad for count?
   const initialEdges = [
-    { id: 'e0-1', source: '1', target: '2' }, //source MUST match id in order to connect
-    { id: 'e1-2', source: '4', target: '5' },
-    { id: 'e2-3', source: '2', target: '3' },
-    { id: 'e3-4', source: '3', target: '4' },
+    {id: 'e0-1', source: '1', target: '2'}, //source MUST match id in order to connect
+    {id: 'e1-2', source: '4', target: '5'},
+    {id: 'e2-3', source: '2', target: '3'},
+    {id: 'e3-4', source: '3', target: '4'},
   ];
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
+  useEffect(() => {
+    setNodes(initialNodes);
+    setEdges(initialEdges);
+  }, [activeProject]);
   // combine nodes with spread?
 
   // const connectNodes () => {
@@ -127,9 +131,7 @@ function Diagram() {
   }, []);
 
   return (
-    <div
-      style={{ width: '100vw', height: '100vh', backgroundColor: '#526D82' }}
-    >
+    <div style={{width: '100vw', height: '100vh', backgroundColor: '#526D82'}}>
       Diagram
       <ReactFlow
         nodes={nodes}

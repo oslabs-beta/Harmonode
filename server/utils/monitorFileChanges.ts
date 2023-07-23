@@ -1,4 +1,6 @@
+import {ipcMain} from 'electron';
 import * as fs from 'fs';
+import {mainWindow} from '../main';
 // module to monitor a project file for changes
 // Will need to be on a setTimeout, cleared only when another project is loaded
 // factory function for monitoring the files
@@ -26,6 +28,7 @@ export default function monitorFiles(astRootObj) {
           console.log(`${file.fileName} was renamed to ${filename}`);
           file.fullPath = `${file.filePath}/${filename}`;
           file.fileName = filename;
+          mainWindow?.webContents.send('fileChanged', astRootObj);
         }
 
         // ===File Change Event===

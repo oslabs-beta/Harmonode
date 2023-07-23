@@ -176,3 +176,5 @@ ipcMain.handle('getProjects', (event) => {
 ipcMain.handle('deleteProjects', (event) => {
   store.delete('projects');
 });
+
+export {mainWindow};

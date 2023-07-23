@@ -1,13 +1,5 @@
 const {ipcRenderer} = window.require('electron');
 
-// export function setTestData(data) {
-//   ipcRenderer.invoke('storeStuff', data);
-// }
-
-// export async function getTestData() {
-//   return await ipcRenderer.invoke('getStoredStuff');
-// }
-
 export async function storeProjects(projects) {
   ipcRenderer.invoke('storeProjects', projects);
 }
@@ -15,4 +7,9 @@ export async function storeProjects(projects) {
 export async function getProjects() {
   const projects = await ipcRenderer.invoke('getProjects');
   return Array.isArray(projects) ? projects : [];
+}
+
+export async function loadProject(project) {
+  const updatedProject = await ipcRenderer.invoke('loadProject', project);
+  return updatedProject;
 }

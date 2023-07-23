@@ -1,4 +1,4 @@
-import React, {useReducer} from 'react';
+import React, {useContext, useEffect, useReducer} from 'react';
 import {Route, Routes, useNavigate} from 'react-router';
 import ProjectsPage from './pages/Projects/ProjectsPage';
 import Sidebar from './components/Sidebar';
@@ -6,31 +6,30 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import List from './pages/List/List';
 import Diagram from './pages/Diagram/Diagram';
 import Settings from './pages/Settings/Settings';
-import {DirTreeHolder} from './context/contextStore';
-import ProjectsProvider from './context/ProjectsProvider';
+import {ProjectsContext} from './context/contextStore';
 import Topbar from './components/Topbar';
-
-//establishes initial state
-const initialState = {dirTree: {name: 'tree'}};
-
-//update and return new state
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'setDirTree':
-      return {...state, dirTree: {name: action.payload}};
-    default:
-      return {...state};
-  }
-};
+const {ipcRenderer} = window.require('electron');
 
 const App = () => {
-  const [globalDir, dirDispatcher] = useReducer(reducer, initialState);
+  const {setActiveProject, dispatchProjects, activeProject} =
+    useContext(ProjectsContext);
+  // console.log(activeProject, 'ACTIVE PROJECT FROM APP');
+  // mount our event listener on file changes
+  useEffect(() => {
+    const handleFileChanged = (e, newAst) => {
+      dispatchProjects({
+        type: 'update',
+        payload: {...activeProject, ast: newAst},
+      });
+      setActiveProject({...activeProject, ast: newAst});
+    };
 
-  const navigate = useNavigate();
+    ipcRenderer.on('fileChanged', handleFileChanged);
 
-  function navClick(path) {
-    navigate(path);
-  }
+    return () => {
+      ipcRenderer.removeListener('fileChanged', handleFileChanged);
+    };
+  }, [activeProject]);
 
   return (
     // <DirTreeHolder.Provider value={{globalDir, dirDispatcher}}>
