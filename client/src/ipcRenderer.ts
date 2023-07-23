@@ -8,7 +8,7 @@ const {ipcRenderer} = window.require('electron');
 //   return await ipcRenderer.invoke('getStoredStuff');
 // }
 
-export async function setProjects(projects) {
+export async function storeProjects(projects) {
   ipcRenderer.invoke('storeProjects', projects);
 }
 

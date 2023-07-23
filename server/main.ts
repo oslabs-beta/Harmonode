@@ -14,6 +14,8 @@ import fetchParser from './ast/clientParser';
 import endpointParse from './ast/serverParser';
 import monitorFiles from './utils/monitorFileChanges';
 import Store from 'electron-store';
+import {v4 as uuid} from 'uuid';
+import createComponentObject from './utils/createComponentObject';
 
 const dev: boolean = process.env.NODE_ENV === 'development';
 const path = require('path');
@@ -132,41 +134,7 @@ ipcMain.handle(
       serverPath
     );
 
-    const componentObj: astRoot = {
-      fetches: [] as astFetch[],
-      endpoints: [] as astEndpoint[],
-      fetchFiles: [] as astFetchFile[],
-      endpointFiles: [] as astEndpointFile[],
-    };
-    // // fetchParsing files
-    for (const file of codeFiles) {
-      // if it's the server path, let's load the server stuff into an ast
-      if (file.fullPath === serverPath) {
-        const parsedEndpointsArray = endpointParse(file.contents);
-        if (parsedEndpointsArray.length > 0) {
-          componentObj.endpointFiles.push({
-            fileName: file.fileName,
-            fullPath: file.fullPath,
-            filePath: file.filePath,
-            lastUpdated: file.mDate,
-            isServer: true,
-            endpoints: parsedEndpointsArray,
-          });
-        }
-        continue; // skip the rest since we have what we need
-      }
-
-      const parsedFetchesArray = fetchParser(file.contents);
-      if (parsedFetchesArray.length > 0) {
-        componentObj.fetchFiles.push({
-          fileName: file.fileName,
-          fullPath: file.fullPath,
-          filePath: file.filePath,
-          lastUpdated: file.mDate,
-          fetches: parsedFetchesArray,
-        });
-      }
-    }
+    const componentObj = createComponentObject(codeFiles, serverPath);
 
     monitorFiles(componentObj);
     return componentObj;
