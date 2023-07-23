@@ -1,20 +1,9 @@
-import {BrowserWindow, Menu, app, ipcMain, dialog} from 'electron';
+import {BrowserWindow, app, ipcMain, dialog} from 'electron';
 import {stringCodeBase} from './utils/stringifyCode';
 import {getDirectories} from './utils/getFileDirectories';
-import {
-  DirObj,
-  FileObj,
-  astEndpoint,
-  astEndpointFile,
-  astFetch,
-  astFetchFile,
-  astRoot,
-} from './types';
-import fetchParser from './ast/clientParser';
-import endpointParse from './ast/serverParser';
+import {DirObj, FileObj} from './types';
 import monitorFiles from './utils/monitorFileChanges';
 import Store from 'electron-store';
-import {v4 as uuid} from 'uuid';
 import createComponentObject from './utils/createComponentObject';
 
 const dev: boolean = process.env.NODE_ENV === 'development';
@@ -40,10 +29,6 @@ function createWindow() {
 
     webPreferences: {nodeIntegration: true, contextIsolation: false},
   });
-
-  //   if (process.platform === 'darwin' || process.platform === 'win32') {
-  //     app.dock.setIcon(path.join(__dirname, ''));
-  //   }
 
   let indexPath: string;
   if (dev) {
@@ -108,9 +93,6 @@ ipcMain.handle('openFileDialog', async (_, dirPath) => {
   return result.filePaths[0];
 });
 
-// TODO:
-// need to handle counting the code files instead of parsing them all
-// for performance reasons
 ipcMain.handle(
   'countCodeFiles',
   async (_, dirPath, ignoreList, approvedExt, serverPath) => {
@@ -146,54 +128,7 @@ ipcMain.handle('getDirectories', async (_, dirPath) => {
   return directories;
 });
 
-ipcMain.handle('getDummyState', () => {
-  const randomNum1 = Math.random().toString();
-  const randomNum2 = Math.random().toString();
-  const randomNum3 = Math.random().toString();
-  const randomNum4 = Math.random().toString();
-  const randomNum5 = Math.random().toString();
-  const randomNum6 = Math.random().toString();
-  return {
-    fetches: [
-      {
-        path: randomNum1,
-        contents: randomNum2,
-        data: {params: [randomNum5], queries: [], body: []},
-        lastUpdated: Date.now(),
-      },
-    ],
-    endPoints: [
-      {
-        path: randomNum3,
-        contents: randomNum4,
-        data: {params: [], queries: [], body: [randomNum6]},
-        lastUpdated: Date.now(),
-      },
-    ],
-    settings: {
-      updateInterval: 1000,
-    },
-  };
-});
-
-// AST function stuf
-
-ipcMain.handle('astParse', () => {
-  fetchParser();
-});
-
 // ==== Electron Store Stuff ====
-
-// ipcMain.handle('storeStuff', (event, data) => {
-//   console.log('storeStuff triggered');
-//   store.set('testData', data);
-// });
-
-// ipcMain.handle('getStoredStuff', (event) => {
-//   console.log('getStoredStuff');
-//   const storageData = store.get('testData');
-//   return storageData;
-// });
 
 ipcMain.handle('storeProjects', (event, projects) => {
   store.set('projects', projects);
