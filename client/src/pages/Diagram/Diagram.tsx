@@ -10,6 +10,8 @@ import ReactFlow, {
   Background,
   BackgroundVariant,
   Controls,
+  useReactFlow,
+  useNodesInitialized,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import {PlaylistAddOutlined} from '@mui/icons-material';
@@ -30,7 +32,8 @@ import {PlaylistAddOutlined} from '@mui/icons-material';
 function Diagram() {
   // onclick of "save project and load" button nodes are created
   // show all files EXCEPT the ones that were selected to be ignored
-
+  const [isLoaded, setIsLoaded] = useState(false);
+  const {fitView} = useReactFlow();
   const {activeProject} = useContext(ProjectsContext);
 
   // console.log(activeProject);
@@ -54,6 +57,7 @@ function Diagram() {
     border: '3px solid #ff0071',
     background: '#FCC8D1',
     borderRadius: 15,
+    opacity: '1',
   };
 
   const defaultNodeStyle2 = {
@@ -90,7 +94,7 @@ function Diagram() {
   }) */
   const initialNodes = activeProject.ast.fetchFiles.map((file, idx) => {
     return {
-      id: idx.toString(),
+      id: file.id,
       position: {x: 0, y: idx * 100},
       data: {label: file.fileName}, //each file needs an id and we'll use the id to connect the nodes
       style: defaultNodeStyle1,
@@ -109,11 +113,28 @@ function Diagram() {
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const nodesInitialized = useNodesInitialized();
 
   useEffect(() => {
-    setNodes(initialNodes);
+    const newNodes = nodes.map((node) => {
+      const match = activeProject.ast.fetchFiles.find(
+        (file) => file.id === node.id
+      );
+      if (match) {
+        return {
+          ...node,
+          data: {label: match.fileName},
+        };
+      }
+    });
+
+    setNodes(newNodes as any);
     setEdges(initialEdges);
   }, [activeProject]);
+
+  useEffect(() => {
+    fitView();
+  }, [nodesInitialized]);
   // combine nodes with spread?
 
   // const connectNodes () => {
@@ -131,8 +152,14 @@ function Diagram() {
   }, []);
 
   return (
-    <div style={{width: '100vw', height: '100vh', backgroundColor: '#526D82'}}>
-      Diagram
+    <div
+      style={{
+        width: '100vw',
+        height: 'calc(100vh - 3em)',
+        backgroundColor: '#526D82',
+        overflow: 'hidden',
+      }}
+    >
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -140,6 +167,7 @@ function Diagram() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={onNodeClick} // to test if node is clicked
+        proOptions={{hideAttribution: true}}
       >
         <Controls />
         <MiniMap nodeColor={nodeColor} zoomable pannable />
