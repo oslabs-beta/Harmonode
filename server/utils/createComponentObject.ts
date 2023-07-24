@@ -49,7 +49,7 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
     // getting the AST for fetches
     const parsedFetchesArray = fetchParser(file.contents);
     const fetchesArray = parsedFetchesArray.map((fetch) => {
-      return {path: getEndpoint(fetch.path), id: uuid(), ...fetch};
+      return {...fetch, path: getEndpoint(fetch.path), id: uuid()};
     });
     if (parsedFetchesArray.length > 0) {
       componentObj.fetchFiles.push({
