@@ -1,25 +1,25 @@
 import React from 'react';
 import {useEffect, useReducer, useState} from 'react';
 import {ProjectsContext} from './contextStore.js';
-import {getProjects, setProjects} from '../ipcRenderer';
+import {getProjects, storeProjects} from '../ipcRenderer';
 
 function projectsReducer(state, {type, payload}) {
   switch (type) {
     case 'add':
       const newStateAdd = [...state, payload];
-      setProjects(newStateAdd);
+      storeProjects(newStateAdd);
       return newStateAdd;
     case 'delete':
       const newStateDelete = state.filter(
         (project) => project.name !== payload.name
       );
-      setProjects(newStateDelete);
+      storeProjects(newStateDelete);
       return newStateDelete;
     case 'update':
       const newStateUpdate = state.map((project) =>
-        project.id === payload.iid ? payload : project
+        project.id === payload.id ? payload : project
       );
-      setProjects(newStateUpdate);
+      storeProjects(newStateUpdate);
       return newStateUpdate;
     case 'load':
       return payload;
@@ -37,7 +37,7 @@ async function initProjects() {
 export default function ProjectsProvider({children}) {
   const [projects, dispatchProjects] = useReducer(projectsReducer, []);
   const [activeProject, setActiveProject] = useState({});
-
+  console.log(projects);
   useEffect(() => {
     async function dispatchStoredProjects() {
       dispatchProjects({type: 'load', payload: await initProjects()});

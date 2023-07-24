@@ -5,19 +5,13 @@ function Topbar() {
   const {activeProject} = useContext(ProjectsContext);
   console.log(activeProject);
   return (
-    <div
-      style={{
-        backgroundColor: 'black',
-        margin: '0',
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-      }}
-    >
+    <div className={`topbar ${!activeProject.name && 'topbar-inactive'}`}>
       {activeProject.name ? (
-        <p style={{color: 'white'}}>Active Project: {activeProject.name}</p>
+        <p style={{color: 'var(--font-main-color)'}}>
+          Active Project: <b>{activeProject.name}</b> ({activeProject.folder})
+        </p>
       ) : (
-        <p style={{color: 'white'}}>No Active Project </p>
+        <p style={{color: 'var(--font-main-color)'}}>No Active Project </p>
       )}
     </div>
   );

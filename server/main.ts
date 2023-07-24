@@ -1,24 +1,18 @@
-import {BrowserWindow, Menu, app, ipcMain, dialog} from 'electron';
+import {BrowserWindow, app, ipcMain, dialog} from 'electron';
 import {stringCodeBase} from './utils/stringifyCode';
 import {getDirectories} from './utils/getFileDirectories';
-import {
-  DirObj,
-  FileObj,
-  astEndpoint,
-  astEndpointFile,
-  astFetch,
-  astFetchFile,
-  astRoot,
-} from './types';
-import fetchParser from './ast/clientParser';
-import endpointParse from './ast/serverParser';
+import {DirObj, FileObj} from './types';
 import monitorFiles from './utils/monitorFileChanges';
 import Store from 'electron-store';
+import createComponentObject from './utils/createComponentObject';
+import * as fs from 'fs';
 
 const dev: boolean = process.env.NODE_ENV === 'development';
-const path = require('path');
 const url = require('url');
 const store = new Store();
+
+// need to have all our file watchers in global so we can clear them
+let watchers: fs.FSWatcher[] = [];
 
 let mainWindow: BrowserWindow | null;
 
@@ -38,10 +32,6 @@ function createWindow() {
 
     webPreferences: {nodeIntegration: true, contextIsolation: false},
   });
-
-  //   if (process.platform === 'darwin' || process.platform === 'win32') {
-  //     app.dock.setIcon(path.join(__dirname, ''));
-  //   }
 
   let indexPath: string;
   if (dev) {
@@ -106,9 +96,6 @@ ipcMain.handle('openFileDialog', async (_, dirPath) => {
   return result.filePaths[0];
 });
 
-// TODO:
-// need to handle counting the code files instead of parsing them all
-// for performance reasons
 ipcMain.handle(
   'countCodeFiles',
   async (_, dirPath, ignoreList, approvedExt, serverPath) => {
@@ -132,100 +119,50 @@ ipcMain.handle(
       serverPath
     );
 
-    const componentObj: astRoot = {
-      fetches: [] as astFetch[],
-      endpoints: [] as astEndpoint[],
-      fetchFiles: [] as astFetchFile[],
-      endpointFiles: [] as astEndpointFile[],
-    };
-    // // fetchParsing files
-    for (const file of codeFiles) {
-      // if it's the server path, let's load the server stuff into an ast
-      if (file.fullPath === serverPath) {
-        const parsedEndpointsArray = endpointParse(file.contents);
-        if (parsedEndpointsArray.length > 0) {
-          componentObj.endpointFiles.push({
-            fileName: file.fileName,
-            fullPath: file.fullPath,
-            filePath: file.filePath,
-            lastUpdated: file.mDate,
-            isServer: true,
-            endpoints: parsedEndpointsArray,
-          });
-        }
-        continue; // skip the rest since we have what we need
-      }
+    // create the component object
+    const componentObj = createComponentObject(codeFiles, serverPath);
 
-      const parsedFetchesArray = fetchParser(file.contents);
-      if (parsedFetchesArray.length > 0) {
-        componentObj.fetchFiles.push({
-          fileName: file.fileName,
-          fullPath: file.fullPath,
-          filePath: file.filePath,
-          lastUpdated: file.mDate,
-          fetches: parsedFetchesArray,
-        });
-      }
-    }
+    // clear all the watchers before adding new ones
+    for (const watcher of watchers) watcher.close();
 
-    monitorFiles(componentObj);
+    // add the new file watchers
+    watchers = monitorFiles(componentObj);
+
+    // return the component object to front end
     return componentObj;
   }
 );
+
+// handler to load a folder
+// -rebuilds the AST for it to get most up to date info
+// -clears the watchers on the previous project
+// -adds new watchers on the loaded project
+ipcMain.handle('loadProject', async (_, project) => {
+  // need to restring the code base
+  const {folder, ignore, extensions, server} = project;
+  const codeFiles: FileObj[] = await stringCodeBase(
+    folder,
+    ignore,
+    extensions,
+    server
+  );
+  // create the component object
+  const componentObj = createComponentObject(codeFiles, server);
+
+  // clear any existing watchers
+  for (const watcher of watchers) watcher.close();
+  // set new watchers
+  watchers = monitorFiles(componentObj);
+  // return the component object
+  return componentObj;
+});
 
 ipcMain.handle('getDirectories', async (_, dirPath) => {
   const directories: DirObj[] = await getDirectories(dirPath);
   return directories;
 });
 
-ipcMain.handle('getDummyState', () => {
-  const randomNum1 = Math.random().toString();
-  const randomNum2 = Math.random().toString();
-  const randomNum3 = Math.random().toString();
-  const randomNum4 = Math.random().toString();
-  const randomNum5 = Math.random().toString();
-  const randomNum6 = Math.random().toString();
-  return {
-    fetches: [
-      {
-        path: randomNum1,
-        contents: randomNum2,
-        data: {params: [randomNum5], queries: [], body: []},
-        lastUpdated: Date.now(),
-      },
-    ],
-    endPoints: [
-      {
-        path: randomNum3,
-        contents: randomNum4,
-        data: {params: [], queries: [], body: [randomNum6]},
-        lastUpdated: Date.now(),
-      },
-    ],
-    settings: {
-      updateInterval: 1000,
-    },
-  };
-});
-
-// AST function stuf
-
-ipcMain.handle('astParse', () => {
-  fetchParser();
-});
-
 // ==== Electron Store Stuff ====
-
-// ipcMain.handle('storeStuff', (event, data) => {
-//   console.log('storeStuff triggered');
-//   store.set('testData', data);
-// });
-
-// ipcMain.handle('getStoredStuff', (event) => {
-//   console.log('getStoredStuff');
-//   const storageData = store.get('testData');
-//   return storageData;
-// });
 
 ipcMain.handle('storeProjects', (event, projects) => {
   store.set('projects', projects);
@@ -239,3 +176,5 @@ ipcMain.handle('getProjects', (event) => {
 ipcMain.handle('deleteProjects', (event) => {
   store.delete('projects');
 });
+
+export {mainWindow};
