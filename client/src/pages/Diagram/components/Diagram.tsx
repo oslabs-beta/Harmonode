@@ -56,7 +56,6 @@ function Diagram() {
     border: '3px solid #ff0071',
     background: '#FCC8D1',
     borderRadius: 15,
-    opacity: '1',
   };
 
   const defaultNodeStyle2 = {
@@ -112,7 +111,7 @@ function Diagram() {
   );
 
   const initialNodes = [...initialFetchNodes, ...initialEndpointNodes];
-
+  console.log(initialNodes, 'INITIAL NODES');
   // Need to add functionality so that for each proj. load..
   // it will create nodes based on what is necesscary
   // We determine how many nodes are necesscary based on what user selected and on fileLoad for count?
@@ -123,30 +122,29 @@ function Diagram() {
     {id: 'e3-4', source: '3', target: '4'},
   ];
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialFetchNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const nodesInitialized = useNodesInitialized();
 
   useEffect(() => {
-    const newNodes = nodes.map((node) => {
-      const match = activeProject.ast.fetchFiles.find(
-        (file) => file.id === node.id
-      );
-      if (match) {
-        return {
-          ...node,
-          data: {label: match.fileName},
-        };
-      }
-    });
-
-    setNodes(newNodes as any);
-    setEdges(initialEdges);
+    // const newNodes = nodes.map((node) => {
+    //   const match = activeProject.ast.fetchFiles.find(
+    //     (file) => file.id === node.id
+    //   );
+    //   if (match) {
+    //     return {
+    //       ...node,
+    //       data: {label: match.fileName},
+    //     };
+    //   }
+    // });
+    // setNodes(newNodes as any);
+    // setEdges(initialEdges);
   }, [activeProject]);
 
-  useEffect(() => {
-    fitView();
-  }, [nodesInitialized]);
+  // useEffect(() => {
+  //   fitView();
+  // }, [nodesInitialized]);
   // combine nodes with spread?
 
   // const connectNodes () => {
