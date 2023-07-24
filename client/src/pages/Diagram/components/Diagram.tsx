@@ -1,7 +1,7 @@
 import React, {useCallback, useState, useContext, useEffect} from 'react';
-import AddProject from '../Projects/components/AddProject';
-import ProjectsProvider from '../../context/ProjectsProvider';
-import {ProjectsContext} from '../../context/contextStore';
+import AddProject from '../../Projects/components/AddProject';
+import ProjectsProvider from '../../../context/ProjectsProvider';
+import {ProjectsContext} from '../../../context/contextStore';
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -32,7 +32,6 @@ import {PlaylistAddOutlined} from '@mui/icons-material';
 function Diagram() {
   // onclick of "save project and load" button nodes are created
   // show all files EXCEPT the ones that were selected to be ignored
-  const [isLoaded, setIsLoaded] = useState(false);
   const {fitView} = useReactFlow();
   const {activeProject} = useContext(ProjectsContext);
 
@@ -92,7 +91,7 @@ function Diagram() {
       style: defaultNodeStyle1
     }
   }) */
-  const initialNodes = activeProject.ast.fetchFiles.map((file, idx) => {
+  const initialFetchNodes = activeProject.ast.fetchFiles.map((file, idx) => {
     return {
       id: file.id,
       position: {x: 0, y: idx * 100},
@@ -100,6 +99,19 @@ function Diagram() {
       style: defaultNodeStyle1,
     };
   });
+
+  const initialEndpointNodes = activeProject.ast.endpointFiles[0].endpoints.map(
+    (file, idx) => {
+      return {
+        id: idx.toString(),
+        position: {x: 200, y: idx * 100},
+        data: {label: file},
+        style: defaultNodeStyle2,
+      };
+    }
+  );
+
+  const initialNodes = [...initialFetchNodes, ...initialEndpointNodes];
 
   // Need to add functionality so that for each proj. load..
   // it will create nodes based on what is necesscary
