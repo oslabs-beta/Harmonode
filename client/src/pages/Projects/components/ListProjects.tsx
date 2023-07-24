@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router';
 import ProjectListCard from './ProjectListCard';
 import {ProjectsContext} from '../../../context/contextStore';
+import {v4 as uuid} from 'uuid';
 
 interface projectObject {
   name: string;
@@ -15,9 +16,9 @@ interface projectObject {
 function ListProjects() {
   const {projects} = useContext(ProjectsContext);
   const navigate = useNavigate();
-  console.log(projects);
+
   const projectComponents = projects.map((project) => {
-    return <ProjectListCard project={project} />;
+    return <ProjectListCard key={uuid()} project={project} />;
   });
 
   function navigateElsewhere() {

@@ -2,7 +2,6 @@ import React, {useContext, useEffect, useState} from 'react';
 import ProjectDirectories from './ProjectDirectories';
 import {DirectoryTree, Directory} from '../../../types';
 import ApprovedExtensions from './ApprovedExtensions';
-import {setProjects} from '../../../ipcRenderer';
 import {v4 as uuid} from 'uuid';
 import {ProjectsContext} from '../../../context/contextStore';
 const {ipcRenderer} = window.require('electron');
@@ -18,7 +17,7 @@ interface projectObj {
 }
 
 // Component to add a new project
-function AddProject() {
+function AddProject({hideNew}) {
   const {
     projects,
     dispatchProjects,
@@ -129,6 +128,7 @@ function AddProject() {
     }
     setActiveProject(projectObj);
     dispatchProjects({type: 'add', payload: projectObj});
+    hideNew();
   }
 
   // callback passed down to ProjectDirectories component

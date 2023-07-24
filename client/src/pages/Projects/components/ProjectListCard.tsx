@@ -1,11 +1,30 @@
 import React, {useContext} from 'react';
 import {ProjectsContext} from '../../../context/contextStore';
+import {loadProject} from '../../../ipcRenderer';
 
 function ProjectListCard({project}) {
-  const {dispatchProjects} = useContext(ProjectsContext);
+  const {dispatchProjects, activeProject, setActiveProject} =
+    useContext(ProjectsContext);
 
   function handleDelete(e) {
     dispatchProjects({type: 'delete', payload: project});
+    if (project.id === activeProject.id) setActiveProject({});
+  }
+
+  async function handleLoad(e) {
+    const files = await loadProject(project);
+    const newProject = {
+      folder: project.folder,
+      server: project.server,
+      ignore: project.ignore,
+      extensions: project.extensions,
+      id: project.id,
+      name: project.name,
+      ast: files,
+    };
+
+    dispatchProjects({type: 'update', payload: newProject});
+    setActiveProject(newProject);
   }
 
   function formatPath(path) {
@@ -19,6 +38,7 @@ function ProjectListCard({project}) {
     }
     return path;
   }
+
   const formattedPath = formatPath(project.folder);
 
   return (
@@ -26,7 +46,7 @@ function ProjectListCard({project}) {
       <div className='project-card-header'>
         <h2>{project.name}</h2>
         <div className='project-header-btns'>
-          <button>Load</button>
+          <button onClick={handleLoad}>Load</button>
           <button onClick={handleDelete}>Delete</button>
         </div>
       </div>
