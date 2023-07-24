@@ -105,7 +105,7 @@ function Diagram() {
   // it will create nodes based on what is necesscary
   // We determine how many nodes are necesscary based on what user selected and on fileLoad for count?
   const initialEdges = [
-    { id: 'e0-1', source: '0', target: '1' }, //source MUST match id in order to connect
+    { id: 'e0-1', source: '0', target: '1' }, //source MUST match id in order to connect - filename will be ID
     { id: 'e1-2', source: '1', target: '2' },
     { id: 'e2-3', source: '2', target: '3' },
     { id: 'e3-4', source: '3', target: '4' },
