@@ -36,8 +36,23 @@ async function initProjects() {
 
 export default function ProjectsProvider({children}) {
   const [projects, dispatchProjects] = useReducer(projectsReducer, []);
-  const [activeProject, setActiveProject] = useState({});
-  console.log(projects);
+  // fill out empty stuff for active project so it doesn't throw errors elsewhere when we try
+  // to iterate over stuff
+  const [activeProject, setActiveProject] = useState({
+    ast: {
+      fetchFiles: [],
+      endPointFiles: [],
+      fetches: [],
+      endpoints: [],
+    },
+    fileName: '',
+    extensions: [],
+    id: '',
+    ignore: [],
+    name: '',
+    server: '',
+  });
+
   useEffect(() => {
     async function dispatchStoredProjects() {
       dispatchProjects({type: 'load', payload: await initProjects()});
