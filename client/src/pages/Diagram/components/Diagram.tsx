@@ -6,20 +6,17 @@ import ReactFlow, {
   useEdgesState,
   addEdge,
   MiniMap,
+  Controls,
   Background,
   BackgroundVariant,
-  Controls,
+  NodeToolbar,
+  Panel,
+  NodeResizer,
   useReactFlow,
   useNodesInitialized,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { PlaylistAddOutlined } from '@mui/icons-material';
-// start with fetchFiles?
-// get data from interface astroot in types.ts
-// formSubmit in addproject.tsx
-// setActiveProject holds all data thats loaded for current project
-// ast:files
-// grab name from active project name and state
 
 // Need some function to be able to create nodes each time "save and load project" is clicked
 // Will also render the data being passed onto the nodes
@@ -33,31 +30,33 @@ function Diagram() {
   // show all files EXCEPT the ones that were selected to be ignored
   const { fitView } = useReactFlow();
   const { activeProject } = useContext(ProjectsContext);
+  console.log(activeProject);
 
-  // console.log(activeProject);
-
+  //minimap colors
   const nodeColor = (node) => {
-    switch (node.id) {
-      case '1':
-        return '#FCC8D1';
-      case '2':
+    switch (node.type) {
+      case 'fetchFileNode':
+        return '#19A7CE';
+      case 'endpointNode':
         return '#98DFD6';
       case '3':
-        return '#FFF89C';
+        return '#FCC8D1';
       case '4':
-        return '#19A7CE';
-      default:
+        return '#FFF89C';
+      case 'errorNode':
         return '#ff0072';
+      default:
+        return '#F1F1F1';
     }
   };
-
-  const defaultNodeStyle1 = {
-    border: '3px solid #ff0071',
-    background: '#FCC8D1',
+  //diagram colors
+  const fetchFileNode = {
+    border: '3px solid #146C94',
+    background: '#19A7CE',
     borderRadius: 15,
   };
 
-  const defaultNodeStyle2 = {
+  const endpointNode = {
     border: '3px solid #1B9C85',
     background: '#98DFD6',
     borderRadius: 15,
@@ -69,43 +68,46 @@ function Diagram() {
     borderRadius: 15,
   };
 
-  const defaultNodeStyle4 = {
-    border: '3px solid #146C94',
-    background: '#19A7CE',
+  const errorNode = {
+    border: '3px solid #ff0071',
+    background: '#FCC8D1',
     borderRadius: 15,
   };
+  // State for switching between vertical and horizontal view
+  const [orientation, setOrientation] = useState('vertical');
 
-  const testObj = {
-    firstName: 'Hamza',
-    lastName: 'C',
-    age: 27,
-  };
-  /*
-  activeProject.ast.fetchFiles.map( (file, idx) => {
-    return {
-      id: idx,
-      position: {x: 0, y: idx * 100},
-      data: {label: file.fileName},
-      style: defaultNodeStyle1
-    }
-  }) */
-  function generateNodes(project = activeProject) {
+  function generateNodes(project = activeProject, orientation) {
+    // Common spacing for horizontal/vertical stacking
+    const spacing = 200;
     const initialFetchNodes = project.ast.fetchFiles.map((file, idx) => {
+      const position =
+        orientation === 'horizontal'
+          ? { x: idx * spacing, y: 0 }
+          : { x: 0, y: idx * spacing };
+
       return {
-        id: file.id,
-        position: { x: idx * 200, y: 0 },
+        id: file.id, // This is fetchFiles.id
+        position,
+        // position: { x: idx * 200, y: 0 },
         data: { label: file.fileName }, //each file needs an id and we'll use the id to connect the nodes
-        style: defaultNodeStyle1,
+        style: fetchFileNode,
+        type: 'fetchFileNode',
       };
     });
 
     const initialEndpointNodes = project.ast.endpointFiles[0].endpoints.map(
       (file, idx) => {
+        const position =
+          orientation === 'horizontal'
+            ? { x: idx * spacing, y: spacing }
+            : { x: spacing, y: idx * spacing };
         return {
-          id: file.id,
-          position: { x: idx * 200, y: 200 },
+          id: file.id, // This is endpoints.id
+          position,
+          // position: { x: idx * 200, y: 200 },
           data: { label: file.path },
-          style: defaultNodeStyle2,
+          style: endpointNode,
+          type: 'endpointNode',
         };
       }
     );
@@ -135,100 +137,37 @@ function Diagram() {
     });
   }
 
-  // const initialEdges = [
-  //   { id: 'e0-1', source: '0', target: '1' }, //source MUST match id in order to connect
-  //   { id: 'e1-2', source: '1', target: '2' },
-  //   { id: 'e2-3', source: '2', target: '3' },
-  //   { id: 'e3-4', source: '3', target: '4' },
-  // ];
-  // create empty array (we'll be using .map on another .map)
+  // State Management for nodes and edges (connectors)
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(generateNodes());
-  const [edges, setEdges, onEdgesChange] = useEdgesState(generateEdges());
+  const [nodes, setNodes, onNodesChange] = useNodesState(
+    generateNodes(activeProject, orientation)
+  );
+  const [edges, setEdges, onEdgesChange] = useEdgesState(
+    generateEdges(activeProject)
+  );
   const nodesInitialized = useNodesInitialized();
-  // console.log(activeProject);
+
   useEffect(() => {
-    // const newFetchNodes = nodes
-    //   .map((node) => {
-    //     const match = activeProject.ast.fetchFiles.find(
-    //       (file) => file.id === node.id
-    //     );
-    //     if (match) {
-    //       return {
-    //         ...node,
-    //         data: {label: match.fileName},
-    //       };
-    //     }
-    //     return null;
-    //   })
-    //   .filter((node) => node !== null);
-    // const newEndpointNodes = nodes
-    //   .map((node) => {
-    //     const match = activeProject.ast.endpointFiles[0].endpoints.find(
-    //       (file) => file.id === node.id
-    //     );
-    //     if (match) {
-    //       return {
-    //         ...node,
-    //         data: {label: match.path},
-    //       };
-    //     }
-    //     return null;
-    //   })
-    //   .filter((node) => node !== null);
-    // const newNodes = [...newFetchNodes, ...newEndpointNodes];
-    setNodes(generateNodes(activeProject));
+    setNodes(generateNodes(activeProject, orientation));
     setEdges(generateEdges(activeProject));
-    const newFetchNodes = nodes
-      .map((node) => {
-        const match = activeProject.ast.fetchFiles.find(
-          (file) => file.id === node.id
-        );
-        if (match) {
-          return {
-            ...node,
-            data: { label: match.fileName },
-          };
-        }
-        return null;
-      })
-      .filter((node) => node !== null);
-    const newEndpointNodes = nodes
-      .map((node) => {
-        const match = activeProject.ast.endpointFiles[0].endpoints.find(
-          (file) => {
-            file.id === node.id;
-          }
-        );
-        if (match) {
-          return {
-            ...node,
-            data: { label: match.path },
-          };
-        }
-        return null;
-      })
-      .filter((node) => node !== null);
-    const newNodes = [...newFetchNodes, ...newEndpointNodes];
-    // console.log(newNodes, '!!!!!!NEW NODES!!!!');
-    setNodes(newNodes as any);
-    setEdges(initialEdges);
-  }, [activeProject]);
+  }, [activeProject, orientation]);
 
   useEffect(() => {
     fitView();
   }, [nodesInitialized]);
   // combine nodes with spread?
 
-  // const connectNodes () => {
-  // const combinedNodes = [...initialNodes, ...setActiveProject]
-  //
-  // }
-
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params) => setEdges((eds) => addEdge(params, eds)), // Not doing anything for now
     [setEdges]
   );
+
+  const handleHorizontalClick = () => {
+    setOrientation('horizontal');
+  };
+  const handleVerticalClick = () => {
+    setOrientation('vertical');
+  };
 
   const onNodeClick = useCallback((event, node) => {
     console.log(node, 'node clicked');
@@ -252,6 +191,11 @@ function Diagram() {
         onNodeClick={onNodeClick} // to test if node is clicked
         proOptions={{ hideAttribution: true }}
       >
+        {/* <NodeToolbar /> */}
+        <Panel position='top-right'>
+          <button onClick={handleVerticalClick}>Vertical View</button>
+          <button onClick={handleHorizontalClick}>Horizontal View</button>
+        </Panel>
         <Controls />
         <MiniMap nodeColor={nodeColor} zoomable pannable />
         <Background
