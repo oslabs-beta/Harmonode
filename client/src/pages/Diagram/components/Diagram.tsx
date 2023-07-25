@@ -89,48 +89,51 @@ function Diagram() {
       style: defaultNodeStyle1
     }
   }) */
-  const initialFetchNodes = activeProject.ast.fetchFiles.map((file, idx) => {
-    return {
-      id: file.id,
-      position: { x: idx * 200, y: 0 },
-      data: { label: file.fileName }, //each file needs an id and we'll use the id to connect the nodes
-      style: defaultNodeStyle1,
-    };
-  });
-
-  const initialEndpointNodes = activeProject.ast.endpointFiles[0].endpoints.map(
-    (file, idx) => {
+  function generateNodes(project = activeProject) {
+    const initialFetchNodes = project.ast.fetchFiles.map((file, idx) => {
       return {
         id: file.id,
-        position: { x: idx * 200, y: 200 },
-        data: { label: file.path },
-        style: defaultNodeStyle2,
+        position: { x: idx * 200, y: 0 },
+        data: { label: file.fileName }, //each file needs an id and we'll use the id to connect the nodes
+        style: defaultNodeStyle1,
       };
-    }
-  );
+    });
 
-  const initialNodes = [...initialFetchNodes, ...initialEndpointNodes];
+    const initialEndpointNodes = project.ast.endpointFiles[0].endpoints.map(
+      (file, idx) => {
+        return {
+          id: file.id,
+          position: { x: idx * 200, y: 200 },
+          data: { label: file.path },
+          style: defaultNodeStyle2,
+        };
+      }
+    );
+
+    return [...initialFetchNodes, ...initialEndpointNodes];
+  }
   // Need to add functionality so that for each proj. load..
   // it will create nodes based on what is necesscary
   // We determine how many nodes are necesscary based on what user selected and on fileLoad for count?
-
-  const initialEdges = activeProject.ast.fetchFiles.flatMap((file, idx) => {
-    return file.fetches
-      .map((fetch) => {
-        const endpoint = activeProject.ast.endpointFiles[0].endpoints.find(
-          (endpoint) => endpoint.path === fetch.path
-        );
-        if (endpoint) {
-          return {
-            id: uuid(),
-            target: endpoint.id,
-            source: file.id,
-          };
-        }
-        return null;
-      })
-      .filter((edge) => edge !== null);
-  });
+  function generateEdges(project = activeProject) {
+    return project.ast.fetchFiles.flatMap((file, idx) => {
+      return file.fetches
+        .map((fetch) => {
+          const endpoint = project.ast.endpointFiles[0].endpoints.find(
+            (endpoint) => endpoint.path === fetch.path
+          );
+          if (endpoint) {
+            return {
+              id: uuid(),
+              target: endpoint.id,
+              source: file.id,
+            };
+          }
+          return null;
+        })
+        .filter((edge) => edge !== null);
+    });
+  }
 
   // const initialEdges = [
   //   { id: 'e0-1', source: '0', target: '1' }, //source MUST match id in order to connect
@@ -140,11 +143,42 @@ function Diagram() {
   // ];
   // create empty array (we'll be using .map on another .map)
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(generateNodes());
+  const [edges, setEdges, onEdgesChange] = useEdgesState(generateEdges());
   const nodesInitialized = useNodesInitialized();
-
+  // console.log(activeProject);
   useEffect(() => {
+    // const newFetchNodes = nodes
+    //   .map((node) => {
+    //     const match = activeProject.ast.fetchFiles.find(
+    //       (file) => file.id === node.id
+    //     );
+    //     if (match) {
+    //       return {
+    //         ...node,
+    //         data: {label: match.fileName},
+    //       };
+    //     }
+    //     return null;
+    //   })
+    //   .filter((node) => node !== null);
+    // const newEndpointNodes = nodes
+    //   .map((node) => {
+    //     const match = activeProject.ast.endpointFiles[0].endpoints.find(
+    //       (file) => file.id === node.id
+    //     );
+    //     if (match) {
+    //       return {
+    //         ...node,
+    //         data: {label: match.path},
+    //       };
+    //     }
+    //     return null;
+    //   })
+    //   .filter((node) => node !== null);
+    // const newNodes = [...newFetchNodes, ...newEndpointNodes];
+    setNodes(generateNodes(activeProject));
+    setEdges(generateEdges(activeProject));
     const newFetchNodes = nodes
       .map((node) => {
         const match = activeProject.ast.fetchFiles.find(

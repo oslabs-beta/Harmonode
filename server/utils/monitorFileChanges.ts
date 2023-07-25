@@ -1,10 +1,12 @@
 import {ipcMain} from 'electron';
 import * as fs from 'fs';
 import {mainWindow} from '../main';
+import createComponentObject from './createComponentObject';
+import {stringCodeBase} from './stringifyCode';
 // module to monitor a project file for changes
 // Will need to be on a setTimeout, cleared only when another project is loaded
 // factory function for monitoring the files
-export default function monitorFiles(astRootObj) {
+export default function monitorFiles(astRootObj, codeFileObj) {
   const fetchFiles = astRootObj.fetchFiles;
   const fetches = astRootObj.fetches;
   const endpoints = astRootObj.endpoints;
@@ -19,7 +21,7 @@ export default function monitorFiles(astRootObj) {
   function setWatchers() {
     for (const file of fetchFiles) {
       // some editors sometimes trigger two change events, so we can do this based on modified time
-      const watcher = fs.watch(file.fullPath, (eventType, filename) => {
+      const watcher = fs.watch(file.fullPath, async (eventType, filename) => {
         let fsStats: fs.Stats;
 
         // ===File Rename Event===
@@ -51,6 +53,23 @@ export default function monitorFiles(astRootObj) {
         if (mTime.getTime() != file.lastUpdated.getTime()) {
           file.lastUpdated = mTime; // update the last modified time
           console.log(`The file ${filename} was ${eventType}d`);
+          const {folder, ignore, extensions, server} = codeFileObj;
+          const codeFiles = await stringCodeBase(
+            folder,
+            ignore,
+            extensions,
+            server
+          );
+          const newAst = createComponentObject(codeFiles, server);
+          /*
+          const stringifiedFile = stringFileContents(file.fullPath)
+          const parsedFetchArray = fetchParser(stringifiedFile)
+          const newFileFetches = []
+          for (const fetch of file.fetches) {
+          }
+          
+          */
+          mainWindow?.webContents.send('fileChanged', newAst);
         }
       });
       watchers.push(watcher);
@@ -64,7 +83,7 @@ export default function monitorFiles(astRootObj) {
 
     for (const file of endpointFiles) {
       if (!file.isServer) continue; // we only want to set this watch on the server, so skip if it's not
-      const watcher = fs.watch(file.fullPath, (eventType, filename) => {
+      const watcher = fs.watch(file.fullPath, async (eventType, filename) => {
         let fsStats: fs.Stats;
 
         // ===File Rename Event===
@@ -73,6 +92,7 @@ export default function monitorFiles(astRootObj) {
           console.log(`${file.fileName} was renamed to ${filename}`);
           file.fullPath = `${file.filePath}/${filename}`;
           file.fileName = filename;
+          mainWindow?.webContents.send('fileChanged', astRootObj);
         }
 
         // ===File Change Event===
@@ -95,6 +115,15 @@ export default function monitorFiles(astRootObj) {
         if (mTime.getTime() != file.lastUpdated.getTime()) {
           file.lastUpdated = mTime; // update the last modified time
           console.log(`The file ${filename} was ${eventType}d`);
+          const {folder, ignore, extensions, server} = codeFileObj;
+          const codeFiles = await stringCodeBase(
+            folder,
+            ignore,
+            extensions,
+            server
+          );
+          const newAst = createComponentObject(codeFiles, server);
+          mainWindow?.webContents.send('fileChanged', newAst);
         }
       });
       watchers.push(watcher);
