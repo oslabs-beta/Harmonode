@@ -1,0 +1,70 @@
+.list-page {
+  color: var(--font-main-color);
+  background-color: var(--secondary-color);
+  border: 15px solid var(--secondary-color);
+}
+
+/*
+=================
+AddProject Styles
+=================
+*/
+.project-form {
+  border: 15px solid var(--secondary-color);
+  background-color: var(--secondary-color);
+}
+
+.project-name-header {
+  background-color: (--tertiary-color);
+  color: var(--font-main-color);
+}
+
+/*
+=================
+Project List Card
+=================
+*/
+
+.project-card {
+  background-color: var(--primary-color);
+  min-width: 25em;
+  padding: 0.5em;
+  margin: 0.5em;
+}
+
+.project-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.project-card-header h2 {
+  margin: 0;
+}
+
+.project-header-btns {
+  display: flex;
+}
+
+.project-header-btns > * {
+  border: 1px solid var(--secondary-color);
+  margin-left: 0.5em;
+  border-radius: 5px;
+}
+
+.project-card-body {
+  display: flex;
+}
+
+.project-card-body-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.project-card-path-label {
+  font-weight: bold;
+}
+
+.project-card-path {
+  margin-left: 2em;
+}

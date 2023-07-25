@@ -1,41 +1,40 @@
-import React, {useContext, useEffect, useReducer} from 'react';
+import React, {useReducer} from 'react';
 import {Route, Routes, useNavigate} from 'react-router';
 import ProjectsPage from './pages/Projects/ProjectsPage';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard/Dashboard';
 import List from './pages/List/List';
-import Diagram from './pages/Diagram/components/Diagram';
+import Diagram from './pages/Diagram/Diagram';
 import Settings from './pages/Settings/Settings';
-import {ProjectsContext} from './context/contextStore';
+import {DirTreeHolder} from './context/contextStore';
+import ProjectsProvider from './context/ProjectsProvider';
 import Topbar from './components/Topbar';
-import DiagramPage from './pages/Diagram/DiagramPage';
-const {ipcRenderer} = window.require('electron');
+
+//establishes initial state
+const initialState = {dirTree: {name: 'tree'}};
+
+//update and return new state
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'setDirTree':
+      return {...state, dirTree: {name: action.payload}};
+    default:
+      return {...state};
+  }
+};
 
 const App = () => {
-  const {setActiveProject, dispatchProjects, activeProject} =
-    useContext(ProjectsContext);
-  // console.log(activeProject, 'ACTIVE PROJECT FROM APP');
-  // mount our event listener on file changes
-  useEffect(() => {
-    const handleFileChanged = (e, newAst) => {
-      dispatchProjects({
-        type: 'update',
-        payload: {...activeProject, ast: newAst},
-      });
-      console.log('file change detected');
-      setActiveProject({...activeProject, ast: newAst});
-    };
+  const [globalDir, dirDispatcher] = useReducer(reducer, initialState);
 
-    ipcRenderer.on('fileChanged', handleFileChanged);
+  const navigate = useNavigate();
 
-    return () => {
-      ipcRenderer.removeListener('fileChanged', handleFileChanged);
-    };
-  }, [activeProject]);
+  function navClick(path) {
+    navigate(path);
+  }
 
   return (
     // <DirTreeHolder.Provider value={{globalDir, dirDispatcher}}>
-    <main className='main'>
+    <>
       <Topbar />
       <div className='app'>
         <Sidebar />
@@ -44,11 +43,11 @@ const App = () => {
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/projects' element={<ProjectsPage />} />
           <Route path='/list' element={<List />} />
-          <Route path='/diagram' element={<DiagramPage />} />
+          <Route path='/diagram' element={<Diagram />} />
           <Route path='/settings' element={<Settings />} />
         </Routes>
       </div>
-    </main>
+    </>
     // </DirTreeHolder.Provider>
   );
 };

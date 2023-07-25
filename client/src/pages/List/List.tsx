@@ -1,16 +1,20 @@
 import React, { useContext, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { ProjectsContext } from '../../context/contextStore'
-import ActiveProjectFrontEnd from './components/FrontEndList'
+import ActiveFrontEndList from './components/FrontEndList'
 
-// list will have a deeper dive  of the data from Dashboard 
-// listing out all endpoints, fetches, and file location
+import './list.css';
+
+// container for all the list components
 
 function ListPage() {
+
   return (
-    <>
+    <main className='list-page'>
       <div>List</div>
-      <ActiveProjectFrontEnd />
-    </>
+      <ActiveFrontEndList />
+      <ActiveBackEndList />
+    </main>
     )
 }
 

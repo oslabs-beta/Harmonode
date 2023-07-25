@@ -1,22 +1,33 @@
 import React, { useContext, } from 'react';
 import { ProjectsContext } from '../../../context/contextStore';
+import {v4 as uuid} from 'uuid';
+import  FetchFileCard from './FetchFileCard';
 
-function ActiveProjectFrontEnd() {
+
+
+function FrontEndList() {
   const { activeProject } = useContext(ProjectsContext);
+  const fetchFiles = activeProject.ast.fetchFiles
+  console.log(fetchFiles)
+  const fetchFilesComponents = fetchFiles.map((file) => {
+    return <FetchFileCard key={uuid()} file={file} />
+  })
 
   if (!activeProject) {
     return <p>No active project selected.</p>
   }
 
-  if (!activeProject.ast || !activeProject.ast.fetchfiles || activeProject.ast.fetchfiles.length === 0) {
+  if (fetchFilesComponents.length === 0) {
     return <p>No fetch files found for the active project.</p>
   }
 
   return (
     <ul>
-      <li>Fetch 1: {activeProject.ast.fetchfiles[0]}</li>
+      <h1>Fetch Files</h1> 
+      {fetchFilesComponents}
+      <FetchFileDetails />
     </ul>
   )
 }
 
-export default ActiveProjectFrontEnd;
+export default FrontEndList;
