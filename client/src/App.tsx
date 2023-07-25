@@ -22,6 +22,7 @@ const App = () => {
         type: 'update',
         payload: {...activeProject, ast: newAst},
       });
+      console.log('file change detected');
       setActiveProject({...activeProject, ast: newAst});
     };
 
