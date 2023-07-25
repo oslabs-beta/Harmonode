@@ -1,4 +1,3 @@
-import * as path from "path";
 
 import fetchParser from "../ast/clientParser";
 import endpointParse from "../ast/serverParser";
@@ -10,6 +9,7 @@ import {
   astRoot,
 } from "../types";
 import { v4 as uuid } from "uuid";
+import { getPathArray } from "./pathUtils";
 
 // module that creates the component object that will be sent to the front end
 
@@ -31,13 +31,9 @@ export default function createComponentObject(codeFiles, serverPath) {
 
 function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
   const fetchPaths = {};
-  const filePaths = [];
+  const allPathArrays : Array<Array<string>> = [];
   for (const file of codeFiles) {
-    const pathParts: string[] = file.fullpath.split(path.sep);
-    let last: string = pathParts.at(-1);
-    if (last.includes("."))
-      pathParts[pathParts.length - 1] = last.slice(0, last.indexOf("."));
-    filePaths.push(pathParts);
+    allPathArrays.push(getPathArray(file.fullPath));
     // if it's the server path, let's load the server stuff into an ast
     if (file.fullPath === serverPath) {
       // get the AST for the server
@@ -55,7 +51,7 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
         });
 
         componentObj.fromImports = serverObj;
-        componentObj.filePaths = filePaths;
+        console.log(allPathArrays)
       }
 
       continue; // skip the rest since we have what we need
