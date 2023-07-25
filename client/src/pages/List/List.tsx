@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { ProjectsContext } from '../../context/contextStore'
-import ActiveFrontEndList from './components/FrontEndList'
+import FrontEndList  from './components/FrontEndList'
+
 
 import './list.css';
 
@@ -12,8 +13,8 @@ function ListPage() {
   return (
     <main className='list-page'>
       <div>List</div>
-      <ActiveFrontEndList />
-      <ActiveBackEndList />
+      <FrontEndList file={undefined} />
+
     </main>
     )
 }

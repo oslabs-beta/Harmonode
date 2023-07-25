@@ -1,8 +1,9 @@
 import React, {useContext} from 'react';
 import {ProjectsContext} from '../../../context/contextStore';
+import FetchFileDetails from './FetchFileDetails';
 
 
-function FetchFileCard({file}) {
+function FetchFileCard({ file }) {
 
 
 
@@ -13,7 +14,7 @@ function FetchFileCard({file}) {
     <div className='fetch-file-card'>
       <div className='fetch-file-card-header'>
         <h2>{file.fileName}</h2>
-        <p>{file.fileName.lastUpdated}</p>
+        <FetchFileDetails file={file}/>
       </div>
     </div>
   )

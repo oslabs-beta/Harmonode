@@ -4,7 +4,7 @@ import ProjectsPage from './pages/Projects/ProjectsPage';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard/Dashboard';
 import List from './pages/List/List';
-import Diagram from './pages/Diagram/Diagram';
+import Diagram from './pages/Diagram/components/Diagram';
 import Settings from './pages/Settings/Settings';
 import {DirTreeHolder} from './context/contextStore';
 import ProjectsProvider from './context/ProjectsProvider';

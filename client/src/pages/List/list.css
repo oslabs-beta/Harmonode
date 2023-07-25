@@ -6,7 +6,7 @@
 
 /*
 =================
-AddProject Styles
+FrontEndList Styles
 =================
 */
 .project-form {
@@ -21,50 +21,41 @@ AddProject Styles
 
 /*
 =================
-Project List Card
+Fetch File List Card
 =================
 */
 
-.project-card {
+.fetch-file-card {
   background-color: var(--primary-color);
   min-width: 25em;
   padding: 0.5em;
   margin: 0.5em;
 }
 
-.project-card-header {
+.fetch-file-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.project-card-header h2 {
+.fetch-file-card-header h2 {
   margin: 0;
 }
 
-.project-header-btns {
+
+.fetch-file-card-body {
   display: flex;
 }
 
-.project-header-btns > * {
-  border: 1px solid var(--secondary-color);
-  margin-left: 0.5em;
-  border-radius: 5px;
-}
-
-.project-card-body {
-  display: flex;
-}
-
-.project-card-body-row {
+.fetch-file-card-body-row {
   display: flex;
   justify-content: space-between;
 }
 
-.project-card-path-label {
+.fetch-file-card-path-label {
   font-weight: bold;
 }
 
-.project-card-path {
+.fetch-file-card-path {
   margin-left: 2em;
 }
