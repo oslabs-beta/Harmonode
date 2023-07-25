@@ -114,7 +114,7 @@ function handleIdentifier(fetchArg, findOriginalVal) {
 
 function getFetchDetails(properties, path) {
   const details = {};
-  for (property of properties) {
+  for (const property of properties) {
     if (property.key.name == 'method') {
       details['method'] = property.value.value;
     }
@@ -132,7 +132,7 @@ function getFetchDetails(properties, path) {
 
 function getFetchHeaders(properties) {
   const headers = {};
-  for (property of properties) {
+  for (const property of properties) {
     if (property.key.value.toLowerCase() === 'content-type')
       headers.contentType = property.value.value;
   }
