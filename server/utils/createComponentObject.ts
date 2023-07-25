@@ -10,6 +10,7 @@ import {
 } from "../types";
 import { v4 as uuid } from "uuid";
 import { getPathArray } from "./pathUtils";
+import fullBackEndCreator from "./getBackEndObj";
 
 // module that creates the component object that will be sent to the front end
 
@@ -32,6 +33,9 @@ export default function createComponentObject(codeFiles, serverPath) {
 function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
   const fetchPaths = {};
   const allPathArrays : Array<Array<string>> = [];
+
+  fullBackEndCreator(codeFiles, serverPath);
+
   for (const file of codeFiles) {
     allPathArrays.push(getPathArray(file.fullPath, serverPath));
     // if it's the server path, let's load the server stuff into an ast
@@ -57,7 +61,6 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
         });
 
         componentObj.fromImports = serverObj;
-        console.log(allPathArrays)
       }
 
       continue; // skip the rest since we have what we need

@@ -48,7 +48,6 @@ const endpointParse = (codeString) => {
             current.arguments[1].type === "Identifier"
           ) {
             const nextInLine = current.arguments[1];
-            routesObj.serverEndPoints.push(findOriginalVal(current.arguments[1].name));
             routesObj[nextInLine.name] = findOriginalVal(nextInLine.name);
           }
         }
