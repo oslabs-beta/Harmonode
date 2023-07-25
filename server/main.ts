@@ -112,6 +112,7 @@ ipcMain.handle(
 ipcMain.handle(
   'readCodeFiles',
   async (_, projectDir, ignoreList, approvedExt, serverPath) => {
+    console.log(projectDir, ignoreList, approvedExt, serverPath);
     const codeFiles: FileObj[] = await stringCodeBase(
       projectDir,
       ignoreList,
