@@ -7,7 +7,7 @@ import {
   astFetchFile,
   astRoot,
 } from '../types';
-import {v4 as uuid} from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 // module that creates the component object that will be sent to the front end
 
@@ -28,11 +28,18 @@ export default function createComponentObject(codeFiles, serverPath) {
 }
 
 function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
+  const fetchPaths = {};
   for (const file of codeFiles) {
     // if it's the server path, let's load the server stuff into an ast
     if (file.fullPath === serverPath) {
       // get the AST for the server
       const parsedEndpointsArray = endpointParse(file.contents);
+      const endpointsArray = parsedEndpointsArray.map((endpoint) => {
+        return {
+          path: endpoint,
+          id: uuid(),
+        };
+      });
       if (parsedEndpointsArray.length > 0) {
         componentObj.endpointFiles.push({
           fileName: file.fileName,
@@ -41,7 +48,7 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
           id: uuid(),
           lastUpdated: file.mDate,
           isServer: true,
-          endpoints: parsedEndpointsArray,
+          endpoints: endpointsArray,
         });
       }
       continue; // skip the rest since we have what we need
@@ -49,7 +56,16 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
     // getting the AST for fetches
     const parsedFetchesArray = fetchParser(file.contents);
     const fetchesArray = parsedFetchesArray.map((fetch) => {
-      return {path: getEndpoint(fetch), id: uuid()};
+      const fetchStore = `${fetch.path}-${fetch.method}`;
+      if (!fetchPaths.hasOwnProperty(fetchStore)) {
+        fetchPaths[fetchStore] = {
+          ...fetch,
+          path: getEndpoint(fetch.path),
+          id: uuid(),
+        };
+      }
+
+      return fetchPaths[fetchStore];
     });
     if (parsedFetchesArray.length > 0) {
       componentObj.fetchFiles.push({
@@ -76,6 +92,7 @@ function isLocalHost(url) {
 }
 
 function getEndpoint(url) {
+  if (typeof url !== 'string') return 'unknownurl';
   // Check if the URL starts with 'http' or '/' to determine if it's a non-local URL or just a path
   if (!url.startsWith('http') && !url.startsWith('/')) {
     if (isLocalHost(url.split('/')[0])) {

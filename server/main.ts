@@ -111,22 +111,28 @@ ipcMain.handle(
 
 ipcMain.handle(
   'readCodeFiles',
-  async (_, projectDir, ignoreList, approvedExt, serverPath) => {
+  async (_, folder, ignore, extensions, server) => {
     const codeFiles: FileObj[] = await stringCodeBase(
-      projectDir,
-      ignoreList,
-      approvedExt,
-      serverPath
+      folder,
+      ignore,
+      extensions,
+      server
     );
 
+    const codeFileObj = {
+      folder,
+      ignore,
+      extensions,
+      server,
+    };
     // create the component object
-    const componentObj = createComponentObject(codeFiles, serverPath);
+    const componentObj = createComponentObject(codeFiles, server);
 
     // clear all the watchers before adding new ones
     for (const watcher of watchers) watcher.close();
 
     // add the new file watchers
-    watchers = monitorFiles(componentObj);
+    watchers = monitorFiles(componentObj, codeFileObj);
 
     // return the component object to front end
     return componentObj;
@@ -146,13 +152,15 @@ ipcMain.handle('loadProject', async (_, project) => {
     extensions,
     server
   );
+
+  const codeFileObj = {folder, ignore, extensions, server};
   // create the component object
   const componentObj = createComponentObject(codeFiles, server);
 
   // clear any existing watchers
   for (const watcher of watchers) watcher.close();
   // set new watchers
-  watchers = monitorFiles(componentObj);
+  watchers = monitorFiles(componentObj, codeFileObj);
   // return the component object
   return componentObj;
 });
