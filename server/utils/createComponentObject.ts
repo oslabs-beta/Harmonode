@@ -33,7 +33,7 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
   const fetchPaths = {};
   const allPathArrays : Array<Array<string>> = [];
   for (const file of codeFiles) {
-    allPathArrays.push(getPathArray(file.fullPath));
+    allPathArrays.push(getPathArray(file.fullPath, serverPath));
     // if it's the server path, let's load the server stuff into an ast
     if (file.fullPath === serverPath) {
       // get the AST for the server
