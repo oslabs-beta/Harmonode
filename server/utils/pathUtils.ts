@@ -1,6 +1,6 @@
 import * as path from "path";
 
-export const getPathArray = (routeString : string) : string[] => {
+export const getPathArray = (routeString : string, serverPath : string) : string[] => {
   const pathParts : string[] = routeString.split(path.sep);
   const last : string = pathParts[pathParts.length - 1]
   if (last.includes("."))
