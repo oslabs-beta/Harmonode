@@ -39,6 +39,12 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
       // get the AST for the server
       const serverObj = endpointParse(file.contents);
       const parsedEndpointsArray = serverObj.serverEndPoints;
+      const endpointsArray = parsedEndpointsArray.map((endpoint) => {
+        return {
+          path: endpoint,
+          id: uuid(),
+        };
+      });
       if (parsedEndpointsArray.length > 0) {
         componentObj.endpointFiles.push({
           fileName: file.fileName,
@@ -47,7 +53,7 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
           id: uuid(),
           lastUpdated: file.mDate,
           isServer: true,
-          endpoints: parsedEndpointsArray,
+          endpoints: endpointsArray,
         });
 
         componentObj.fromImports = serverObj;
