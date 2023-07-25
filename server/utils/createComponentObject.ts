@@ -1,13 +1,15 @@
-import fetchParser from '../ast/clientParser';
-import endpointParse from '../ast/serverParser';
+
+import fetchParser from "../ast/clientParser";
+import endpointParse from "../ast/serverParser";
 import {
   astEndpoint,
   astEndpointFile,
   astFetch,
   astFetchFile,
   astRoot,
-} from '../types';
-import { v4 as uuid } from 'uuid';
+} from "../types";
+import { v4 as uuid } from "uuid";
+import { getPathArray } from "./pathUtils";
 
 // module that creates the component object that will be sent to the front end
 
@@ -29,11 +31,14 @@ export default function createComponentObject(codeFiles, serverPath) {
 
 function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
   const fetchPaths = {};
+  const allPathArrays : Array<Array<string>> = [];
   for (const file of codeFiles) {
+    allPathArrays.push(getPathArray(file.fullPath, serverPath));
     // if it's the server path, let's load the server stuff into an ast
     if (file.fullPath === serverPath) {
       // get the AST for the server
-      const parsedEndpointsArray = endpointParse(file.contents);
+      const serverObj = endpointParse(file.contents);
+      const parsedEndpointsArray = serverObj.serverEndPoints;
       const endpointsArray = parsedEndpointsArray.map((endpoint) => {
         return {
           path: endpoint,
@@ -50,7 +55,11 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
           isServer: true,
           endpoints: endpointsArray,
         });
+
+        componentObj.fromImports = serverObj;
+        console.log(allPathArrays)
       }
+
       continue; // skip the rest since we have what we need
     }
     // getting the AST for fetches
@@ -92,14 +101,14 @@ function isLocalHost(url) {
 }
 
 function getEndpoint(url) {
-  if (typeof url !== 'string') return 'unknownurl';
+  if (typeof url !== "string") return "unknownurl";
   // Check if the URL starts with 'http' or '/' to determine if it's a non-local URL or just a path
-  if (!url.startsWith('http') && !url.startsWith('/')) {
-    if (isLocalHost(url.split('/')[0])) {
+  if (!url.startsWith("http") && !url.startsWith("/")) {
+    if (isLocalHost(url.split("/")[0])) {
       // It's a local URL without the protocol
       // Extract the endpoint by removing the domain and protocol from the URL
-      const urlParts = url.split('/');
-      return `/${urlParts.slice(1).join('/')}`;
+      const urlParts = url.split("/");
+      return `/${urlParts.slice(1).join("/")}`;
     }
     // It's just a path, return it as is
     return url;
@@ -108,8 +117,8 @@ function getEndpoint(url) {
   // Check if the URL is a local URL
   if (isLocalHost(new URL(url).hostname)) {
     // Extract the endpoint by removing the domain and protocol from the URL
-    const urlParts = url.split('/');
-    return `/${urlParts.slice(3).join('/')}`;
+    const urlParts = url.split("/");
+    return `/${urlParts.slice(3).join("/")}`;
   }
 
   // It's a non-local URL, return it as is
