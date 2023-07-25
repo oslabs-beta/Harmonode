@@ -163,7 +163,6 @@ function Diagram() {
       .map((node) => {
         const match = activeProject.ast.endpointFiles[0].endpoints.find(
           (file) => {
-            console.log(file, node);
             file.id === node.id;
           }
         );
