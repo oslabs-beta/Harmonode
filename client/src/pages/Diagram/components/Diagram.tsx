@@ -101,9 +101,9 @@ function Diagram() {
   const initialEndpointNodes = activeProject.ast.endpointFiles[0].endpoints.map(
     (file, idx) => {
       return {
-        id: idx.toString(),
+        id: file.id,
         position: { x: idx * 200, y: 200 },
-        data: { label: file },
+        data: { label: file.path },
         style: defaultNodeStyle2,
       };
     }
@@ -117,12 +117,13 @@ function Diagram() {
   const initialEdges = activeProject.ast.fetchFiles.flatMap((file, idx) => {
     return file.fetches
       .map((fetch) => {
-        if (activeProject.ast.endpointFiles[0].endpoints.includes(fetch.path)) {
+        const endpoint = activeProject.ast.endpointFiles[0].endpoints.find(
+          (endpoint) => endpoint.path === fetch.path
+        );
+        if (endpoint) {
           return {
             id: uuid(),
-            target: activeProject.ast.endpointFiles[0].endpoints
-              .indexOf(fetch.path)
-              .toString(),
+            target: endpoint.id,
             source: file.id,
           };
         }
@@ -130,7 +131,6 @@ function Diagram() {
       })
       .filter((edge) => edge !== null);
   });
-  console.log(initialEdges, initialNodes);
 
   // const initialEdges = [
   //   { id: 'e0-1', source: '0', target: '1' }, //source MUST match id in order to connect
@@ -145,31 +145,41 @@ function Diagram() {
   const nodesInitialized = useNodesInitialized();
 
   useEffect(() => {
-    // const newFetchNodes = nodes.map((node) => {
-    //   const match = activeProject.ast.fetchFiles.find(
-    //     (file) => file.id === node.id
-    //   );
-    //   if (match) {
-    //     return {
-    //       ...node,
-    //       data: { label: match.fileName },
-    //     };
-    //   }
-    // });
-    // const newEndpointNodes = nodes.map((node) => {
-    //   const match = activeProject.ast.endpointFiles[0].endpoints.find(
-    //     (file) => file.id === node.id
-    //   );
-    //   if (match) {
-    //     return {
-    //       ...node,
-    //       data: { label: match.fileName },
-    //     };
-    //   }
-    // });
-    // const newNodes = [...newFetchNodes, ...newEndpointNodes];
-    // setNodes(newNodes as any);
-    // setEdges(initialEdges);
+    const newFetchNodes = nodes
+      .map((node) => {
+        const match = activeProject.ast.fetchFiles.find(
+          (file) => file.id === node.id
+        );
+        if (match) {
+          return {
+            ...node,
+            data: { label: match.fileName },
+          };
+        }
+        return null;
+      })
+      .filter((node) => node !== null);
+    const newEndpointNodes = nodes
+      .map((node) => {
+        const match = activeProject.ast.endpointFiles[0].endpoints.find(
+          (file) => {
+            console.log(file, node);
+            file.id === node.id;
+          }
+        );
+        if (match) {
+          return {
+            ...node,
+            data: { label: match.path },
+          };
+        }
+        return null;
+      })
+      .filter((node) => node !== null);
+    const newNodes = [...newFetchNodes, ...newEndpointNodes];
+    // console.log(newNodes, '!!!!!!NEW NODES!!!!');
+    setNodes(newNodes as any);
+    setEdges(initialEdges);
   }, [activeProject]);
 
   useEffect(() => {
