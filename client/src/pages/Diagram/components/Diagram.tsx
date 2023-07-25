@@ -1,5 +1,6 @@
-import React, {useCallback, useState, useContext, useEffect} from 'react';
-import {ProjectsContext} from '../../../context/contextStore';
+import React, { useCallback, useState, useContext, useEffect } from 'react';
+import { v4 as uuid } from 'uuid';
+import { ProjectsContext } from '../../../context/contextStore';
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -12,7 +13,7 @@ import ReactFlow, {
   useNodesInitialized,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import {PlaylistAddOutlined} from '@mui/icons-material';
+import { PlaylistAddOutlined } from '@mui/icons-material';
 // start with fetchFiles?
 // get data from interface astroot in types.ts
 // formSubmit in addproject.tsx
@@ -30,8 +31,8 @@ import {PlaylistAddOutlined} from '@mui/icons-material';
 function Diagram() {
   // onclick of "save project and load" button nodes are created
   // show all files EXCEPT the ones that were selected to be ignored
-  const {fitView} = useReactFlow();
-  const {activeProject} = useContext(ProjectsContext);
+  const { fitView } = useReactFlow();
+  const { activeProject } = useContext(ProjectsContext);
 
   // console.log(activeProject);
 
@@ -91,8 +92,8 @@ function Diagram() {
   const initialFetchNodes = activeProject.ast.fetchFiles.map((file, idx) => {
     return {
       id: file.id,
-      position: {x: 0, y: idx * 100},
-      data: {label: file.fileName}, //each file needs an id and we'll use the id to connect the nodes
+      position: { x: idx * 200, y: 0 },
+      data: { label: file.fileName }, //each file needs an id and we'll use the id to connect the nodes
       style: defaultNodeStyle1,
     };
   });
@@ -101,48 +102,79 @@ function Diagram() {
     (file, idx) => {
       return {
         id: idx.toString(),
-        position: {x: 200, y: idx * 100},
-        data: {label: file},
+        position: { x: idx * 200, y: 200 },
+        data: { label: file },
         style: defaultNodeStyle2,
       };
     }
   );
 
   const initialNodes = [...initialFetchNodes, ...initialEndpointNodes];
-  console.log(initialNodes, 'INITIAL NODES');
   // Need to add functionality so that for each proj. load..
   // it will create nodes based on what is necesscary
   // We determine how many nodes are necesscary based on what user selected and on fileLoad for count?
-  const initialEdges = [
-    {id: 'e0-1', source: '0', target: '1'}, //source MUST match id in order to connect
-    {id: 'e1-2', source: '1', target: '2'},
-    {id: 'e2-3', source: '2', target: '3'},
-    {id: 'e3-4', source: '3', target: '4'},
-  ];
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialFetchNodes);
+  const initialEdges = activeProject.ast.fetchFiles.flatMap((file, idx) => {
+    return file.fetches
+      .map((fetch) => {
+        if (activeProject.ast.endpointFiles[0].endpoints.includes(fetch.path)) {
+          return {
+            id: uuid(),
+            target: activeProject.ast.endpointFiles[0].endpoints
+              .indexOf(fetch.path)
+              .toString(),
+            source: file.id,
+          };
+        }
+        return null;
+      })
+      .filter((edge) => edge !== null);
+  });
+  console.log(initialEdges, initialNodes);
+
+  // const initialEdges = [
+  //   { id: 'e0-1', source: '0', target: '1' }, //source MUST match id in order to connect
+  //   { id: 'e1-2', source: '1', target: '2' },
+  //   { id: 'e2-3', source: '2', target: '3' },
+  //   { id: 'e3-4', source: '3', target: '4' },
+  // ];
+  // create empty array (we'll be using .map on another .map)
+
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const nodesInitialized = useNodesInitialized();
 
   useEffect(() => {
-    // const newNodes = nodes.map((node) => {
+    // const newFetchNodes = nodes.map((node) => {
     //   const match = activeProject.ast.fetchFiles.find(
     //     (file) => file.id === node.id
     //   );
     //   if (match) {
     //     return {
     //       ...node,
-    //       data: {label: match.fileName},
+    //       data: { label: match.fileName },
     //     };
     //   }
     // });
+    // const newEndpointNodes = nodes.map((node) => {
+    //   const match = activeProject.ast.endpointFiles[0].endpoints.find(
+    //     (file) => file.id === node.id
+    //   );
+    //   if (match) {
+    //     return {
+    //       ...node,
+    //       data: { label: match.fileName },
+    //     };
+    //   }
+    // });
+    // const newNodes = [...newFetchNodes, ...newEndpointNodes];
     // setNodes(newNodes as any);
     // setEdges(initialEdges);
   }, [activeProject]);
 
-  // useEffect(() => {
-  //   fitView();
-  // }, [nodesInitialized]);
+  useEffect(() => {
+    fitView();
+  }, [nodesInitialized]);
   // combine nodes with spread?
 
   // const connectNodes () => {
@@ -175,7 +207,7 @@ function Diagram() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={onNodeClick} // to test if node is clicked
-        proOptions={{hideAttribution: true}}
+        proOptions={{ hideAttribution: true }}
       >
         <Controls />
         <MiniMap nodeColor={nodeColor} zoomable pannable />
