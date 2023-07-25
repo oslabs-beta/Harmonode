@@ -7,7 +7,7 @@ import {
   astFetchFile,
   astRoot,
 } from '../types';
-import {v4 as uuid} from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 // module that creates the component object that will be sent to the front end
 
@@ -34,6 +34,12 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
     if (file.fullPath === serverPath) {
       // get the AST for the server
       const parsedEndpointsArray = endpointParse(file.contents);
+      const endpointsArray = parsedEndpointsArray.map((endpoint) => {
+        return {
+          path: endpoint,
+          id: uuid(),
+        };
+      });
       if (parsedEndpointsArray.length > 0) {
         componentObj.endpointFiles.push({
           fileName: file.fileName,
@@ -42,7 +48,7 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
           id: uuid(),
           lastUpdated: file.mDate,
           isServer: true,
-          endpoints: parsedEndpointsArray,
+          endpoints: endpointsArray,
         });
       }
       continue; // skip the rest since we have what we need
