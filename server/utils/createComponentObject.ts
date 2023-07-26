@@ -23,7 +23,7 @@ export default function createComponentObject(codeFiles, serverPath) {
 
   // call the helper function to push the data we need to into our component object
   pushFilesToCompObj(codeFiles, componentObj, serverPath);
-
+  createFetchArray(componentObj);
   // this will be the object we eventually return to the front end
   return componentObj;
 }
@@ -85,6 +85,29 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
       });
     }
   }
+}
+
+function createFetchArray(componentObj) {
+  const fetches = {};
+  for (const fetchFile of componentObj.fetchFiles) {
+    for (const fetch of fetchFile.fetches) {
+      const fetchStore = `${fetch.path}-${fetch.method}`;
+      console.log(fetches[fetchStore]);
+      if (!fetches.hasOwnProperty(fetchStore)) {
+        fetches[fetchStore] = {
+          ...fetch,
+          files: [fetchFile.fileName],
+        };
+      } else {
+        fetches[fetchStore] = {
+          ...fetches[fetchStore],
+          files: fetches[fetchStore].files.concat(fetchFile.fileName),
+        };
+      }
+      componentObj.fetches.push(fetches[fetchStore]);
+    }
+  }
+  console.log(JSON.stringify(componentObj));
 }
 
 // URL Sanitizing functions for fetch request URL's to extract the endpoints
