@@ -30,6 +30,19 @@ module.exports = {
         test: /\.s?[ac]ss$/i,
         use: ['style-loader', 'css-loader', 'sass-loader'],
       },
+      {
+        test: /\.(png|jp(e*)g|svg|gif)$/,
+        include: path.resolve(__dirname, 'server'),
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              outputPath: '',
+              name: '[name].[ext]',
+            },
+          },
+        ],
+      },
     ],
   },
 

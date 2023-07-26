@@ -1,6 +1,6 @@
-import React, { useCallback, useState, useContext, useEffect } from 'react';
-import { v4 as uuid } from 'uuid';
-import { ProjectsContext } from '../../../context/contextStore';
+import React, {useCallback, useState, useContext, useEffect} from 'react';
+import {v4 as uuid} from 'uuid';
+import {ProjectsContext} from '../../../context/contextStore';
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -16,7 +16,7 @@ import ReactFlow, {
   useNodesInitialized,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { PlaylistAddOutlined } from '@mui/icons-material';
+import {PlaylistAddOutlined} from '@mui/icons-material';
 
 // Need some function to be able to create nodes each time "save and load project" is clicked
 // Will also render the data being passed onto the nodes
@@ -28,8 +28,8 @@ import { PlaylistAddOutlined } from '@mui/icons-material';
 function Diagram() {
   // onclick of "save project and load" button nodes are created
   // show all files EXCEPT the ones that were selected to be ignored
-  const { fitView } = useReactFlow();
-  const { activeProject } = useContext(ProjectsContext);
+  const {fitView} = useReactFlow();
+  const {activeProject} = useContext(ProjectsContext);
   console.log(activeProject);
 
   //minimap colors
@@ -82,14 +82,14 @@ function Diagram() {
     const initialFetchNodes = project.ast.fetchFiles.map((file, idx) => {
       const position =
         orientation === 'horizontal'
-          ? { x: idx * spacing, y: 0 }
-          : { x: 0, y: idx * spacing };
+          ? {x: idx * spacing, y: 0}
+          : {x: 0, y: idx * spacing};
 
       return {
         id: file.id, // This is fetchFiles.id
         position,
         // position: { x: idx * 200, y: 0 },
-        data: { label: file.fileName }, //each file needs an id and we'll use the id to connect the nodes
+        data: {label: file.fileName}, //each file needs an id and we'll use the id to connect the nodes
         style: fetchFileNode,
         type: 'fetchFileNode',
       };
@@ -99,13 +99,13 @@ function Diagram() {
       (file, idx) => {
         const position =
           orientation === 'horizontal'
-            ? { x: idx * spacing, y: spacing }
-            : { x: spacing, y: idx * spacing };
+            ? {x: idx * spacing, y: spacing}
+            : {x: spacing, y: idx * spacing};
         return {
           id: file.id, // This is endpoints.id
           position,
           // position: { x: idx * 200, y: 200 },
-          data: { label: file.path },
+          data: {label: file.path},
           style: endpointNode,
           type: 'endpointNode',
         };
@@ -189,7 +189,7 @@ function Diagram() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={onNodeClick} // to test if node is clicked
-        proOptions={{ hideAttribution: true }}
+        proOptions={{hideAttribution: true}}
       >
         {/* <NodeToolbar /> */}
         <Panel position='top-right'>
