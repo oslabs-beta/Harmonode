@@ -96,12 +96,12 @@ function createFetchArray(componentObj) {
       if (!fetches.hasOwnProperty(fetchStore)) {
         fetches[fetchStore] = {
           ...fetch,
-          files: [fetchFile.fileName],
+          files: [fetchFile.id],
         };
       } else {
         fetches[fetchStore] = {
           ...fetches[fetchStore],
-          files: fetches[fetchStore].files.concat(fetchFile.fileName),
+          files: fetches[fetchStore].files.concat(fetchFile.id),
         };
       }
       componentObj.fetches.push(fetches[fetchStore]);
