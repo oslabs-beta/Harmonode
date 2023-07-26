@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, Routes, useNavigate} from 'react-router';
+import {Route, Routes} from 'react-router';
 import ProjectsPage from './pages/Projects/ProjectsPage';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard/Dashboard';
@@ -9,14 +9,7 @@ import Topbar from './components/Topbar';
 import DiagramPage from './pages/Diagram/DiagramPage';
 
 const App = () => {
-  const navigate = useNavigate();
-
-  function navClick(path) {
-    navigate(path);
-  }
-
   return (
-    // <DirTreeHolder.Provider value={{globalDir, dirDispatcher}}>
     <>
       <Topbar />
       <div className='app'>
@@ -31,7 +24,6 @@ const App = () => {
         </Routes>
       </div>
     </>
-    // </DirTreeHolder.Provider>
   );
 };
 
