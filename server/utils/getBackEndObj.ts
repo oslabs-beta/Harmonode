@@ -10,6 +10,9 @@ const getPathArray = (routeString: string): string[] => {
   return pathParts;
 };
 
+// return a new file in the file collection. Must receive an origin file. If a valid destination file exists, return it
+// if NOT, return 'not a valid path or file doesn't exist'
+
 const fullBackEndCreator = (codefiles, serverPath: string) => {
   // create the full array of all file paths, so we can navigate through this...
   const allPathArrays: Array<Array<string>> = [];
@@ -24,22 +27,32 @@ const fullBackEndCreator = (codefiles, serverPath: string) => {
     }
   }
 
-  const serverPaths = getPathArray(serverPath);
-  console.log(serverPaths);
+  const navToOtherFile = (originString: string, destinationString: string) => {
+    const originPaths = getPathArray(originString);
+    const destPathArray = destinationString.split("/");
+    let pathToNewFile: string[] = [];
+    let dots: number;
+
+    if (destPathArray[0] === "..") dots = -2;
+    else if (destPathArray[0] === ".") dots = -1;
+    else dots = 0;
+
+    pathToNewFile = [...originPaths.slice(0, dots), ...destPathArray.slice(1)];
+    for (let pathArray of allPathArrays) {
+      if (path.join(...pathArray) === path.join(...pathToNewFile)) {
+        return path.join(...pathArray);
+      }
+    }
+    return "no such file exists";
+  };
 
   for (let key in serverFileObj) {
-    if (typeof serverFileObj[key] === 'string') {
-      const importString = serverFileObj[key];
-      const importPathArray = importString.split('/');
-      let pathToNewFile : string[] = [];
-      console.log(importPathArray)
-      if (importPathArray[0] === '.') {
-        pathToNewFile = [...serverPaths.slice(0, -1), ...importPathArray.slice(1)];
-        console.log(pathToNewFile); 
-      }
-
+    if (typeof serverFileObj[key] === "string") {
+      console.log(navToOtherFile(serverPath, serverFileObj[key]));
     }
   }
+
+  console.log(navToOtherFile(serverPath, '../server/controllers/devsController.js'))
 };
 
 export default fullBackEndCreator;
