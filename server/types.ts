@@ -21,6 +21,7 @@ export interface astRoot {
   endpointFiles: astEndpointFile[];
 }
 
+
 // produces information from ast parser with information on a per file basis for fetch requests
 export interface astFetchFile {
   fileName: string;
@@ -47,3 +48,7 @@ export interface astFetch {}
 
 // produces information derived from ast parser with information on a per endpoint basis
 export interface astEndpoint {}
+export interface pathFileObj {
+  path: string[];
+  file: FileObj;
+}
