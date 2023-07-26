@@ -1,4 +1,4 @@
-import {BrowserWindow, app, ipcMain, dialog} from 'electron';
+import {BrowserWindow, app, ipcMain, dialog, nativeImage} from 'electron';
 import {stringCodeBase} from './utils/stringifyCode';
 import {getDirectories} from './utils/getFileDirectories';
 import {DirObj, FileObj} from './types';
@@ -29,7 +29,6 @@ function createWindow() {
     minHeight: 720,
     title: 'Harmonode',
     show: false,
-
     webPreferences: {nodeIntegration: true, contextIsolation: false},
   });
 
@@ -58,7 +57,9 @@ function createWindow() {
   });
 }
 
-app.on('ready', createWindow);
+app.whenReady().then(() => {
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

@@ -23,13 +23,14 @@ export default function createComponentObject(codeFiles, serverPath) {
 
   // call the helper function to push the data we need to into our component object
   pushFilesToCompObj(codeFiles, componentObj, serverPath);
-
+  createFetchArray(componentObj);
+  createEndpointArray(componentObj);
   // this will be the object we eventually return to the front end
   return componentObj;
 }
 
 function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
-  const fetchPaths = {};
+  const paths = {};
   const allPathArrays: Array<Array<string>> = [];
   for (const file of codeFiles) {
     allPathArrays.push(getPathArray(file.fullPath, serverPath));
@@ -40,6 +41,7 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
       const parsedEndpointsArray = serverObj.serverEndPoints;
       const endpointsArray = parsedEndpointsArray.map((endpoint) => {
         return {
+          method: 'GLOBAL',
           path: endpoint,
           id: uuid(),
         };
@@ -64,15 +66,15 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
     const parsedFetchesArray = fetchParser(file.contents);
     const fetchesArray = parsedFetchesArray.map((fetch) => {
       const fetchStore = `${fetch.path}-${fetch.method}`;
-      if (!fetchPaths.hasOwnProperty(fetchStore)) {
-        fetchPaths[fetchStore] = {
+      if (!paths.hasOwnProperty(fetchStore)) {
+        paths[fetchStore] = {
           ...fetch,
           path: getEndpoint(fetch.path),
           id: uuid(),
         };
       }
 
-      return fetchPaths[fetchStore];
+      return paths[fetchStore];
     });
     if (parsedFetchesArray.length > 0) {
       componentObj.fetchFiles.push({
@@ -83,6 +85,40 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
         lastUpdated: file.mDate,
         fetches: fetchesArray,
       });
+    }
+  }
+}
+
+function createFetchArray(componentObj) {
+  const fetches = {};
+  for (const fetchFile of componentObj.fetchFiles) {
+    for (const fetch of fetchFile.fetches) {
+      const fetchStore = `${fetch.path}-${fetch.method}`;
+      if (!fetches.hasOwnProperty(fetchStore)) {
+        fetches[fetchStore] = {
+          ...fetch,
+          files: [{name: fetchFile.fileName, id: fetchFile.id}],
+        };
+      } else {
+        fetches[fetchStore] = {
+          ...fetches[fetchStore],
+          files: fetches[fetchStore].files.concat({
+            name: fetchFile.fileName,
+            id: fetchFile.id,
+          }),
+        };
+      }
+    }
+  }
+  for (const key of Object.keys(fetches)) {
+    componentObj.fetches.push(fetches[key]);
+  }
+}
+
+function createEndpointArray(componentObj) {
+  const endpoints = {};
+  for (const endpointFile of componentObj.endpointFiles) {
+    for (const endpoint of endpointFile.endpoints) {
     }
   }
 }

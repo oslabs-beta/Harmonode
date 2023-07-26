@@ -126,6 +126,7 @@ function AddProject({ hideNew }) {
         return;
       }
     }
+    console.log(projectObj);
     setActiveProject(projectObj);
     dispatchProjects({ type: 'add', payload: projectObj });
     hideNew();
