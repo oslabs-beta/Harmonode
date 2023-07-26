@@ -45,7 +45,7 @@ Fetch File List Card
 .fetch-file-card-header h2 {
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: center;
   padding-right: .5em;
   margin: 0;
 }
@@ -53,7 +53,7 @@ Fetch File List Card
 .fetch-file-card-header h5 {
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: center;
   padding-right: 1em;
   margin: 0;
 }
