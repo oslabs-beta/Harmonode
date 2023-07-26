@@ -5,6 +5,9 @@ import ListProjects from './components/ListProjects';
 import './projects.css';
 import ProjectsProvider from '../../context/ProjectsProvider';
 
+//this is like our container 
+
+
 function ProjectsPage() {
   const [showNew, setShowNew] = useState(false);
   return (
