@@ -1,10 +1,10 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ProjectDirectories from './ProjectDirectories';
-import {DirectoryTree, Directory} from '../../../types';
+import { DirectoryTree, Directory } from '../../../types';
 import ApprovedExtensions from './ApprovedExtensions';
-import {v4 as uuid} from 'uuid';
-import {ProjectsContext} from '../../../context/contextStore';
-const {ipcRenderer} = window.require('electron');
+import { v4 as uuid } from 'uuid';
+import { ProjectsContext } from '../../../context/contextStore';
+const { ipcRenderer } = window.require('electron');
 
 interface projectObj {
   folder: string;
@@ -17,7 +17,7 @@ interface projectObj {
 }
 
 // Component to add a new project
-function AddProject({hideNew}) {
+function AddProject({ hideNew }) {
   const {
     projects,
     dispatchProjects,
@@ -128,7 +128,7 @@ function AddProject({hideNew}) {
     }
     console.log(projectObj);
     setActiveProject(projectObj);
-    dispatchProjects({type: 'add', payload: projectObj});
+    dispatchProjects({ type: 'add', payload: projectObj });
     hideNew();
   }
 
@@ -145,19 +145,23 @@ function AddProject({hideNew}) {
 
   return (
     <>
-      <h1>Choose Your Project Folder</h1>
+      <h1 className='chooseProjHeader'>Choose Project Folder</h1>
       <div>
-        <button onClick={getDir}>Choose Project Directory</button>
+        <button className='projPageButtons' onClick={getDir}>
+          Choose Project Directory
+        </button>
         {projectFolder && (
           <>
             <h3>Project Folder: {projectFolder}</h3>
-            <button onClick={getFile}>Choose Server File</button>
+            <button className='projPageButtons' onClick={getFile}>
+              Choose Server File
+            </button>
             {serverPath && (
               <>
                 <form className='project-form' onSubmit={formSubmit}>
                   <h3>Server File: {serverPath}</h3>
                   <div
-                    style={{display: 'flex', justifyContent: 'space-around'}}
+                    style={{ display: 'flex', justifyContent: 'space-around' }}
                   >
                     <ProjectDirectories
                       dirPath={projectFolder}
@@ -174,7 +178,9 @@ function AddProject({hideNew}) {
                       defaultValue={projectNameFormat(projectName)}
                     />
                   </div>
-                  <button>Save and Load Project</button>
+                  <button className='projPageButtons'>
+                    Save and Load Project
+                  </button>
                 </form>
               </>
             )}
