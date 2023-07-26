@@ -54,7 +54,6 @@ const fullBackEndCreator = (codefiles, serverPath: string) => {
     }
   }
 
-  console.log(navToOtherFile(serverPath, '../server/controllers/devsController.js'))
 };
 
 export default fullBackEndCreator;
