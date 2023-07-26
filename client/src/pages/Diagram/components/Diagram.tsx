@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useContext, useEffect } from 'react';
 import { v4 as uuid } from 'uuid';
+import './diagram.css';
 import { ProjectsContext } from '../../../context/contextStore';
 import ReactFlow, {
   useNodesState,
@@ -18,21 +19,12 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import { PlaylistAddOutlined } from '@mui/icons-material';
 
-// Need some function to be able to create nodes each time "save and load project" is clicked
-// Will also render the data being passed onto the nodes
-// How do we determine/measure the amount of nodes we need per project? fileLoad counter?
-// One node will have name of endpoint
-// Possibly will need ANOTHER node to specifiy what kind of request it is (post, delete etc.)
-// The next node(s) will have the data being sent to all the fetches
-
 function Diagram() {
-  // onclick of "save project and load" button nodes are created
-  // show all files EXCEPT the ones that were selected to be ignored
   const { fitView } = useReactFlow();
   const { activeProject } = useContext(ProjectsContext);
   console.log(activeProject);
 
-  //minimap colors
+  // codMinimap colors
   const nodeColor = (node) => {
     switch (node.type) {
       case 'fetchFileNode':
@@ -193,8 +185,12 @@ function Diagram() {
       >
         {/* <NodeToolbar /> */}
         <Panel position='top-right'>
-          <button onClick={handleVerticalClick}>Vertical View</button>
-          <button onClick={handleHorizontalClick}>Horizontal View</button>
+          <button className='verticalButton' onClick={handleVerticalClick}>
+            Vertical View
+          </button>
+          <button className='horizontalButton' onClick={handleHorizontalClick}>
+            Horizontal View
+          </button>
         </Panel>
         <Controls />
         <MiniMap nodeColor={nodeColor} zoomable pannable />
