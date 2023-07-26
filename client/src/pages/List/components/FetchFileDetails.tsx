@@ -5,7 +5,7 @@ import {v4 as uuid} from 'uuid'
 function FetchFileDetails({file}) {
   console.log('hello', file)
 
-  const lastUpdated = new Date(file.lastUpdated).toLocaleString();
+  
 
 
 
@@ -13,10 +13,10 @@ function FetchFileDetails({file}) {
     return (
       <div key={uuid()}>
         <div className="fetch-file-method">
-          {fetch.method}
+          Method: {fetch.method}
         </div>
         <div className="fetch-file-path">
-          {fetch.path}
+          Path: {fetch.path}
         </div>
       </div>
     )
@@ -24,8 +24,8 @@ function FetchFileDetails({file}) {
   return (
     <div className='fetch-file-card'>
       <div className='fetch-file-card-header'>
-      <span>Last updated:{lastUpdated}</span>
-        <div>Fetches: {fetchesComponents} </div>
+        <div className="fetches-header">Fetches: </div>
+          <div> {fetchesComponents}</div>
       </div>
     </div>
   )

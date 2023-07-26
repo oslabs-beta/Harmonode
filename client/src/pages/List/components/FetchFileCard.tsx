@@ -5,7 +5,7 @@ import FetchFileDetails from './FetchFileDetails';
 
 function FetchFileCard({ file }) {
 
-
+const lastUpdated = new Date(file.lastUpdated).toLocaleString();
 
 
 
@@ -14,6 +14,7 @@ function FetchFileCard({ file }) {
     <div className='fetch-file-card'>
       <div className='fetch-file-card-header'>
         <h2>{file.fileName}</h2>
+        <h5>Last updated: {lastUpdated}</h5>
         <FetchFileDetails file={file}/>
       </div>
     </div>

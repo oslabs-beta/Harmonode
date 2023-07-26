@@ -12,7 +12,7 @@ function ListPage() {
 
   return (
     <main className='list-page'>
-      <div>List</div>
+      <h1>List</h1>
       <FrontEndList file={undefined} />
 
     </main>

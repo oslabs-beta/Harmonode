@@ -26,7 +26,7 @@ function FrontEndList({file}) {
 
   return (
     <ul>
-      <h1>Fetch Files</h1> 
+      <h2>Fetch Files</h2> 
       {fetchFilesComponents}
     </ul>
   )
