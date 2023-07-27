@@ -1,11 +1,12 @@
 import * as path from "path";
 import endpointParse from "../ast/serverParser";
+import routerParser from "../ast/routerParser";
 import { FileObj, pathFileObj } from "../types";
 
 // helper function to extract array of strings for paths in each file
-const getPathArray = (routeString: string): string[] => {
-  const pathParts: string[] = routeString.split(path.sep);
-  const last: string = pathParts[pathParts.length - 1];
+const getPathArray = (routeString) => {
+  const pathParts = routeString.split(path.sep);
+  const last = pathParts[pathParts.length - 1];
   if (last.includes("."))
     pathParts[pathParts.length - 1] = last.slice(0, last.indexOf("."));
   return pathParts;
@@ -14,13 +15,13 @@ const getPathArray = (routeString: string): string[] => {
 // return a new file in the file collection. Must receive an origin file. If a valid destination file exists, return it
 // if NOT, return 'not a valid path or file doesn't exist'
 
-const fullBackEndCreator = (codefiles, serverPath: string) => {
+const fullBackEndCreator = (codefiles, serverPath) => {
   // create the full array of all file paths, so we can navigate through this...
-  const allPathArrays: Array<Array<string>> = [];
-  const pathFileObjs: pathFileObj[] = [];
+  const allPathArrays = [];
+  const pathFileObjs = [];
 
   // this object will have all needed data from the server file, to be retrieved in loop below...
-  let serverFileObj: object = {};
+  let serverFileObj = {};
 
   for (let file of codefiles) {
     allPathArrays.push(getPathArray(file.fullPath));
@@ -31,11 +32,11 @@ const fullBackEndCreator = (codefiles, serverPath: string) => {
     }
   }
 
-  const navToOtherFile = (originString: string, destinationString: string) => {
+  const navToOtherFile = (originString, destinationString) => {
     const originPaths = getPathArray(originString);
     const destPathArray = destinationString.split("/");
-    let pathToNewFile: string[] = [];
-    let dots: number = 0;
+    let pathToNewFile = [];
+    let dots = 0;
 
     for (let el of destPathArray) {
       if (el === "..") {
@@ -50,7 +51,7 @@ const fullBackEndCreator = (codefiles, serverPath: string) => {
 
     for (let pathFile of pathFileObjs) {
       if (JSON.stringify(pathFile.path) === JSON.stringify(pathToNewFile)) {
-        console.log(pathFile);
+        return pathFile.file;
       }
     }
 
@@ -60,14 +61,17 @@ const fullBackEndCreator = (codefiles, serverPath: string) => {
       }
     }
 
-
-
     return "no such file exists";
   };
 
   for (let key in serverFileObj) {
+    // for getting stuff out of routes
     if (typeof serverFileObj[key] === "string") {
-      console.log(navToOtherFile(serverPath, serverFileObj[key]));
+      const routerFile = navToOtherFile(
+        serverPath,
+        serverFileObj[key]
+      );
+      console.log(routerParser(routerFile.contents))
     }
   }
 };
