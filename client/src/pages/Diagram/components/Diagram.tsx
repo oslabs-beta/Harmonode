@@ -173,7 +173,7 @@ function Diagram() {
       style={{
         width: '100vw',
         height: 'calc(100vh - 3em)',
-        backgroundColor: '#526D82',
+        backgroundColor: '#121212',
         overflow: 'hidden',
       }}
     >
@@ -206,9 +206,9 @@ function Diagram() {
         <Background
           id='2'
           gap={100}
-          offset={1}
+          // offset={1}
           color='#ccc'
-          variant={BackgroundVariant.Cross}
+          // variant={BackgroundVariant.Cross}
         />
       </ReactFlow>
     </div>
