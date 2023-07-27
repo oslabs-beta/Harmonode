@@ -10,20 +10,38 @@ import ReactFlow, {
   Controls,
   Background,
   BackgroundVariant,
-  NodeToolbar,
   Panel,
-  NodeResizer,
   useReactFlow,
   useNodesInitialized,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import {PlaylistAddOutlined} from '@mui/icons-material';
+import PathNode from './PathNode';
+import GetEdge from './GetEdge';
+import PostEdge from './PostEdge';
+import PutEdge from './PutEdge';
+import PatchEdge from './PatchEdge';
+import DeleteEdge from './DeleteEdge';
+
+const nodeTypes = {pathNode: PathNode};
+const edgeTypes = {
+  getEdge: GetEdge,
+  postEdge: PostEdge,
+  putEdge: PutEdge,
+  patchEdge: PatchEdge,
+  deleteEdge: DeleteEdge,
+};
 
 function Diagram() {
   const {fitView} = useReactFlow();
   const {activeProject} = useContext(ProjectsContext);
-  console.log(activeProject);
 
+  if (activeProject.ast.fetches.length === 0) return <h1>No project loaded</h1>;
+  // eventually going to use this paths to generate all of the path nodes and all of the edges
+  const paths = [...activeProject.ast.fetches, ...activeProject.ast.endpoints];
+  const ast = activeProject.ast;
+  const fetchFilesLength = ast.fetchFiles.length - 1;
+  const fetchesLength = ast.endpointFiles[0].endpoints.length - 1;
+  const spacing = 1000;
   // codMinimap colors
   const nodeColor = (node) => {
     switch (node.type) {
@@ -66,16 +84,16 @@ function Diagram() {
     borderRadius: 15,
   };
   // State for switching between vertical and horizontal view
-  const [orientation, setOrientation] = useState('vertical');
+  const [orientation, setOrientation] = useState('horizontal');
 
   function generateNodes(project = activeProject, orientation) {
     // Common spacing for horizontal/vertical stacking
-    const spacing = 200;
+
     const initialFetchNodes = project.ast.fetchFiles.map((file, idx) => {
       const position =
         orientation === 'horizontal'
-          ? {x: idx * spacing, y: 0}
-          : {x: 0, y: idx * spacing};
+          ? {x: idx * (spacing / fetchFilesLength), y: 0}
+          : {x: 0, y: idx * (spacing / fetchFilesLength)};
 
       return {
         id: file.id, // This is fetchFiles.id
@@ -83,7 +101,7 @@ function Diagram() {
         // position: { x: idx * 200, y: 0 },
         data: {label: file.fileName}, //each file needs an id and we'll use the id to connect the nodes
         style: fetchFileNode,
-        type: 'fetchFileNode',
+        type: 'pathNode',
       };
     });
 
@@ -91,21 +109,44 @@ function Diagram() {
       (file, idx) => {
         const position =
           orientation === 'horizontal'
-            ? {x: idx * spacing, y: spacing}
-            : {x: spacing, y: idx * spacing};
+            ? {
+                x: idx * (spacing / fetchesLength),
+                y: spacing / fetchesLength,
+              }
+            : {
+                x: spacing / fetchesLength,
+                y: idx * (spacing / 2 / fetchesLength),
+              };
         return {
           id: file.id, // This is endpoints.id
           position,
           // position: { x: idx * 200, y: 200 },
           data: {label: file.path},
           style: endpointNode,
-          type: 'endpointNode',
         };
       }
     );
 
     return [...initialFetchNodes, ...initialEndpointNodes];
   }
+
+  function returnEdgeType(method) {
+    switch (method) {
+      case 'GET':
+        return ['getEdge', 'a'];
+      case 'POST':
+        return ['postEdge', 'b'];
+      case 'PUT':
+        return ['putEdge', 'c'];
+      case 'PATCH':
+        return ['patchEdge', 'd'];
+      case 'DELETE':
+        return ['deleteEdge', 'e'];
+      default:
+        return ['getEdge', 'a'];
+    }
+  }
+
   // Need to add functionality so that for each proj. load..
   // it will create nodes based on what is necesscary
   // We determine how many nodes are necesscary based on what user selected and on fileLoad for count?
@@ -117,10 +158,14 @@ function Diagram() {
             (endpoint) => endpoint.path === fetch.path
           );
           if (endpoint) {
+            const edgeTypeArray = returnEdgeType(fetch.method);
             return {
               id: uuid(),
               target: endpoint.id,
               source: file.id,
+              type: edgeTypeArray[0],
+              sourceHandle: edgeTypeArray[1],
+              animated: true,
             };
           }
           return null;
@@ -147,7 +192,6 @@ function Diagram() {
   useEffect(() => {
     fitView();
   }, [nodesInitialized]);
-  // combine nodes with spread?
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)), // Not doing anything for now
@@ -161,9 +205,9 @@ function Diagram() {
     setOrientation('vertical');
   };
 
-  const onNodeClick = useCallback((event, node) => {
-    console.log(node, 'node clicked');
-  }, []);
+  // const onNodeClick = useCallback((event, node) => {
+  //   console.log(node, 'node clicked');
+  // }, []);
 
   return (
     <div
@@ -180,8 +224,9 @@ function Diagram() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        onNodeClick={onNodeClick} // to test if node is clicked
         proOptions={{hideAttribution: true}}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
       >
         {/* <NodeToolbar /> */}
         <Panel position='top-right'>

@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 process.env.NODE_ENV === 'development';
 
 module.exports = {
@@ -59,6 +60,16 @@ module.exports = {
   devServer: {
     historyApiFallback: {
       index: '/index.html', // Specify the entry point HTML file
+    },
+    client: {
+      overlay: {
+        runtimeErrors: (error) => {
+          if (error.message === 'ResizeObserver loop limit exceeded') {
+            return false;
+          }
+          return true;
+        },
+      },
     },
   },
 };
