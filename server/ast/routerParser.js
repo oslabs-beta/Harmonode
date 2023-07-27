@@ -35,11 +35,12 @@ const routerParser = (codeString) => {
   trav(ast, {
     enter(path) {
       let current = path.node;
-      if (
+      let isMethodCall =
         current.type === "CallExpression" &&
-        current.callee.type === "MemberExpression" &&
-        current.callee.property.name === "get"
-      ) {
+        current.callee.type === "MemberExpression";
+      let isGet = isMethodCall && current.callee.property.name === "get";
+      let isPost = isMethodCall && current.callee.property.name === "post";
+      if (isGet) {
         if (current.arguments[0].value) {
           routerObj.routerEndPoints.push(current.arguments[0].value);
           if (
@@ -55,7 +56,6 @@ const routerParser = (codeString) => {
   });
 
   return routerObj;
-
 };
 
 export default routerParser;
