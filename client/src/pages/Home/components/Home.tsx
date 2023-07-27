@@ -1,11 +1,20 @@
 import React from 'react';
+import icon from '../../../../../server/icon.png';
 
 function Home() {
+  const ImageCenter: React.CSSProperties = {
+    textAlign: 'center',
+  };
+  const image: React.CSSProperties = {
+    width: '150px',
+    marginTop: 25,
+    marginBottom: 0,
+  };
   const titleText: React.CSSProperties = {
     fontStyle: 'bold',
     fontSize: 75,
-    color: '#4caf50',
-    marginTop: 15,
+    color: '#42A186',
+    marginTop: 0,
     marginBottom: 3,
     textAlign: 'center',
   };
@@ -27,7 +36,7 @@ function Home() {
     fontSize: 25,
     margin: 0,
     paddingLeft: 20,
-    color: '#4caf50',
+    color: '#42A186',
   };
   const pText: React.CSSProperties = {
     fontSize: 18,
@@ -37,7 +46,10 @@ function Home() {
 
   return (
     <div>
-      {/* <img>'./server/icon.png'</img> */}
+      <div style={ImageCenter}>
+        <img style={image} src={icon} alt='Image' />
+      </div>
+
       <h1 style={titleText}>Harmonode</h1>
       <p style={italicText}> "Harmonize your code with Harmonode!</p>
       <p style={subTitleText}>
