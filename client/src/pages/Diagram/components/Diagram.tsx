@@ -45,7 +45,7 @@ function Diagram() {
   // codMinimap colors
   const nodeColor = (node) => {
     switch (node.type) {
-      case 'fetchFileNode':
+      case 'pathNode':
         return '#19A7CE';
       case 'endpointNode':
         return '#98DFD6';
@@ -125,6 +125,7 @@ function Diagram() {
           // position: { x: idx * 200, y: 200 },
           data: { label: file.path },
           style: endpointNode,
+          type: 'endpointNode',
         };
       }
     );
@@ -168,7 +169,6 @@ function Diagram() {
               source: file.id,
               type: edgeTypeArray[0],
               sourceHandle: edgeTypeArray[1],
-              animated: true,
             };
           }
           return null;
@@ -221,6 +221,78 @@ function Diagram() {
         overflow: 'hidden',
       }}
     >
+      {/* <div
+      //   style={{
+      //     position: 'absolute',
+      //     top: '10px',
+      //     left: '10px',
+      //     zIndex: '1',
+      //   }}
+      // > */}
+      {/* <label htmlFor='legend'>Legend</label> */}
+      {/* <div
+          style={{
+            display: 'inline-block',
+            position: 'relative',
+            cursor: 'pointer',
+          }}
+        > */}
+      <ul
+        style={{
+          position: 'relative',
+          listStyleType: 'none',
+        }}
+      >
+        {/* <li> */}
+        <div
+          style={{
+            height: '1em',
+            width: '2em',
+            backgroundColor: 'limegreen',
+            display: 'inline-block',
+            marginRight: '0.5em',
+          }}
+        />
+        GET
+        {/* </li> */}
+        <li>
+          <div
+            style={{
+              height: '1em',
+              width: '2em',
+              backgroundColor: 'violet',
+              display: 'inline-block',
+              marginRight: '0.5em',
+            }}
+          />
+          PUT
+        </li>
+        <li>
+          <div
+            style={{
+              height: '1em',
+              width: '2em',
+              backgroundColor: 'blue',
+              display: 'inline-block',
+              marginRight: '0.5em',
+            }}
+          />
+          POST
+        </li>
+        <li>
+          <div
+            style={{
+              height: '1em',
+              width: '2em',
+              backgroundColor: 'orange',
+              display: 'inline-block',
+              marginRight: '0.5em',
+            }}
+          />
+          PATCH
+        </li>
+      </ul>
+      {/* </div> */}
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -231,7 +303,6 @@ function Diagram() {
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
       >
-        {/* <NodeToolbar /> */}
         <Panel position='top-right'>
           <button className='verticalButton' onClick={handleVerticalClick}>
             Vertical View
@@ -253,7 +324,7 @@ function Diagram() {
           gap={100}
           // offset={1}
           color='#ccc'
-          // variant={BackgroundVariant.Cross}
+          variant={BackgroundVariant.Cross}
         />
       </ReactFlow>
     </div>
