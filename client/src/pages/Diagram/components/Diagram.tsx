@@ -93,7 +93,7 @@ function Diagram() {
       const position =
         orientation === 'horizontal'
           ? {x: idx * (spacing / fetchFilesLength), y: 0}
-          : {x: 0, y: idx * (spacing / fetchFilesLength)};
+          : {x: 0, y: idx * (spacing / fetchFilesLength / 2)};
 
       return {
         id: file.id, // This is fetchFiles.id

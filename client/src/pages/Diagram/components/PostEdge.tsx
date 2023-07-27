@@ -25,7 +25,7 @@ export default function PostEdge({
   const edgeStyle = {
     ...style,
     stroke: 'blue',
-    strokeWidth: 2,
+    strokeWidth: 3,
   };
 
   return (
