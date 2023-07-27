@@ -1,7 +1,7 @@
-import React, {useCallback, useState, useContext, useEffect} from 'react';
-import {v4 as uuid} from 'uuid';
+import React, { useCallback, useState, useContext, useEffect } from 'react';
+import { v4 as uuid } from 'uuid';
 import './diagram.css';
-import {ProjectsContext} from '../../../context/contextStore';
+import { ProjectsContext } from '../../../context/contextStore';
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -17,11 +17,11 @@ import ReactFlow, {
   useNodesInitialized,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import {PlaylistAddOutlined} from '@mui/icons-material';
+import { PlaylistAddOutlined } from '@mui/icons-material';
 
 function Diagram() {
-  const {fitView} = useReactFlow();
-  const {activeProject} = useContext(ProjectsContext);
+  const { fitView } = useReactFlow();
+  const { activeProject } = useContext(ProjectsContext);
   console.log(activeProject);
 
   // codMinimap colors
@@ -74,14 +74,15 @@ function Diagram() {
     const initialFetchNodes = project.ast.fetchFiles.map((file, idx) => {
       const position =
         orientation === 'horizontal'
-          ? {x: idx * spacing, y: 0}
-          : {x: 0, y: idx * spacing};
+          ? { x: idx * spacing, y: 0 }
+          : { x: 0, y: idx * spacing };
 
       return {
         id: file.id, // This is fetchFiles.id
         position,
+        animated: true,
         // position: { x: idx * 200, y: 0 },
-        data: {label: file.fileName}, //each file needs an id and we'll use the id to connect the nodes
+        data: { label: file.fileName }, //each file needs an id and we'll use the id to connect the nodes
         style: fetchFileNode,
         type: 'fetchFileNode',
       };
@@ -91,13 +92,14 @@ function Diagram() {
       (file, idx) => {
         const position =
           orientation === 'horizontal'
-            ? {x: idx * spacing, y: spacing}
-            : {x: spacing, y: idx * spacing};
+            ? { x: idx * spacing, y: spacing }
+            : { x: spacing, y: idx * spacing };
         return {
           id: file.id, // This is endpoints.id
           position,
+          animated: true,
           // position: { x: idx * 200, y: 200 },
-          data: {label: file.path},
+          data: { label: file.path },
           style: endpointNode,
           type: 'endpointNode',
         };
@@ -119,6 +121,7 @@ function Diagram() {
           if (endpoint) {
             return {
               id: uuid(),
+              animated: true,
               target: endpoint.id,
               source: file.id,
             };
@@ -181,7 +184,7 @@ function Diagram() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={onNodeClick} // to test if node is clicked
-        proOptions={{hideAttribution: true}}
+        proOptions={{ hideAttribution: true }}
       >
         {/* <NodeToolbar /> */}
         <Panel position='top-right'>
