@@ -1,0 +1,100 @@
+.list-page {
+  color: var(--font-main-color);
+  background-color: var(--secondary-color);
+  border: 15px solid var(--secondary-color);
+}
+
+/*
+=================
+FrontEndList Styles
+=================
+*/
+.project-form {
+  border: 15px solid var(--secondary-color);
+  background-color: var(--secondary-color);
+}
+
+.project-name-header {
+  background-color: (--tertiary-color);
+  color: var(--font-main-color);
+}
+
+/*
+=================
+Fetch File List Card
+=================
+*/
+
+.fetch-file-card {
+  background-color: var(--primary-color);
+  min-width: 25em;
+  padding: .5em;
+  margin: 0.5em;
+
+}
+
+.fetch-file-card-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  flex-direction:column;
+  margin-left: 0em;
+  
+}
+
+.fetch-file-card-header h2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding-right: .5em;
+  margin: 0;
+}
+
+.fetch-file-card-header h5 {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding-right: 1em;
+  margin: 0;
+}
+
+
+
+.fetch-file-card-body {
+  display: flex;
+}
+
+.fetch-file-card-body-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.fetch-file-card-path-label {
+  font-weight: bold;
+}
+
+.fetch-file-card-path {
+  margin-left: 2em;
+}
+
+.fetch-file-method {
+  width: 100%;
+  margin: .3em;
+  padding-top: .7em;
+}
+
+.fetch-file-path {
+  width: 100%;
+  margin: .3em;
+  margin-bottom: .4em
+}
+
+.fetches-header {
+ font-weight: bold;
+  
+ 
+}
+
+.file-name {
+  width: 100%;
+}

@@ -2,6 +2,7 @@
   color: var(--font-main-color);
   background-color: var(--secondary-color);
   border: 15px solid var(--secondary-color);
+  width: 35%;
 }
 
 /*
@@ -67,4 +68,24 @@ Project List Card
 
 .project-card-path {
   margin-left: 2em;
+}
+
+.chooseProjHeader {
+  text-align: center;
+}
+
+.projPageButtons {
+  align-items: center;
+  margin-left: 25%;
+  width: 45%;
+}
+
+.loadButton {
+  border-radius: 50px;
+  width: 85px;
+}
+
+.deleteButton {
+  border-radius: 50px;
+  width: 85px;
 }

@@ -4,9 +4,14 @@ import ProjectsPage from './pages/Projects/ProjectsPage';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard/Dashboard';
 import List from './pages/List/List';
+<<<<<<< HEAD
 import Diagram from './pages/Diagram/components/Diagram';
 import Settings from './pages/Settings/SettingsPage';
 import { ProjectsContext } from './context/contextStore';
+=======
+import Settings from './pages/Settings/Settings';
+import {ProjectsContext} from './context/contextStore';
+>>>>>>> dev
 import Topbar from './components/Topbar';
 import DiagramPage from './pages/Diagram/DiagramPage';
 const { ipcRenderer } = window.require('electron');
@@ -22,8 +27,12 @@ const App = () => {
         type: 'update',
         payload: { ...activeProject, ast: newAst },
       });
+<<<<<<< HEAD
       console.log('file change detected');
       setActiveProject({ ...activeProject, ast: newAst });
+=======
+      setActiveProject({...activeProject, ast: newAst});
+>>>>>>> dev
     };
 
     ipcRenderer.on('fileChanged', handleFileChanged);

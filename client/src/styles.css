@@ -57,6 +57,7 @@ h6 {
 button {
   background-color: var(--tertiary-color);
   color: var(--font-main-color);
+  border-radius: 15px;
   padding: 14px 20px;
   margin: 8px 0;
   border: none;
@@ -65,5 +66,5 @@ button {
 }
 
 button:hover {
-  opacity: 0.8;
+  background-color: #54a257;
 }

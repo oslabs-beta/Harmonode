@@ -1,11 +1,22 @@
-import React from 'react'
-// list will have a deeper dive  of the data from Dashboard 
-// listing out all endpoints, fetches, and file location
+import React, { useContext, useState } from 'react'
+import { useNavigate } from 'react-router'
+import { ProjectsContext } from '../../context/contextStore'
+import FrontEndList  from './components/FrontEndList'
 
-function List() {
+
+import './list.css';
+
+// container for all the list components
+
+function ListPage() {
+
   return (
-    <div>List</div>
-  )
+    <main className='list-page'>
+      <h1>List</h1>
+      <FrontEndList file={undefined} />
+
+    </main>
+    )
 }
 
-export default List
+export default ListPage
