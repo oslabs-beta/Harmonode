@@ -6,6 +6,7 @@ import monitorFiles from './utils/monitorFileChanges';
 import Store from 'electron-store';
 import createComponentObject from './utils/createComponentObject';
 import * as fs from 'fs';
+import {blueGrey} from '@mui/material/colors';
 
 const dev: boolean = process.env.NODE_ENV === 'development';
 const url = require('url');
@@ -135,6 +136,7 @@ ipcMain.handle(
     // add the new file watchers
     watchers = monitorFiles(componentObj, codeFileObj);
 
+    console.log(componentObj);
     // return the component object to front end
     return componentObj;
   }

@@ -25,7 +25,7 @@ export default function GetEdge({
   const edgeStyle = {
     ...style,
     stroke: 'limegreen',
-    strokeWidth: 2,
+    strokeWidth: 3,
   };
 
   return (
