@@ -30,6 +30,7 @@ function Sidebar() {
   const navigate = useNavigate();
 
   const handleClick = (path) => {
+    console.log('HERE');
     navigate(path);
     // console.log(window.location.href, 'url');
   };
@@ -74,7 +75,12 @@ function Sidebar() {
             button: { '&:hover': { backgroundColor: 'var(--primary-color)' } },
           }}
         >
-          <MenuItem icon={<HomeOutlinedIcon />}>Home</MenuItem>
+          <MenuItem
+            icon={<HomeOutlinedIcon />}
+            onClick={() => handleClick('/home')}
+          >
+            Home
+          </MenuItem>
           <MenuItem
             icon={<FolderOutlinedIcon />}
             onClick={() => handleClick('/projects')}
