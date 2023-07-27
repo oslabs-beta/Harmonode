@@ -4,6 +4,7 @@ import React from 'react';
 function Dashboard() {
   function handleSubmit(e, variable) {
     e.preventDefault();
+    console.log('e.target.inputField.value: ', e.target.inputField.value);
     document.documentElement.style.setProperty(
       variable,
       e.target.inputField.value
