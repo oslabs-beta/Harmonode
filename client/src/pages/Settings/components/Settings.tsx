@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 function Settings() {
   const defaultTheme = {
@@ -44,25 +44,27 @@ function Settings() {
     '--inactive-color': '#FAD6A5',
     '--font-main-color': '#A7EDE7',
   };
-
-  let themeChooice = false;
+  //set user customization state
+  const [themeChoice, setChoice] = useState(false);
+  // let themeChooice = false;
   let themeChoose;
+
   function handleClick(theme, e) {
     if (theme !== 'themeChoose') {
       for (let key in theme) {
         document.documentElement.style.setProperty(key, theme[key]);
       }
     } else {
-      if (themeChooice === false) {
-        console.log('themeChoice 57', themeChooice);
-        themeChooice = true;
-        console.log('themeChoice 59', themeChooice);
+      if (themeChoice === false) {
+        console.log('themeChoice 57', themeChoice);
+        setChoice(true);
+        console.log('themeChoice 59', themeChoice);
       } else {
-        themeChooice = false;
-        console.log('themeChoice 62', themeChooice);
+        setChoice(false);
+        console.log('themeChoice 62', themeChoice);
       }
-      if (themeChooice === true) {
-        console.log('themeChoice 65', themeChooice);
+      if (themeChoice === true) {
+        console.log('themeChoice 65', themeChoice);
         themeChoose = (
           <section>
             <form
@@ -129,44 +131,48 @@ function Settings() {
       <button onClick={(e) => handleClick('themeChoose', e)}>
         Choose Your Own Adventure
       </button>
-      <section>{themeChoose}</section>
-      {/* <section>
-        <form
-          onSubmit={(e) => handleSubmit(e, '--primary-color')}
-          style={{ display: 'flex' }}
-        >
-          <input name='inputField' placeholder='type hex code' />
-          <button>Primary Color</button>
-        </form>
-        <form
-          onSubmit={(e) => handleSubmit(e, '--secondary-color')}
-          style={{ display: 'flex' }}
-        >
-          <input name='inputField' placeholder='type hex code' />
-          <button>Secondary Color</button>
-        </form>
-        <form
-          onSubmit={(e) => handleSubmit(e, '--tertiary-color')}
-          style={{ display: 'flex' }}
-        >
-          <input name='inputField' placeholder='type hex code' />
-          <button>Tertiary Color</button>
-        </form>
-        <form
-          onSubmit={(e) => handleSubmit(e, '--quaternary-color')}
-          style={{ display: 'flex' }}
-        >
-          <input name='inputField' placeholder='type hex code' />
-          <button>Quaternary Color</button>
-        </form>
-        <form
-          onSubmit={(e) => handleSubmit(e, '--font-main-color')}
-          style={{ display: 'flex' }}
-        >
-          <input name='inputField' placeholder='type hex code' />
-          <button>Font Color</button>
-        </form>
-      </section> */}
+      {/* <section>{themeChoose}</section> */}
+      {themeChoice ? (
+        <section>
+          <form
+            onSubmit={(e) => handleSubmit(e, '--primary-color')}
+            style={{ display: 'flex' }}
+          >
+            <input name='inputField' placeholder='type hex code' />
+            <button>Primary Color</button>
+          </form>
+          <form
+            onSubmit={(e) => handleSubmit(e, '--secondary-color')}
+            style={{ display: 'flex' }}
+          >
+            <input name='inputField' placeholder='type hex code' />
+            <button>Secondary Color</button>
+          </form>
+          <form
+            onSubmit={(e) => handleSubmit(e, '--tertiary-color')}
+            style={{ display: 'flex' }}
+          >
+            <input name='inputField' placeholder='type hex code' />
+            <button>Tertiary Color</button>
+          </form>
+          <form
+            onSubmit={(e) => handleSubmit(e, '--quaternary-color')}
+            style={{ display: 'flex' }}
+          >
+            <input name='inputField' placeholder='type hex code' />
+            <button>Quaternary Color</button>
+          </form>
+          <form
+            onSubmit={(e) => handleSubmit(e, '--font-main-color')}
+            style={{ display: 'flex' }}
+          >
+            <input name='inputField' placeholder='type hex code' />
+            <button>Font Color</button>
+          </form>
+        </section>
+      ) : (
+        <section></section>
+      )}
     </div>
   );
 }
