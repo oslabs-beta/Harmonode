@@ -6,11 +6,12 @@
   "scripts": {
     "build": "tsc",
     "start": "NODE_ENV=development electron .",
-    "dev": "run-p tsc-dev electron-dev webpack-dev",
+    "dev": "run-p tsc-dev copy-images electron-dev webpack-dev",
     "test": "echo \"Error: no test specified\" && exit 1",
     "webpack-dev": "cross-env NODE_ENV=development webpack serve --no-open",
     "electron-dev": "nodemon --watch tsCompiled/backend --exec \"npx cross-env NODE_ENV=development electron .\"",
-    "tsc-dev": "tsc --watch"
+    "tsc-dev": "tsc --watch",
+    "copy-images": "cp server/*.png tsCompiled/server"
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +26,7 @@
     "body-parser": "^1.20.2",
     "concurrently": "^8.2.0",
     "config": "^3.3.9",
+    "copyfiles": "^2.4.1",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",

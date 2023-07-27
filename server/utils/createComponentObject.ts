@@ -138,14 +138,13 @@ function getEndpoint(url) {
   if (typeof url !== 'string') return 'unknownurl';
   // Check if the URL starts with 'http' or '/' to determine if it's a non-local URL or just a path
   url = url.replaceAll('`', '').split('?')[0];
+  // if creating a url triggers an error, then we know it's missing a '/' at the beginning
   try {
     new URL(url).hostname;
   } catch (error) {
     if (!url.startsWith('/')) url = '/' + url;
   }
-  console.log(url);
   if (!url.startsWith('http') && url.startsWith('/')) {
-    console.log('IF CONDITION MET');
     if (isLocalHost(url.split('/')[0])) {
       // It's a local URL without the protocol
       // Extract the endpoint by removing the domain and protocol from the URL

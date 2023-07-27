@@ -3,10 +3,10 @@ import {stringCodeBase} from './utils/stringifyCode';
 import {getDirectories} from './utils/getFileDirectories';
 import {DirObj, FileObj} from './types';
 import monitorFiles from './utils/monitorFileChanges';
+import * as path from 'path';
 import Store from 'electron-store';
 import createComponentObject from './utils/createComponentObject';
 import * as fs from 'fs';
-import {blueGrey} from '@mui/material/colors';
 
 const dev: boolean = process.env.NODE_ENV === 'development';
 const url = require('url');
@@ -21,7 +21,9 @@ process.on('uncaughtException', (error) => {
   // Hiding the error on the terminal as well
   console.error('Uncaught Exception:', error);
 });
-
+app.setName('Harmonode');
+const icon = nativeImage.createFromPath(path.join(__dirname, 'icon.png'));
+app.dock.setIcon(icon);
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1800,
@@ -29,6 +31,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 720,
     title: 'Harmonode',
+    icon: nativeImage.createFromPath(path.join(__dirname, 'icon.png')),
     show: false,
     webPreferences: {nodeIntegration: true, contextIsolation: false},
   });
@@ -136,7 +139,6 @@ ipcMain.handle(
     // add the new file watchers
     watchers = monitorFiles(componentObj, codeFileObj);
 
-    console.log(componentObj);
     // return the component object to front end
     return componentObj;
   }
