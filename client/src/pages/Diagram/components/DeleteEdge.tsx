@@ -25,7 +25,7 @@ export default function DeleteEdge({
   const edgeStyle = {
     ...style,
     stroke: 'red',
-    strokeWidth: 2,
+    strokeWidth: 3,
   };
 
   return (

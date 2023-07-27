@@ -1,11 +1,11 @@
 import React, {useCallback} from 'react';
 import {Handle, Position} from 'reactflow';
 
-const handleStyle = {left: 10};
-const handleStyle2 = {left: 35};
-const handleStyle3 = {left: 60};
-const handleStyle4 = {left: 85};
-const handleStyle5 = {left: 110};
+const handleStyle = {left: 11};
+const handleStyle2 = {left: 42};
+const handleStyle3 = {left: 73};
+const handleStyle4 = {left: 104};
+const handleStyle5 = {left: 135};
 
 function PathNode({data, isConnectable}) {
   return (

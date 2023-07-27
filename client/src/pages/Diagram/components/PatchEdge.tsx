@@ -25,7 +25,7 @@ export default function PatchEdge({
   const edgeStyle = {
     ...style,
     stroke: 'orange',
-    strokeWidth: 2,
+    strokeWidth: 3,
   };
 
   return (

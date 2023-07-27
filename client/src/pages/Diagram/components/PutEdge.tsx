@@ -25,7 +25,7 @@ export default function PutEdge({
   const edgeStyle = {
     ...style,
     stroke: 'violet',
-    strokeWidth: 2,
+    strokeWidth: 3,
   };
 
   return (
