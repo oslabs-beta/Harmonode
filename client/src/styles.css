@@ -79,12 +79,12 @@ button:hover {
   flex-direction: column;
   background: black;
   border-radius: 15px;
+  min-width: 35rem;
 }
 
 .editor-container {
   max-height: 60vh;
   overflow-y: auto;
-  pointer-events: none;
   cursor: default;
 }
 

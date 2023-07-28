@@ -6,6 +6,7 @@ import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism.min.css'; //Example style, you can use another
 import '../styles.css';
 import {saveStringCode, stringCode} from '../ipcRenderer';
+import e from 'express';
 
 function CodeEditor({file, close}) {
   const [code, setCode] = useState('');
@@ -13,7 +14,6 @@ function CodeEditor({file, close}) {
   const [position, setPosition] = useState({x: 0, y: 0});
   const [initialPosition, setInitialPosition] = useState({x: 0, y: 0});
   const [isDragging, setIsDragging] = useState(false);
-  console.log(file);
 
   useEffect(() => {
     async function getStringCode() {
@@ -34,11 +34,12 @@ function CodeEditor({file, close}) {
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
-    setPosition({x: e.clientX, y: e.clientY});
+    setInitialPosition({x: e.clientX, y: e.clientY});
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e) => {
     setIsDragging(false);
+    setInitialPosition({x: position.x, y: position.y});
   };
 
   const handleMouseMove = (e) => {
@@ -47,11 +48,10 @@ function CodeEditor({file, close}) {
     const dx = e.clientX - initialPosition.x;
     const dy = e.clientY - initialPosition.y;
 
-    console.log(dx, dy);
-    // setPosition((prevPosition) => ({
-    //   x: prevPosition.x + dx,
-    //   y: prevPosition.y + dy,
-    // }));
+    setPosition(() => ({
+      x: position.x + dx,
+      y: position.y + dy,
+    }));
   };
 
   useEffect(() => {
@@ -69,9 +69,9 @@ function CodeEditor({file, close}) {
       className='code-editor'
       style={{
         position: 'fixed',
-        left: position.x,
-        top: position.y,
-        cursor: isDragging ? 'grabbing' : 'grab',
+        left: `calc(50% + ${position.x}px)`,
+        top: `calc(50% + ${position.y}px)`,
+        transform: 'translate(-50%, -50%)',
       }}
     >
       <div
@@ -79,8 +79,10 @@ function CodeEditor({file, close}) {
           height: '1.5em',
           width: '100%',
           backgroundColor: 'var(--primary-color)',
+          cursor: isDragging ? 'grabbing' : 'grab',
         }}
         onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
       />
       <button className='editor-close-btn' onClick={handleClose}>
         Close / Discard Unsaved Changes

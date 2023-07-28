@@ -139,7 +139,6 @@ function Diagram() {
           // position: { x: idx * 200, y: 200 },
           data: {label: file.path},
           style: endpointNode,
-          type: 'endpointNode',
         };
       }
     );
