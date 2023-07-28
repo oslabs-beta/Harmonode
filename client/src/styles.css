@@ -69,6 +69,11 @@ button:hover {
   background-color: #54a257;
 }
 
+/*
+=======================
+   Code Editor Styles
+=======================
+*/
 .code-editor {
   display: flex;
   flex-direction: column;
@@ -76,6 +81,17 @@ button:hover {
   border-radius: 15px;
 }
 
+.editor-container {
+  max-height: 60vh;
+  overflow-y: auto;
+  pointer-events: none;
+  cursor: default;
+}
+
 .token.operator {
   background-color: transparent !important;
+}
+
+.editor-close-btn {
+  background-color: rgb(156, 10, 10);
 }
