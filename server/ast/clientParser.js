@@ -141,4 +141,6 @@ function fetchParser(input) {
   return fetchCalls;
 }
 
+// console.log(fetchParser(input));
+
 export default fetchParser;

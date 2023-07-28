@@ -175,6 +175,14 @@ ipcMain.handle('getDirectories', async (_, dirPath) => {
   return directories;
 });
 
+ipcMain.handle('stringCode', async (_, filePath) => {
+  return await fs.readFileSync(filePath, 'utf-8');
+});
+
+ipcMain.handle('saveCode', async (_, filePath, code) => {
+  return await fs.writeFileSync(filePath, code);
+});
+
 // ==== Electron Store Stuff ====
 
 ipcMain.handle('storeProjects', (event, projects) => {

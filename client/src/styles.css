@@ -68,3 +68,14 @@ button {
 button:hover {
   background-color: #54a257;
 }
+
+.code-editor {
+  display: flex;
+  flex-direction: column;
+  background: black;
+  border-radius: 15px;
+}
+
+.token.operator {
+  background-color: transparent !important;
+}
