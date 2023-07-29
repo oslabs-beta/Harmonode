@@ -1,7 +1,7 @@
-import React, { useCallback, useState, useContext, useEffect } from 'react';
-import { v4 as uuid } from 'uuid';
+import React, {useCallback, useState, useContext, useEffect} from 'react';
+import {v4 as uuid} from 'uuid';
 import './diagram.css';
-import { ProjectsContext } from '../../../context/contextStore';
+import {ProjectsContext} from '../../../context/contextStore';
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -21,8 +21,11 @@ import PostEdge from './PostEdge';
 import PutEdge from './PutEdge';
 import PatchEdge from './PatchEdge';
 import DeleteEdge from './DeleteEdge';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faPenToSquare} from '@fortawesome/free-solid-svg-icons';
+import CodeEditor from '../../../components/CodeEditor';
 
-const nodeTypes = { pathNode: PathNode };
+const nodeTypes = {pathNode: PathNode};
 const edgeTypes = {
   getEdge: GetEdge,
   postEdge: PostEdge,
@@ -31,9 +34,13 @@ const edgeTypes = {
   deleteEdge: DeleteEdge,
 };
 
+const editIcon = <FontAwesomeIcon icon={faPenToSquare} />;
+
 function Diagram() {
-  const { fitView } = useReactFlow();
-  const { activeProject } = useContext(ProjectsContext);
+  const {fitView} = useReactFlow();
+  const {activeProject} = useContext(ProjectsContext);
+  const [showEditor, setShowEditor] = useState(false);
+  const [editorFile, setEditorFile] = useState({});
 
   if (activeProject.ast.fetches.length === 0) return <h1>No project loaded</h1>;
   // eventually going to use this paths to generate all of the path nodes and all of the edges
@@ -42,7 +49,14 @@ function Diagram() {
   const fetchFilesLength = ast.fetchFiles.length - 1;
   const fetchesLength = ast.endpointFiles[0].endpoints.length - 1;
   const spacing = 1000;
+
+  function clickEdit(file) {
+    setEditorFile(file);
+    setShowEditor(true);
+  }
+
   // codMinimap colors
+
   const nodeColor = (node) => {
     switch (node.type) {
       case 'pathNode':
@@ -92,15 +106,15 @@ function Diagram() {
     const initialFetchNodes = project.ast.fetchFiles.map((file, idx) => {
       const position =
         orientation === 'horizontal'
-          ? { x: idx * (spacing / fetchFilesLength), y: 0 }
-          : { x: 0, y: idx * (spacing / fetchFilesLength / 2) };
+          ? {x: idx * (spacing / fetchFilesLength), y: 0}
+          : {x: 0, y: idx * (spacing / fetchFilesLength / 2)};
 
       return {
         id: file.id, // This is fetchFiles.id
         position,
         animated: true,
         // position: { x: idx * 200, y: 0 },
-        data: { label: file.fileName }, //each file needs an id and we'll use the id to connect the nodes
+        data: {label: file.fileName, file: file, showEditor: clickEdit}, //each file needs an id and we'll use the id to connect the nodes
         style: fetchFileNode,
         type: 'pathNode',
       };
@@ -123,9 +137,8 @@ function Diagram() {
           position,
           animated: true,
           // position: { x: idx * 200, y: 200 },
-          data: { label: file.path },
+          data: {label: file.path},
           style: endpointNode,
-          type: 'endpointNode',
         };
       }
     );
@@ -161,7 +174,7 @@ function Diagram() {
             (endpoint) => endpoint.path === fetch.path
           );
           if (endpoint) {
-            const edgeTypeArray = returnEdgeType(fetch.method);
+            const edgeTypeArray = returnEdgeType(fetch.method); // 'GET'
             return {
               id: uuid(),
               animated: true,
@@ -217,92 +230,93 @@ function Diagram() {
       style={{
         width: '100vw',
         height: 'calc(100vh - 3em)',
-        backgroundColor: '#121212',
+        backgroundColor: 'var(--diagram-bg-color)',
         overflow: 'hidden',
       }}
     >
-      {/* <div
-      //   style={{
-      //     position: 'absolute',
-      //     top: '10px',
-      //     left: '10px',
-      //     zIndex: '1',
-      //   }}
-      // > */}
-      {/* <label htmlFor='legend'>Legend</label> */}
-      {/* <div
-          style={{
-            display: 'inline-block',
-            position: 'relative',
-            cursor: 'pointer',
-          }}
-        > */}
-      <ul
-        style={{
-          position: 'relative',
-          listStyleType: 'none',
-        }}
-      >
-        {/* <li> */}
-        <div
-          style={{
-            height: '1em',
-            width: '2em',
-            backgroundColor: 'limegreen',
-            display: 'inline-block',
-            marginRight: '0.5em',
-          }}
-        />
-        GET
-        {/* </li> */}
-        <li>
-          <div
-            style={{
-              height: '1em',
-              width: '2em',
-              backgroundColor: 'violet',
-              display: 'inline-block',
-              marginRight: '0.5em',
-            }}
-          />
-          PUT
-        </li>
-        <li>
-          <div
-            style={{
-              height: '1em',
-              width: '2em',
-              backgroundColor: 'blue',
-              display: 'inline-block',
-              marginRight: '0.5em',
-            }}
-          />
-          POST
-        </li>
-        <li>
-          <div
-            style={{
-              height: '1em',
-              width: '2em',
-              backgroundColor: 'orange',
-              display: 'inline-block',
-              marginRight: '0.5em',
-            }}
-          />
-          PATCH
-        </li>
-      </ul>
-      {/* </div> */}
+      {showEditor && (
+        <div className='diagram-code-editor'>
+          <CodeEditor file={editorFile} close={() => setShowEditor(false)} />
+        </div>
+      )}
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        proOptions={{ hideAttribution: true }}
+        proOptions={{hideAttribution: true}}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
       >
+        <ul
+          style={{
+            position: 'relative',
+            width: '50%',
+            listStyleType: 'none',
+          }}
+        >
+          {/* <li> */}
+          <div
+            style={{
+              height: '1em',
+              width: '2em',
+              backgroundColor: 'limegreen',
+              display: 'inline-block',
+              marginRight: '0.5em',
+            }}
+          />
+          GET
+          {/* </li> */}
+          <li>
+            <div
+              style={{
+                height: '1em',
+                width: '2em',
+                backgroundColor: 'blue',
+                display: 'inline-block',
+                marginRight: '0.5em',
+              }}
+            />
+            POST
+          </li>
+          <li>
+            <div
+              style={{
+                height: '1em',
+                width: '2em',
+                backgroundColor: 'violet',
+                display: 'inline-block',
+                marginRight: '0.5em',
+              }}
+            />
+            PUT
+          </li>
+          <li>
+            <div
+              style={{
+                height: '1em',
+                width: '2em',
+                backgroundColor: 'orange',
+                display: 'inline-block',
+                marginRight: '0.5em',
+              }}
+            />
+            PATCH
+          </li>
+          <li>
+            <div
+              style={{
+                height: '1em',
+                width: '2em',
+                backgroundColor: 'red',
+                display: 'inline-block',
+                marginRight: '0.5em',
+              }}
+            />
+            DELETE
+          </li>
+        </ul>
         <Panel position='top-right'>
           <button className='verticalButton' onClick={handleVerticalClick}>
             Vertical View
