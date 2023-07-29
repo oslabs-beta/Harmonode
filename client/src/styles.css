@@ -92,6 +92,16 @@ button:hover {
   background-color: transparent !important;
 }
 
+.token.number {
+  /* Your styles for numbers here */
+  color: blue;
+}
+
+.token.property {
+  /* Your styles for keys in objects here */
+  color: green;
+}
+
 .editor-close-btn {
   background-color: rgb(156, 10, 10);
 }
