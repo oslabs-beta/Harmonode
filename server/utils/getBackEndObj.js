@@ -27,8 +27,10 @@ const fullBackEndCreator = (codefiles, serverPath) => {
     allPathArrays.push(getPathArray(file.fullPath));
     pathFileObjs.push({ path: getPathArray(file.fullPath), file });
 
+    // parse the server file first and get each endpoint and where it will go next
     if (file.fullPath === serverPath) {
       serverFileObj = endpointParse(file.contents);
+      console.log(serverFileObj)
     }
   }
 

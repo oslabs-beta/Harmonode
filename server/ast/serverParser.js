@@ -1,27 +1,17 @@
 const babelParser = require("@babel/parser");
 const trav = require("@babel/traverse").default;
 
+import find from "./importsFinder";
+
 const endpointParse = (codeString) => {
   const ast = babelParser.parse(codeString, {
     sourceType: "module",
     plugins: ["jsx"],
   });
 
-  const routesObj = {serverEndPoints: []};
-  const importedRoutes = {};
+  const routesObj = { serverEndPoints: [] };
 
-  trav(ast, {
-    enter(path) {
-      if (path.node.type === "VariableDeclarator") {
-        if (
-          path.node.init.type === "CallExpression" &&
-          path.node.init.callee.name === "require"
-        ) {
-          importedRoutes[path.node.id.name] = path.node.init.arguments[0].value;
-        }
-      }
-    },
-  });
+  const importedRoutes = find(ast);
 
   const findOriginalVal = (variable) => {
     if (
