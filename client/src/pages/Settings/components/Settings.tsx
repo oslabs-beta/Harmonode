@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { SketchPicker } from 'react-color';
+import ColorPicker from 'react-color-picker';
 
 function Settings() {
   const defaultTheme = {
     '--primary-color': '#164b60',
     '--secondary-color': '#1b6b93',
-    '--tertiary-color': '#4caf50',
-    '--quaternary-color': '#4caf50',
+    '--tertiary-color': '#42A186',
+    '--quaternary-color': '#42A186',
     '--inactive-color': '#868484',
     '--font-main-color': '#f6fff5',
   };
@@ -44,10 +46,21 @@ function Settings() {
     '--inactive-color': '#FAD6A5',
     '--font-main-color': '#A7EDE7',
   };
-  //set user customization state
+  //set Choose Your Own Adventure state
   const [themeChoice, setChoice] = useState(false);
-  // let themeChooice = false;
-  let themeChoose;
+
+  //set color picker state
+  const primaryColor = '--primary-color';
+  const [primaryColorChoice, setColorChoice] = useState({
+    '--primary-color': primaryColor,
+  });
+
+  function handleChangeComplete(color) {
+    setColorChoice({ '--primary-color': color.hex });
+  }
+  function onDrag(color) {
+    setColorChoice({ '--primary-color': color.hex });
+  }
 
   function handleClick(theme, e) {
     if (theme !== 'themeChoose') {
@@ -56,54 +69,9 @@ function Settings() {
       }
     } else {
       if (themeChoice === false) {
-        console.log('themeChoice 57', themeChoice);
         setChoice(true);
-        console.log('themeChoice 59', themeChoice);
       } else {
         setChoice(false);
-        console.log('themeChoice 62', themeChoice);
-      }
-      if (themeChoice === true) {
-        console.log('themeChoice 65', themeChoice);
-        themeChoose = (
-          <section>
-            <form
-              onSubmit={(e) => handleSubmit(e, '--primary-color')}
-              style={{ display: 'flex' }}
-            >
-              <input name='inputField' placeholder='type hex code' />
-              <button>Primary Color</button>
-            </form>
-            <form
-              onSubmit={(e) => handleSubmit(e, '--secondary-color')}
-              style={{ display: 'flex' }}
-            >
-              <input name='inputField' placeholder='type hex code' />
-              <button>Secondary Color</button>
-            </form>
-            <form
-              onSubmit={(e) => handleSubmit(e, '--tertiary-color')}
-              style={{ display: 'flex' }}
-            >
-              <input name='inputField' placeholder='type hex code' />
-              <button>Tertiary Color</button>
-            </form>
-            <form
-              onSubmit={(e) => handleSubmit(e, '--quaternary-color')}
-              style={{ display: 'flex' }}
-            >
-              <input name='inputField' placeholder='type hex code' />
-              <button>Quaternary Color</button>
-            </form>
-            <form
-              onSubmit={(e) => handleSubmit(e, '--font-main-color')}
-              style={{ display: 'flex' }}
-            >
-              <input name='inputField' placeholder='type hex code' />
-              <button>Font Color</button>
-            </form>
-          </section>
-        );
       }
     }
   }
@@ -131,9 +99,13 @@ function Settings() {
       <button onClick={(e) => handleClick('themeChoose', e)}>
         Choose Your Own Adventure
       </button>
-      {/* <section>{themeChoose}</section> */}
       {themeChoice ? (
         <section>
+          <ColorPicker value={primaryColor} onDrag={onDrag} />
+          <SketchPicker
+            color={primaryColorChoice}
+            onChangeComplete={handleChangeComplete}
+          />
           <form
             onSubmit={(e) => handleSubmit(e, '--primary-color')}
             style={{ display: 'flex' }}
