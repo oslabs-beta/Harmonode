@@ -1,8 +1,7 @@
-import React, {useCallback, useState} from 'react';
+import React from 'react';
 import {Handle, Position} from 'reactflow';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPenToSquare} from '@fortawesome/free-solid-svg-icons';
-import CodeEditor from '../../../components/CodeEditor';
 
 const handleStyle = {left: 11};
 const handleStyle2 = {left: 42};
