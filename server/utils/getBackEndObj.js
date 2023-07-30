@@ -29,7 +29,7 @@ const fullBackEndCreator = (codefiles, serverPath) => {
 
     // parse the server file first and get each endpoint and where it will go next
     if (file.fullPath === serverPath) {
-      serverFileObj = endpointParse(file.contents);
+      serverFileObj = endpointParse(file.contents, file.fileName);
       console.log(serverFileObj)
     }
   }
