@@ -1,4 +1,4 @@
-@import url(//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css);
+/* @import url(//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css);
 
 @import url(https://fonts.googleapis.com/css?family=Titillium+Web:300);
 .fa-2x {
@@ -12,7 +12,7 @@
   text-align: center;
   vertical-align: middle;
   font-size: 20px;
-}
+} */
 
 .main-menu:hover,
 nav.main-menu.expanded {
@@ -21,30 +21,30 @@ nav.main-menu.expanded {
 }
 
 .main-menu {
-  background: #212121;
+  background-color: var(--secondary-color);
   border-right: 1px solid #e5e5e5;
 
   top: 0;
   bottom: 0;
   height: 100%;
   left: 0;
-  width: 60px;
+  width: 66px;
   overflow: hidden;
   -webkit-transition: width 0.05s linear;
-  transition: width 0.05s linear;
+  transition: width 0.2s linear;
   -webkit-transform: translateZ(0) scale(1, 1);
   z-index: 1000;
 }
 
-.main-menu > ul {
-  margin: 7px 0;
-}
+/* .main-menu > ul {
+  margin: 10px 10px 10px 10px;
+} */
 
+/* icons */
 .main-menu li {
   position: relative;
   display: block;
   width: 250px;
-  color: #999;
 }
 
 .main-menu li > a {
@@ -52,8 +52,7 @@ nav.main-menu.expanded {
   display: table;
   border-collapse: collapse;
   border-spacing: 0;
-  color: #999;
-  font-family: arial;
+  font-family: 'Roboto' sans-serif;
   font-size: 14px;
   text-decoration: none;
   -webkit-transform: translateZ(0) scale(1, 1);
@@ -71,21 +70,29 @@ nav.main-menu.expanded {
   font-size: 18px;
   color: #999;
 }
+.sidebar-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px;
+  background-color: #143542;
+  color: #fff;
+}
 
 .main-menu .nav-text {
   position: relative;
-  display: table-cell;
   vertical-align: middle;
   width: 190px;
-  font-family: 'Titillium Web', sans-serif;
-  color: #999;
+  font-family: 'Roboto', sans-serif;
+  color: var(--font-main-color);
+  font-size: large;
 }
 
-.main-menu > ul.logout {
+/* .main-menu > ul.logout {
   position: absolute;
   left: 0;
   bottom: 0;
-}
+} */
 
 .no-touch .scrollable.hover {
   overflow-y: hidden;
@@ -96,10 +103,8 @@ nav.main-menu.expanded {
   overflow: visible;
 }
 
-a:hover,
-a:focus {
+a:hover a:focus {
   text-decoration: none;
-  /* background-color: aqua; */
 }
 
 nav {
@@ -116,17 +121,16 @@ nav li {
   margin: 0;
   padding: 0;
 }
+
 .main-menu li:hover > a,
 nav.main-menu li.active > a,
-.dropdown-menu > li > a:hover,
-.dropdown-menu > li > a:focus,
+.dropdown-menu > li > a:hover .dropdown-menu > li > a:focus,
 .dropdown-menu > .active > a,
 .dropdown-menu > .active > a:hover,
 .dropdown-menu > .active > a:focus,
 .no-touch .dashboard-page nav.dashboard-menu ul li:hover a,
 .dashboard-page nav.dashboard-menu ul li.active a {
-  color: #fff;
-  background-color: #000000;
+  background-color: #143542 !important;
 }
 .area {
   float: left;
@@ -135,10 +139,9 @@ nav.main-menu li.active > a,
   height: 100%;
 }
 @font-face {
-  font-family: 'Titillium Web';
+  font-family: 'Roboto';
   font-style: normal;
-  font-weight: 300;
-  src: local('Titillium WebLight'), local('TitilliumWeb-Light'),
-    url(http://themes.googleusercontent.com/static/fonts/titilliumweb/v2/anMUvcNT0H1YN4FII8wpr24bNCNEoFTpS2BTjF6FB5E.woff)
-      format('woff');
+  font-weight: 700;
+  src: url(https://fonts.gstatic.com/s/roboto/v29/KFOlCnqEu92Fr1MmWUlfBBc4AMP6lbBP.ttf)
+    format('truetype');
 }

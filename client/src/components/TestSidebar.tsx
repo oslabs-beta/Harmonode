@@ -1,94 +1,97 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { MenuItem, Menu } from 'react-pro-sidebar';
 import './sidebar.css';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
+import PolylineOutlinedIcon from '@mui/icons-material/PolylineOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+// import KeyboardDoubleArrowRightOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowRightOutlined';
+// import KeyboardDoubleArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowLeftOutlined';
+// import { IconButton } from '@mui/material';
+
+const menuItems = [
+  {
+    label: 'Home',
+    icon: <HomeOutlinedIcon />,
+    path: '/home',
+  },
+  {
+    label: 'Projects',
+    icon: <FolderOutlinedIcon />,
+    path: '/projects',
+  },
+  {
+    label: 'Dashboard',
+    icon: <DashboardOutlinedIcon />,
+    path: '/dashboard',
+  },
+  {
+    label: 'Diagram',
+    icon: <PolylineOutlinedIcon />,
+    path: '/diagram',
+  },
+  {
+    label: 'List',
+    icon: <ListAltOutlinedIcon />,
+    path: '/list',
+  },
+  {
+    label: 'Settings',
+    icon: <SettingsOutlinedIcon />,
+    path: '/settings',
+  },
+];
 
 const Sidebar = () => {
-  const [isSubnavOpen, setIsSubnavOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubnavToggle = () => {
-    setIsSubnavOpen((prevState) => !prevState);
+  const [selectedMenuItem, setSelectedMenuItem] = useState(null);
+  const [collapsed, setCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setCollapsed(!collapsed);
+  };
+
+  const handleClick = (path) => {
+    navigate(path);
+  };
+
+  const handleMenuItemClick = (idx) => {
+    setSelectedMenuItem(idx);
   };
 
   return (
     <div>
-      <div className='area'></div>
-      <nav className='main-menu'>
-        <ul>
-          <li>
-            <a href='https://jbfarrow.com'>
-              <i className='fa fa-home fa-2x'></i>
-              <span className='nav-text'>Community Dashboard</span>
-            </a>
-          </li>
-          <li className={isSubnavOpen ? 'has-subnav open' : 'has-subnav'}>
-            <a href='#' onClick={handleSubnavToggle}>
-              <i className='fa fa-globe fa-2x'></i>
-              <span className='nav-text'>Global Surveyors</span>
-            </a>
-          </li>
-          {isSubnavOpen && (
-            <ul className='subnav'>
-              <li>
-                <a href='#'>Submenu Item 1</a>
-              </li>
-              <li>
-                <a href='#'>Submenu Item 2</a>
-              </li>
-              {/* Add more submenu items as needed */}
-            </ul>
-          )}
-          <li className='has-subnav'>
+      {/* <div className={`sidebar-header ${collapsed ? 'collapsed' : ''}`}></div>
+      <IconButton onClick={toggleSidebar}>
+        {collapsed ? (
+          <KeyboardDoubleArrowRightOutlinedIcon />
+        ) : (
+          <KeyboardDoubleArrowLeftOutlinedIcon />
+        )}
+      </IconButton> */}
+      <Menu className={`main-menu ${collapsed ? 'collapsed' : ''}`}>
+        {menuItems.map((item, idx) => (
+          <MenuItem
+            key={idx}
+            icon={item.icon}
+            onClick={() => {
+              handleMenuItemClick(idx);
+              handleClick(item.path);
+            }}
+            style={
+              selectedMenuItem === idx ? { backgroundColor: '#143542' } : {}
+            }
+          >
             <a href='#'>
-              <i className='fa fa-comments fa-2x'></i>
-              <span className='nav-text'>Group Hub Forums</span>
+              <span className='nav-text'>{item.label}</span>
             </a>
-          </li>
-          <li className='has-subnav'>
-            <a href='#'>
-              <i className='fa fa-camera-retro fa-2x'></i>
-              <span className='nav-text'>Survey Photos</span>
-            </a>
-          </li>
-          <li>
-            <a href='#'>
-              <i className='fa fa-film fa-2x'></i>
-              <span className='nav-text'>Surveying Tutorials</span>
-            </a>
-          </li>
-          <li>
-            <a href='#'>
-              <i className='fa fa-book fa-2x'></i>
-              <span className='nav-text'>Surveying Jobs</span>
-            </a>
-          </li>
-          <li>
-            <a href='#'>
-              <i className='fa fa-cogs fa-2x'></i>
-              <span className='nav-text'>Tools &amp; Resources</span>
-            </a>
-          </li>
-          <li>
-            <a href='#'>
-              <i className='fa fa-map-marker fa-2x'></i>
-              <span className='nav-text'>Member Map</span>
-            </a>
-          </li>
-          <li>
-            <a href='#'>
-              <i className='fa fa-info fa-2x'></i>
-              <span className='nav-text'>Documentation</span>
-            </a>
-          </li>
-        </ul>
-
-        <ul className='logout'>
-          <li>
-            <a href='#'>
-              <i className='fa fa-power-off fa-2x'></i>
-              <span className='nav-text'>Logout</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
+          </MenuItem>
+        ))}
+      </Menu>
     </div>
   );
 };
