@@ -1,5 +1,6 @@
 import * as path from "path";
-import endpointParse from "../ast/serverParser";
+// import endpointParse from "../ast/serverParser";
+import endpointParse from "../ast2/serverParser";
 import routerParser from "../ast/routerParser";
 import { FileObj, pathFileObj } from "../types";
 
@@ -21,7 +22,7 @@ const fullBackEndCreator = (codefiles, serverPath) => {
   const pathFileObjs = [];
 
   // this object will have all needed data from the server file, to be retrieved in loop below...
-  let serverFileObj = {};
+  let serverFilePaths = {};
 
   for (let file of codefiles) {
     allPathArrays.push(getPathArray(file.fullPath));
@@ -29,8 +30,8 @@ const fullBackEndCreator = (codefiles, serverPath) => {
 
     // parse the server file first and get each endpoint and where it will go next
     if (file.fullPath === serverPath) {
-      serverFileObj = endpointParse(file.contents, file.fileName);
-      console.log(serverFileObj)
+      serverFilePaths = endpointParse(file.contents, file.fileName);
+      console.log(serverFilePaths)
     }
   }
 
@@ -66,14 +67,13 @@ const fullBackEndCreator = (codefiles, serverPath) => {
     return "no such file exists";
   };
 
-  for (let key in serverFileObj) {
+  for (let breadcrumb of serverFilePaths) {
     // for getting stuff out of routes
-    if (typeof serverFileObj[key] === "string") {
-      const routerFile = navToOtherFile(
-        serverPath,
-        serverFileObj[key]
-      );
-      console.log(routerParser(routerFile.contents))
+    console.log(breadcrumb.nextFile)
+    if (breadcrumb.nextFile) {
+      console.log(breadcrumb.nextFile)
+      const routerFile = navToOtherFile(serverPath, breadcrumb.nextFile);
+      console.log(routerFile)
     }
   }
 };

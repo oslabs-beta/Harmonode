@@ -1,8 +1,8 @@
 export class Breadcrumb {
   constructor() {}
 
-  file(file) {
-    this.file = file;
+  fileName(fileName) {
+    this.fileName = fileName;
     return this;
   }
 

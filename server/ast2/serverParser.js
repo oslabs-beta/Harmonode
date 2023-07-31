@@ -15,6 +15,15 @@ const endpointParse = (codeString, fileName) => {
 
   const importedRoutes = find(ast);
 
+  // at ths point, we have importedRoutes...
+// {
+//   path: 'path',
+//   express: 'express',
+//   harmodevsRoutes: './routes/harmodevsRoutes',
+//   usersRoutes: './routes/usersRoutes',
+//   coolStuffRoutes: './routes/coolRoutes'
+// }
+
   const findOriginalVal = (variable) => {
     if (
       variable in importedRoutes &&
@@ -34,25 +43,21 @@ const endpointParse = (codeString, fileName) => {
         current.callee.property.name === "use"
       ) {
         if (current.arguments[0].value) {
-          let newTrail = [];
-          newTrail.push(
-            new Breadcrumb().file(fileName).path(current.arguments[0].value)
-          );
-          paths.push(newTrail);
-
+          let breadcrumb = new Breadcrumb().fileName(fileName).path(current.arguments[0].value).method('use')
           if (
             current.arguments[1] &&
             current.arguments[1].type === "Identifier"
           ) {
-            const nextInLine = current.arguments[1];
-            routesObj[nextInLine.name] = findOriginalVal(nextInLine.name);
+            const nextNodeInLine = current.arguments[1];
+            breadcrumb.nextFile(findOriginalVal(nextNodeInLine.name));
           }
+          paths.push(breadcrumb)
         }
       }
     },
   });
 
-  return routesObj;
+  return paths;
 };
 
 export default endpointParse;
