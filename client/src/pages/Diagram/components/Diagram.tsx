@@ -1,63 +1,86 @@
 import React, {useCallback, useState, useContext, useEffect} from 'react';
 import {v4 as uuid} from 'uuid';
+import './diagram.css';
 import {ProjectsContext} from '../../../context/contextStore';
 import ReactFlow, {
   useNodesState,
   useEdgesState,
   addEdge,
   MiniMap,
+  Controls,
   Background,
   BackgroundVariant,
-  Controls,
+  Panel,
   useReactFlow,
   useNodesInitialized,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import {PlaylistAddOutlined} from '@mui/icons-material';
-// start with fetchFiles?
-// get data from interface astroot in types.ts
-// formSubmit in addproject.tsx
-// setActiveProject holds all data thats loaded for current project
-// ast:files
-// grab name from active project name and state
+import PathNode from './PathNode';
+import GetEdge from './GetEdge';
+import PostEdge from './PostEdge';
+import PutEdge from './PutEdge';
+import PatchEdge from './PatchEdge';
+import DeleteEdge from './DeleteEdge';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faPenToSquare} from '@fortawesome/free-solid-svg-icons';
+import CodeEditor from '../../../components/CodeEditor';
 
-// Need some function to be able to create nodes each time "save and load project" is clicked
-// Will also render the data being passed onto the nodes
-// How do we determine/measure the amount of nodes we need per project? fileLoad counter?
-// One node will have name of endpoint
-// Possibly will need ANOTHER node to specifiy what kind of request it is (post, delete etc.)
-// The next node(s) will have the data being sent to all the fetches
+const nodeTypes = {pathNode: PathNode};
+const edgeTypes = {
+  getEdge: GetEdge,
+  postEdge: PostEdge,
+  putEdge: PutEdge,
+  patchEdge: PatchEdge,
+  deleteEdge: DeleteEdge,
+};
+
+const editIcon = <FontAwesomeIcon icon={faPenToSquare} />;
 
 function Diagram() {
-  // onclick of "save project and load" button nodes are created
-  // show all files EXCEPT the ones that were selected to be ignored
   const {fitView} = useReactFlow();
   const {activeProject} = useContext(ProjectsContext);
+  const [showEditor, setShowEditor] = useState(false);
+  const [editorFile, setEditorFile] = useState({});
 
-  // console.log(activeProject);
+  if (activeProject.ast.fetches.length === 0) return <h1>No project loaded</h1>;
+  // eventually going to use this paths to generate all of the path nodes and all of the edges
+  const paths = [...activeProject.ast.fetches, ...activeProject.ast.endpoints];
+  const ast = activeProject.ast;
+  const fetchFilesLength = ast.fetchFiles.length - 1;
+  const fetchesLength = ast.endpointFiles[0].endpoints.length - 1;
+  const spacing = 1000;
+
+  function clickEdit(file) {
+    setEditorFile(file);
+    setShowEditor(true);
+  }
+
+  // codMinimap colors
 
   const nodeColor = (node) => {
-    switch (node.id) {
-      case '1':
-        return '#FCC8D1';
-      case '2':
+    switch (node.type) {
+      case 'pathNode':
+        return '#19A7CE';
+      case 'endpointNode':
         return '#98DFD6';
       case '3':
-        return '#FFF89C';
+        return '#FCC8D1';
       case '4':
-        return '#19A7CE';
-      default:
+        return '#FFF89C';
+      case 'errorNode':
         return '#ff0072';
+      default:
+        return '#F1F1F1';
     }
   };
-
-  const defaultNodeStyle1 = {
-    border: '3px solid #ff0071',
-    background: '#FCC8D1',
+  //diagram colors
+  const fetchFileNode = {
+    border: '3px solid #146C94',
+    background: '#19A7CE',
     borderRadius: 15,
   };
 
-  const defaultNodeStyle2 = {
+  const endpointNode = {
     border: '3px solid #1B9C85',
     background: '#98DFD6',
     borderRadius: 15,
@@ -69,49 +92,77 @@ function Diagram() {
     borderRadius: 15,
   };
 
-  const defaultNodeStyle4 = {
-    border: '3px solid #146C94',
-    background: '#19A7CE',
+  const errorNode = {
+    border: '3px solid #ff0071',
+    background: '#FCC8D1',
     borderRadius: 15,
   };
+  // State for switching between vertical and horizontal view
+  const [orientation, setOrientation] = useState('horizontal');
 
-  const testObj = {
-    firstName: 'Hamza',
-    lastName: 'C',
-    age: 27,
-  };
-  /*
-  activeProject.ast.fetchFiles.map( (file, idx) => {
-    return {
-      id: idx,
-      position: {x: 0, y: idx * 100},
-      data: {label: file.fileName},
-      style: defaultNodeStyle1
-    }
-  }) */
-  function generateNodes(project = activeProject) {
+  function generateNodes(project = activeProject, orientation) {
+    // Common spacing for horizontal/vertical stacking
+
     const initialFetchNodes = project.ast.fetchFiles.map((file, idx) => {
+      const position =
+        orientation === 'horizontal'
+          ? {x: idx * (spacing / fetchFilesLength), y: 0}
+          : {x: 0, y: idx * (spacing / fetchFilesLength / 2)};
+
       return {
-        id: file.id,
-        position: {x: idx * 200, y: 0},
-        data: {label: file.fileName}, //each file needs an id and we'll use the id to connect the nodes
-        style: defaultNodeStyle1,
+        id: file.id, // This is fetchFiles.id
+        position,
+        animated: true,
+        // position: { x: idx * 200, y: 0 },
+        data: {label: file.fileName, file: file, showEditor: clickEdit}, //each file needs an id and we'll use the id to connect the nodes
+        style: fetchFileNode,
+        type: 'pathNode',
       };
     });
 
     const initialEndpointNodes = project.ast.endpointFiles[0].endpoints.map(
       (file, idx) => {
+        const position =
+          orientation === 'horizontal'
+            ? {
+                x: idx * (spacing / fetchesLength),
+                y: spacing / fetchesLength,
+              }
+            : {
+                x: spacing / fetchesLength,
+                y: idx * (spacing / 2 / fetchesLength),
+              };
         return {
-          id: file.id,
-          position: {x: idx * 200, y: 200},
+          id: file.id, // This is endpoints.id
+          position,
+          animated: true,
+          // position: { x: idx * 200, y: 200 },
           data: {label: file.path},
-          style: defaultNodeStyle2,
+          style: endpointNode,
         };
       }
     );
 
     return [...initialFetchNodes, ...initialEndpointNodes];
   }
+
+  function returnEdgeType(method) {
+    switch (method) {
+      case 'GET':
+        return ['getEdge', 'a'];
+      case 'POST':
+        return ['postEdge', 'b'];
+      case 'PUT':
+        return ['putEdge', 'c'];
+      case 'PATCH':
+        return ['patchEdge', 'd'];
+      case 'DELETE':
+        return ['deleteEdge', 'e'];
+      default:
+        return ['getEdge', 'a'];
+    }
+  }
+
   // Need to add functionality so that for each proj. load..
   // it will create nodes based on what is necesscary
   // We determine how many nodes are necesscary based on what user selected and on fileLoad for count?
@@ -123,10 +174,14 @@ function Diagram() {
             (endpoint) => endpoint.path === fetch.path
           );
           if (endpoint) {
+            const edgeTypeArray = returnEdgeType(fetch.method); // 'GET'
             return {
               id: uuid(),
+              animated: true,
               target: endpoint.id,
               source: file.id,
+              type: edgeTypeArray[0],
+              sourceHandle: edgeTypeArray[1],
             };
           }
           return null;
@@ -135,89 +190,141 @@ function Diagram() {
     });
   }
 
-  // const initialEdges = [
-  //   { id: 'e0-1', source: '0', target: '1' }, //source MUST match id in order to connect
-  //   { id: 'e1-2', source: '1', target: '2' },
-  //   { id: 'e2-3', source: '2', target: '3' },
-  //   { id: 'e3-4', source: '3', target: '4' },
-  // ];
-  // create empty array (we'll be using .map on another .map)
+  // State Management for nodes and edges (connectors)
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(generateNodes());
-  const [edges, setEdges, onEdgesChange] = useEdgesState(generateEdges());
+  const [nodes, setNodes, onNodesChange] = useNodesState(
+    generateNodes(activeProject, orientation)
+  );
+  const [edges, setEdges, onEdgesChange] = useEdgesState(
+    generateEdges(activeProject)
+  );
   const nodesInitialized = useNodesInitialized();
-  // console.log(activeProject);
+
   useEffect(() => {
-    // const newFetchNodes = nodes
-    //   .map((node) => {
-    //     const match = activeProject.ast.fetchFiles.find(
-    //       (file) => file.id === node.id
-    //     );
-    //     if (match) {
-    //       return {
-    //         ...node,
-    //         data: {label: match.fileName},
-    //       };
-    //     }
-    //     return null;
-    //   })
-    //   .filter((node) => node !== null);
-    // const newEndpointNodes = nodes
-    //   .map((node) => {
-    //     const match = activeProject.ast.endpointFiles[0].endpoints.find(
-    //       (file) => file.id === node.id
-    //     );
-    //     if (match) {
-    //       return {
-    //         ...node,
-    //         data: {label: match.path},
-    //       };
-    //     }
-    //     return null;
-    //   })
-    //   .filter((node) => node !== null);
-    // const newNodes = [...newFetchNodes, ...newEndpointNodes];
-    setNodes(generateNodes(activeProject));
+    setNodes(generateNodes(activeProject, orientation));
     setEdges(generateEdges(activeProject));
-  }, [activeProject]);
+  }, [activeProject, orientation]);
 
   useEffect(() => {
     fitView();
   }, [nodesInitialized]);
-  // combine nodes with spread?
-
-  // const connectNodes () => {
-  // const combinedNodes = [...initialNodes, ...setActiveProject]
-  //
-  // }
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params) => setEdges((eds) => addEdge(params, eds)), // Not doing anything for now
     [setEdges]
   );
 
-  const onNodeClick = useCallback((event, node) => {
-    console.log(node, 'node clicked');
-  }, []);
+  const handleHorizontalClick = () => {
+    setOrientation('horizontal');
+  };
+  const handleVerticalClick = () => {
+    setOrientation('vertical');
+  };
+
+  // const onNodeClick = useCallback((event, node) => {
+  //   console.log(node, 'node clicked');
+  // }, []);
 
   return (
     <div
       style={{
         width: '100vw',
         height: 'calc(100vh - 3em)',
-        backgroundColor: '#526D82',
+        backgroundColor: 'var(--diagram-bg-color)',
         overflow: 'hidden',
       }}
     >
+      {showEditor && (
+        <div className='diagram-code-editor'>
+          <CodeEditor file={editorFile} close={() => setShowEditor(false)} />
+        </div>
+      )}
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        onNodeClick={onNodeClick} // to test if node is clicked
         proOptions={{hideAttribution: true}}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
       >
+        <ul
+          style={{
+            position: 'relative',
+            width: '50%',
+            listStyleType: 'none',
+          }}
+        >
+          {/* <li> */}
+          <div
+            style={{
+              height: '1em',
+              width: '2em',
+              backgroundColor: 'limegreen',
+              display: 'inline-block',
+              marginRight: '0.5em',
+            }}
+          />
+          GET
+          {/* </li> */}
+          <li>
+            <div
+              style={{
+                height: '1em',
+                width: '2em',
+                backgroundColor: 'blue',
+                display: 'inline-block',
+                marginRight: '0.5em',
+              }}
+            />
+            POST
+          </li>
+          <li>
+            <div
+              style={{
+                height: '1em',
+                width: '2em',
+                backgroundColor: 'violet',
+                display: 'inline-block',
+                marginRight: '0.5em',
+              }}
+            />
+            PUT
+          </li>
+          <li>
+            <div
+              style={{
+                height: '1em',
+                width: '2em',
+                backgroundColor: 'orange',
+                display: 'inline-block',
+                marginRight: '0.5em',
+              }}
+            />
+            PATCH
+          </li>
+          <li>
+            <div
+              style={{
+                height: '1em',
+                width: '2em',
+                backgroundColor: 'red',
+                display: 'inline-block',
+                marginRight: '0.5em',
+              }}
+            />
+            DELETE
+          </li>
+        </ul>
+        <Panel position='top-right'>
+          <button className='verticalButton' onClick={handleVerticalClick}>
+            Vertical View
+          </button>
+          <button className='horizontalButton' onClick={handleHorizontalClick}>
+            Horizontal View
+          </button>
+        </Panel>
         <Controls />
         <MiniMap nodeColor={nodeColor} zoomable pannable />
         <Background
@@ -229,7 +336,7 @@ function Diagram() {
         <Background
           id='2'
           gap={100}
-          offset={1}
+          // offset={1}
           color='#ccc'
           variant={BackgroundVariant.Cross}
         />

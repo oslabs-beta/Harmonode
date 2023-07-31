@@ -1,8 +1,8 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {useNavigate} from 'react-router';
+import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import ProjectListCard from './ProjectListCard';
-import {ProjectsContext} from '../../../context/contextStore';
-import {v4 as uuid} from 'uuid';
+import { ProjectsContext } from '../../../context/contextStore';
+import { v4 as uuid } from 'uuid';
 
 interface projectObject {
   name: string;
@@ -14,7 +14,7 @@ interface projectObject {
 }
 // Component to list all of the projects that have been saved previously
 function ListProjects() {
-  const {projects} = useContext(ProjectsContext);
+  const { projects } = useContext(ProjectsContext);
   const navigate = useNavigate();
 
   const projectComponents = projects.map((project) => {
@@ -29,7 +29,9 @@ function ListProjects() {
     <div>
       <h1>Projects :</h1>
       {projectComponents}
-      <button onClick={navigateElsewhere}>Clear Project List</button>
+      <button className='projPageButtons' onClick={navigateElsewhere}>
+        Clear Project List
+      </button>
     </div>
   );
 }

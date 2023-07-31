@@ -57,6 +57,7 @@ h6 {
 button {
   background-color: var(--tertiary-color);
   color: var(--font-main-color);
+  border-radius: 15px;
   padding: 14px 20px;
   margin: 8px 0;
   border: none;
@@ -65,5 +66,63 @@ button {
 }
 
 button:hover {
-  opacity: 0.8;
+  background-color: #54a257;
+}
+
+/*
+=======================
+   Code Editor Styles
+=======================
+*/
+.code-editor {
+  display: flex;
+  flex-direction: column;
+  background: rgb(29, 28, 28);
+  border-radius: 15px;
+  min-width: 35rem;
+}
+
+.editor-container {
+  max-height: 60vh;
+  overflow-y: auto;
+  cursor: default;
+}
+
+.editor-name {
+  padding: 0.4em;
+  margin: 0;
+  user-select: none;
+}
+
+.token.operator {
+  background-color: transparent !important;
+}
+
+.token.number {
+  /* Your styles for numbers here */
+  color: blue;
+}
+
+.token.property {
+  /* Your styles for keys in objects here */
+  color: green;
+}
+
+.editor-close-btn {
+  background-color: rgb(156, 10, 10);
+}
+
+.editor-save-btn,
+.editor-close-btn {
+  margin: 0.5em 1em 0.5em 1em;
+}
+
+.code-editor-save-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--primary-color);
+  color: var(--font-main-color);
+  padding: 1em;
 }

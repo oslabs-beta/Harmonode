@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, { useState, useContext } from 'react';
 
 //import react pro sidebar
 import {
@@ -7,7 +7,7 @@ import {
   MenuItem,
   SubMenu,
 } from 'react-pro-sidebar';
-import {useNavigate} from 'react-router';
+import { useNavigate } from 'react-router';
 //import mui icons for sidebar
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
@@ -30,6 +30,7 @@ function Sidebar() {
   const navigate = useNavigate();
 
   const handleClick = (path) => {
+    console.log('HERE');
     navigate(path);
     // console.log(window.location.href, 'url');
   };
@@ -56,7 +57,7 @@ function Sidebar() {
           {/* small and big changes using sidebarCollapse state */}
           <p>{sidebarCollapse ? 'Hn' : 'Harmonode'}</p>
         </div>
-        <div onClick={sidebarIconClick} style={{cursor: 'pointer'}}>
+        <div onClick={sidebarIconClick} style={{ cursor: 'pointer' }}>
           {/* changing sidebar collapse icon on click */}
           {sidebarCollapse ? (
             <KeyboardDoubleArrowRightOutlinedIcon />
@@ -71,10 +72,15 @@ function Sidebar() {
         <button onClick={testClick} type='button'>clickMe</button> */}
         <Menu
           menuItemStyles={{
-            button: {'&:hover': {backgroundColor: 'var(--primary-color)'}},
+            button: { '&:hover': { backgroundColor: 'var(--primary-color)' } },
           }}
         >
-          <MenuItem icon={<HomeOutlinedIcon />}>Home</MenuItem>
+          <MenuItem
+            icon={<HomeOutlinedIcon />}
+            onClick={() => handleClick('/home')}
+          >
+            Home
+          </MenuItem>
           <MenuItem
             icon={<FolderOutlinedIcon />}
             onClick={() => handleClick('/projects')}

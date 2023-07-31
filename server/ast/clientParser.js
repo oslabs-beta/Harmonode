@@ -1,239 +1,146 @@
-// Import the required babel libraries
-const babelParser = require('@babel/parser');
+const {parse} = require('@babel/parser');
+const generate = require('@babel/generator').default;
 const trav = require('@babel/traverse').default;
 
-// Function to parse the provided code string to fetch all URLs
-const fetchParser = (codeString) => {
-  // Parse the code string into an AST (Abstract Syntax Tree)
-  const ast = babelParser.parse(codeString, {
+const input = `
+const express = require('express');
+const fetch = require('node-fetch');
+const app = express();
+let data = {user: 'WRONG USER', role: 'WRONG ROLE'}
+app.listen(3000, (data) => {
+  data = {user: 'RIGHT USER', role: 'RIGHT ROLE'}
+  fetch('http://localhost:3000/harmodevs', {
+    method: 'POST',
+    headers: { contentType: 'application/json' },
+    body: JSON.stringify(data)
+  });
+  fetch('http://localhost:3000/cool_stuff');
+  fetch('http://localhost:3000/harmodevious');
+});
+`;
+
+function fetchParser(input) {
+  // Parse the input to an Abstract Syntax Tree (AST)
+  const ast = parse(input, {
     sourceType: 'module',
-    plugins: ['jsx'],
+    plugins: ['jsx', 'flow'],
   });
 
-  // List to store all fetched URLs
-  const urlsList = [];
+  // Create an object to hold all variables in scope
+  const allScopedVars = {};
 
-  // List to store all variables scoped within the function
-  const allScopedVars = [];
-  // Traverse the AST to collect all scoped variables
+  // Container for parsed fetch calls
+  const fetchCalls = [];
+
+  // Traverse the AST
   trav(ast, {
     enter(path) {
-      // If node is a variable declarator and has an identifier and initializer
+      // Check for assignment expressions and store the variable to allScopedVars
+      if (
+        path.node.type === 'AssignmentExpression' &&
+        path.node.left &&
+        path.node.right
+      ) {
+        if (path.node.left.type === 'Identifier') {
+          allScopedVars[path.node.left.name] = path.node.right;
+        }
+      }
+
+      // Check for variable declarations and store the variable to allScopedVars
       if (
         path.node.type === 'VariableDeclarator' &&
         path.node.id &&
         path.node.init
       ) {
-        // If the init node is an identifier
-        if (path.node.init.type === 'Identifier') {
-          if (path.node.id.name)
-            // Store the name and value of the scoped variable
-            allScopedVars[path.node.id.name] = {
-              assignedVar: path.node.init.name,
-            };
-        } else if (path.node.id.name)
-          // Else, directly store the value of the variable
-          allScopedVars[path.node.id.name] = path.node.init.value;
+        allScopedVars[path.node.id.name] = path.node.init;
       }
     },
   });
 
-  // Function to get the original value of a variable
-  const findOriginalVal = (variable) => {
-    if (
-      variable in allScopedVars &&
-      typeof allScopedVars[variable] === 'string'
-    )
-      // If the variable exists and its value is a string, return it
-      return allScopedVars[variable];
-
-    // Else, recursively find the original value
-    return findOriginalVal(allScopedVars[variable].assignedVar);
-  };
-
-  // Traverse the AST again to collect all fetch calls
-  trav(ast, {
-    enter(path) {
-      // Check if node is a fetch call
-      const isFetchCall =
-        path.node.type === 'CallExpression' &&
-        path.node.callee?.name === 'fetch';
-
-      if (isFetchCall) {
-        // Fetch the argument of the fetch call
-        const fetchArg = path.node.arguments[0];
-        let fetchObj = {};
-
-        if (path.node.arguments.length > 1) {
-          fetchObj = getFetchDetails(path.node.arguments[1].properties, path);
+  // Function to retrieve the body of a fetch request
+  function getFetchBody(body, path) {
+    let bodyDetails = {stringified: false};
+    if (body.type === 'CallExpression') {
+      if (
+        body.callee.object.name === 'JSON' &&
+        body.callee.property.name === 'stringify'
+      ) {
+        const argument = body.arguments[0];
+        if (argument.type === 'Identifier') {
+          const originalValue = allScopedVars[argument.name];
+          if (typeof originalValue === 'object' && originalValue.properties) {
+            const properties = originalValue.properties;
+            bodyDetails.data = properties.map((prop) => ({
+              key: prop.key.name,
+              value: prop.value.value,
+            }));
+            bodyDetails.stringified = true;
+          }
         }
-        // console.log(fetchObj);
-        if (path.node.arguments.length === 1) fetchObj.method = 'GET';
-        // Handle different types of arguments
-        if (fetchArg.type === 'StringLiteral') {
-          fetchObj['path'] = handleStringLiteral(fetchArg);
-        } else if (fetchArg.type === 'TemplateLiteral') {
-          fetchObj['path'] = handleTemplateLiteral(fetchArg);
-        } else if (fetchArg.type === 'Identifier') {
-          fetchObj['path'] = handleIdentifier(fetchArg, findOriginalVal);
-        }
-        urlsList.push(fetchObj);
       }
-    },
-  });
-
-  // Return the list of URLs
-  return urlsList;
-};
-
-// Function to handle string literals in fetch arguments
-function handleStringLiteral(fetchArg) {
-  // If the argument has a value, add it to the list of URLs
-  if (fetchArg.value) {
-    return fetchArg.value;
-  }
-}
-
-// Function to handle template literals in fetch arguments
-function handleTemplateLiteral(fetchArg) {
-  // If the argument has a raw value, add it to the list of URLs
-  const rawValue = fetchArg.quasis?.[0]?.value?.raw;
-  if (rawValue !== null) {
-    return rawValue;
-  }
-}
-
-// Function to handle identifiers in fetch arguments
-function handleIdentifier(fetchArg, findOriginalVal) {
-  // If the argument has an original value, add it to the list of URLs
-  const originalValue = findOriginalVal(fetchArg.name);
-  if (originalValue !== null) {
-    return originalValue;
-  }
-}
-
-function getFetchDetails(properties, path) {
-  const details = {};
-  for (const property of properties) {
-    if (property.key.name == 'method') {
-      details['method'] = property.value.value;
-    }
-    if (property.key.name.toLowerCase() === 'headers') {
-      details['headers'] = getFetchHeaders(property.value.properties);
-    }
-    if (property.key.name == 'body') {
-      details['body'] = getFetchBody(property.value, path);
-    }
-  }
-  // default to get if there is no method specified
-  if (!details.hasOwnProperty('method')) details['method'] = 'GET';
-  return details;
-}
-
-function getFetchHeaders(properties) {
-  const headers = {};
-  for (const property of properties) {
-    if (property.key.value.toLowerCase() === 'content-type')
-      headers.contentType = property.value.value;
-  }
-  return headers;
-}
-
-function getFetchBody(body, path) {
-  let bodyDetails = {stringified: false};
-  // if the data is being stringified before being sent
-  if (body.type === 'CallExpression') {
-    if (
-      body.callee.object.name === 'JSON' &&
-      body.callee.property.name === 'stringify'
-    ) {
-      const argument = body.arguments[0].name;
-      const binding = path.scope.getBinding(argument);
-      if (binding && binding.path.node.init.type === 'ObjectExpression') {
-        const properties = binding.path.node.init.properties;
+    } else if (body.type === 'Identifier') {
+      const originalValue = allScopedVars[body.name];
+      if (typeof originalValue === 'object' && originalValue.properties) {
+        const properties = originalValue.properties;
         bodyDetails.data = properties.map((prop) => ({
           key: prop.key.name,
           value: prop.value.value,
         }));
+        bodyDetails.stringified = false;
       }
-      bodyDetails.stringified = true;
     }
-  } else if (body.type === 'Identifier') {
-    // if the body field is assigned an Identifier directly
-    const argument = body.name;
-    const binding = path.scope.getBinding(argument);
-    if (binding && binding.path.node.init.type === 'ObjectExpression') {
-      const properties = binding.path.node.init.properties;
-      bodyDetails.data = properties.map((prop) => ({
-        key: prop.key.name,
-        value: prop.value.value,
-      }));
-    }
-  } else {
-    bodyDetails.data = body.value;
+    return bodyDetails;
   }
-  // console.log(bodyDetails);
-  return bodyDetails;
+
+  // Second pass through the AST
+  trav(ast, {
+    enter(path) {
+      if (
+        path.node.type === 'CallExpression' &&
+        path.node.callee.name === 'fetch'
+      ) {
+        // Get the URL of the fetch call
+        const fetchUrl = generate(path.node.arguments[0]).code.replace(
+          /['"]+/g,
+          ''
+        );
+        const fetchOptions = path.node.arguments[1];
+
+        if (fetchOptions) {
+          // Get the method of the fetch call
+          const methodProp = fetchOptions.properties.find(
+            (p) => p.key.name === 'method'
+          );
+          const method = methodProp
+            ? generate(methodProp.value).code.replace(/['"]+/g, '')
+            : 'GET';
+          // Get the body of the fetch call
+          const bodyProp = fetchOptions.properties.find(
+            (p) => p.key.name === 'body'
+          );
+          const body = bodyProp ? getFetchBody(bodyProp.value) : null;
+
+          // Push the method, URL, and body of the fetch call to the fetchCalls array
+          fetchCalls.push({
+            method,
+            path: fetchUrl,
+            body,
+          });
+        } else {
+          // If the fetch call has no options, push the method and URL to the fetchCalls array
+          fetchCalls.push({
+            method: 'GET',
+            path: fetchUrl,
+          });
+        }
+      }
+    },
+  });
+
+  // Return the array of parsed fetch calls
+  return fetchCalls;
 }
 
-const code = `
-import React, { useEffect } from "react";
+// console.log(fetchParser(input));
 
-function AsyncCall() {
-  const [harmodevs, setHarmodevs] = useState([]);
-  // let data = {user: 'test', password: 'test'}
-
-  useEffect(() => {
-    const getDevs = async () => {
-      const data = {user: 'bob', password: 'bob123', email: 'bob@bob.com'}
-      const reply = await fetch("http://localhost:3000/harmodevs", {
-        method: 'POST', 
-        mode: "cors", 
-        headers: {
-        "Content-Type": "application/json",
-        }, 
-        body: 1
-      });
-      const parsedList = await reply.json();
-      if (parsedList.length > 0) setHarmodevs(parsedList);
-    };
-    
-    const getCoolStuff = async () => {
-      const reply = await fetch("http://localhost:3000/cool_stuff");
-      const parsedList2 = await reply.json();
-      if (parsedList2.length > 0) console.log(parsedList2);
-    };
-
-    getDevs();
-    getCoolStuff();
-  }, []);
-
-  useEffect(() => {
-    fetch("http://localhost:3000/harmodevious")
-      .then((res) => res.json())
-      .then((list) => setHarmodevs(list));
-  }, []);
-
-  return <div>AsyncCall</div>;
-}
-
-export default AsyncCall;
-`;
-
-/*
-Example return from code snippet above
-[
-  {
-    method: 'POST',
-    headers: { contentType: 'application/json' },
-    body: { stringified: false, data: 1 },
-    path: 'http://localhost:3000/harmodevs'
-  },
-  { method: 'GET', path: 'http://localhost:3000/cool_stuff' },
-  { method: 'GET', path: 'http://localhost:3000/harmodevious' }
-]
-
-*/
-
-// console.log(fetchParser(code));
 export default fetchParser;
