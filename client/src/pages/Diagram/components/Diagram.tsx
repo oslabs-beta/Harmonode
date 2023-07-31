@@ -182,6 +182,7 @@ function Diagram() {
               source: file.id,
               type: edgeTypeArray[0],
               sourceHandle: edgeTypeArray[1],
+              data: {file: fetch},
             };
           }
           return null;
@@ -256,63 +257,36 @@ function Diagram() {
             listStyleType: 'none',
           }}
         >
-          {/* <li> */}
           <div
-            style={{
-              height: '1em',
-              width: '2em',
-              backgroundColor: 'limegreen',
-              display: 'inline-block',
-              marginRight: '0.5em',
-            }}
+            className='diagram-legend-item'
+            style={{backgroundColor: 'limegreen'}}
           />
           GET
-          {/* </li> */}
           <li>
             <div
-              style={{
-                height: '1em',
-                width: '2em',
-                backgroundColor: 'blue',
-                display: 'inline-block',
-                marginRight: '0.5em',
-              }}
+              className='diagram-legend-item'
+              style={{backgroundColor: 'blue'}}
             />
             POST
           </li>
           <li>
             <div
-              style={{
-                height: '1em',
-                width: '2em',
-                backgroundColor: 'violet',
-                display: 'inline-block',
-                marginRight: '0.5em',
-              }}
+              className='diagram-legend-item'
+              style={{backgroundColor: 'violet'}}
             />
             PUT
           </li>
           <li>
             <div
-              style={{
-                height: '1em',
-                width: '2em',
-                backgroundColor: 'orange',
-                display: 'inline-block',
-                marginRight: '0.5em',
-              }}
+              className='diagram-legend-item'
+              style={{backgroundColor: 'orange'}}
             />
             PATCH
           </li>
           <li>
             <div
-              style={{
-                height: '1em',
-                width: '2em',
-                backgroundColor: 'red',
-                display: 'inline-block',
-                marginRight: '0.5em',
-              }}
+              className='diagram-legend-item'
+              style={{backgroundColor: 'red'}}
             />
             DELETE
           </li>
