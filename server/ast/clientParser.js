@@ -8,11 +8,11 @@ const fetch = require('node-fetch');
 const app = express();
 let data = {user: 'WRONG USER', role: 'WRONG ROLE'}
 app.listen(3000, (data) => {
-  data = {user: 'RIGHT USER', role: 'RIGHT ROLE'}
+  //data = {user: 'RIGHT USER', role: 'RIGHT ROLE'}
   fetch('http://localhost:3000/harmodevs', {
     method: 'POST',
     headers: { contentType: 'application/json' },
-    body: JSON.stringify(data)
+    body: {user: 'RIGHT USER', role: 'RIGHT ROLE'}
   });
   fetch('http://localhost:3000/cool_stuff');
   fetch('http://localhost:3000/harmodevious');
@@ -59,7 +59,8 @@ function fetchParser(input) {
 
   // Function to retrieve the body of a fetch request
   function getFetchBody(body, path) {
-    let bodyDetails = {stringified: false};
+    const bodyDetails = {stringified: false, keys: []};
+    console.log(body.type);
     if (body.type === 'CallExpression') {
       if (
         body.callee.object.name === 'JSON' &&
@@ -70,10 +71,7 @@ function fetchParser(input) {
           const originalValue = allScopedVars[argument.name];
           if (typeof originalValue === 'object' && originalValue.properties) {
             const properties = originalValue.properties;
-            bodyDetails.data = properties.map((prop) => ({
-              key: prop.key.name,
-              value: prop.value.value,
-            }));
+            properties.forEach((prop) => bodyDetails.keys.push(prop.key.name));
             bodyDetails.stringified = true;
           }
         }
@@ -82,12 +80,13 @@ function fetchParser(input) {
       const originalValue = allScopedVars[body.name];
       if (typeof originalValue === 'object' && originalValue.properties) {
         const properties = originalValue.properties;
-        bodyDetails.data = properties.map((prop) => ({
-          key: prop.key.name,
-          value: prop.value.value,
-        }));
+        properties.forEach((prop) => bodyDetails.keys.push(prop.key.name));
         bodyDetails.stringified = false;
       }
+    } else if (body.type === 'ObjectExpression') {
+      body.properties.forEach((prop) => {
+        bodyDetails.keys.push(prop.key.name);
+      });
     }
     return bodyDetails;
   }
@@ -141,6 +140,6 @@ function fetchParser(input) {
   return fetchCalls;
 }
 
-// console.log(fetchParser(input));
+// console.log(fetchParser(input)[0]);
 
 export default fetchParser;
