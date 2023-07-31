@@ -37,39 +37,6 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
 
   for (const file of codeFiles) {
     // getting the AST for fetches
-    const parsedFetchesArray = fetchParser(file.contents);
-
-    const fetchesArray = parsedFetchesArray.map((fetch) => {
-      const fetchStore = `${fetch.path}-${fetch.method}`;
-      if (!fetchPaths.hasOwnProperty(fetchStore)) {
-        fetchPaths[fetchStore] = {
-          ...fetch,
-          path: getEndpoint(fetch.path),
-          id: uuid(),
-        };
-      }
-
-      return fetchPaths[fetchStore];
-    });
-
-    // new version -----
-
-    // for each file with it's small list of fetches, create a new object.
-    // this new object will have a name,
-
-    // ------
-
-    if (parsedFetchesArray.length > 0) {
-      componentObj.fetchFiles.push({
-        fileName: file.fileName,
-        fullPath: file.fullPath,
-        filePath: file.filePath,
-        id: uuid(),
-        lastUpdated: file.mDate,
-        fetches: fetchesArray,
-      });
-    }
-
     allPathArrays.push(getPathArray(file.fullPath, serverPath));
     // if it's the server path, let's load the server stuff into an ast
     if (file.fullPath === serverPath) {
