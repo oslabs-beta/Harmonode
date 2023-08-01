@@ -10,6 +10,7 @@ import {
 import {v4 as uuid} from 'uuid';
 import {getPathArray} from './pathUtils';
 import fullBackEndCreator from './getBackEndObj';
+import {blueGrey} from '@mui/material/colors';
 
 // module that creates the component object that will be sent to the front end
 
@@ -33,7 +34,6 @@ export default function createComponentObject(codeFiles, serverPath) {
 function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
   const paths = {};
   const allPathArrays: Array<Array<string>> = [];
-  fullBackEndCreator(codeFiles, serverPath);
 
   for (const file of codeFiles) {
     // getting the AST for fetches
@@ -41,8 +41,11 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
     // if it's the server path, let's load the server stuff into an ast
     if (file.fullPath === serverPath) {
       // get the AST for the server
-      const serverObj = endpointParse(file.contents);
-      const parsedEndpointsArray = serverObj.serverEndPoints;
+      const serverObj = endpointParse(file.contents).serverEndPoints.filter(
+        (path) => path[0] !== '.'
+      );
+      console.log(serverObj);
+      const parsedEndpointsArray = serverObj;
       const endpointsArray = parsedEndpointsArray.map((endpoint) => {
         return {
           method: 'GLOBAL',
@@ -91,6 +94,9 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
       });
     }
   }
+  const backEndCreation = fullBackEndCreator(codeFiles, serverPath);
+  console.log(backEndCreation, '!!!!BACKEND CREATION!!!!!');
+  backendAdd(backEndCreation, paths);
 }
 
 function createFetchArray(componentObj) {
@@ -168,4 +174,10 @@ function getEndpoint(url) {
 
   // It's a non-local URL, return it as is
   return url;
+}
+
+function backendAdd(backendCreation, paths) {
+  for (const creation of backendCreation) {
+    // console.log(creation, '!!!!CREATION!!!!!');
+  }
 }
