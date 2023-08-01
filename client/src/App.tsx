@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useReducer } from 'react';
 import { Route, Routes, useNavigate, Navigate } from 'react-router';
 import Home from './pages/Home/components/Home';
 import ProjectsPage from './pages/Projects/ProjectsPage';
-import Sidebar from './components/Sidebar';
+// import Sidebar from './components/newSidebar';
+// import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard/Dashboard';
 import List from './pages/List/List';
 import Settings from './pages/Settings/SettingsPage';
@@ -10,6 +11,7 @@ import { ProjectsContext } from './context/contextStore';
 import Topbar from './components/Topbar';
 import DiagramPage from './pages/Diagram/DiagramPage';
 import HomePage from './pages/Home/HomePage';
+import TestSidebar from './components/TestSidebar';
 const { ipcRenderer } = window.require('electron');
 
 const App = () => {
@@ -38,7 +40,7 @@ const App = () => {
     <main className='main'>
       <Topbar />
       <div className='app'>
-        <Sidebar />
+        <TestSidebar />
 
         <Routes>
           <Route path='/home' element={<HomePage />} />
