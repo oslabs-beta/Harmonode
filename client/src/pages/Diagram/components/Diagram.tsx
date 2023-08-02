@@ -21,8 +21,6 @@ import PostEdge from './PostEdge';
 import PutEdge from './PutEdge';
 import PatchEdge from './PatchEdge';
 import DeleteEdge from './DeleteEdge';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faPenToSquare} from '@fortawesome/free-solid-svg-icons';
 import CodeEditor from '../../../components/CodeEditor';
 
 const nodeTypes = {pathNode: PathNode};
@@ -33,8 +31,6 @@ const edgeTypes = {
   patchEdge: PatchEdge,
   deleteEdge: DeleteEdge,
 };
-
-const editIcon = <FontAwesomeIcon icon={faPenToSquare} />;
 
 function Diagram() {
   const {fitView} = useReactFlow();
@@ -48,8 +44,8 @@ function Diagram() {
   const ast = activeProject.ast;
   const fetchFilesLength = ast.fetchFiles.length - 1;
   const fetchesLength = ast.endpointFiles[0].endpoints.length - 1;
-  const spacing = 1000;
-
+  const spacing = paths.length * 100;
+  console.log(paths, '!!!!PATHS!!!!!');
   function clickEdit(file) {
     setEditorFile(file);
     setShowEditor(true);
@@ -100,9 +96,22 @@ function Diagram() {
   // State for switching between vertical and horizontal view
   const [orientation, setOrientation] = useState('horizontal');
 
+  function generateEndpointFiles(paths) {
+    const pathCache: any = {};
+    const pathsArray: any = [];
+    for (const path of paths) {
+      pathCache[path].hasOwnProperty('method')
+        ? pathCache[path].method.push(path.method)
+        : (pathCache[path] = {method: [path.method]});
+    }
+    for (const key of Object.keys(pathCache)) {
+      pathsArray.push(pathCache[key]);
+    }
+    return pathsArray;
+  }
   function generateNodes(project = activeProject, orientation) {
     // Common spacing for horizontal/vertical stacking
-
+    const paths = [...project.ast.fetches, ...project.ast.endpoints];
     const initialFetchNodes = project.ast.fetchFiles.map((file, idx) => {
       const position =
         orientation === 'horizontal'
@@ -120,28 +129,35 @@ function Diagram() {
       };
     });
 
-    const initialEndpointNodes = project.ast.endpointFiles[0].endpoints.map(
-      (file, idx) => {
-        const position =
-          orientation === 'horizontal'
-            ? {
-                x: idx * (spacing / fetchesLength),
-                y: spacing / fetchesLength,
-              }
-            : {
-                x: spacing / fetchesLength,
-                y: idx * (spacing / 2 / fetchesLength),
-              };
-        return {
-          id: file.id, // This is endpoints.id
-          position,
-          animated: true,
-          // position: { x: idx * 200, y: 200 },
-          data: {label: file.path},
-          style: endpointNode,
-        };
-      }
-    );
+    let offsetInd = 0;
+    const endpointCache = {};
+    const initialEndpointNodes = project.ast.endpointFiles.flatMap((file) => {
+      return file.endpoints
+        .map((file) => {
+          if (endpointCache.hasOwnProperty(file.id)) return null;
+          endpointCache[file.id] = true;
+          offsetInd++;
+          const position =
+            orientation === 'horizontal'
+              ? {
+                  x: offsetInd * (spacing / fetchesLength),
+                  y: 300,
+                }
+              : {
+                  x: spacing / fetchesLength,
+                  y: offsetInd * (spacing / 2 / fetchesLength),
+                };
+          return {
+            id: file.id, // This is endpoints.id
+            position,
+            animated: true,
+            // position: { x: idx * 200, y: 200 },
+            data: {label: file.path},
+            style: endpointNode,
+          };
+        })
+        .filter((endpoint) => endpoint !== null);
+    });
 
     return [...initialFetchNodes, ...initialEndpointNodes];
   }

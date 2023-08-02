@@ -47,8 +47,7 @@ const endpointParse = (codeString, fileName) => {
         .method(method.toUpperCase());
       if (current.arguments[1] && current.arguments[1].type === 'Identifier') {
         const nextNodeInLine = current.arguments[1];
-        console.log(current.arguments, '!!!CURR ARGUMENTS!!!');
-        breadcrumb.nextFile(findOriginalVal(nextNodeInLine.name));
+        breadcrumb.nextFile = findOriginalVal(nextNodeInLine.name);
       }
       return breadcrumb;
     }

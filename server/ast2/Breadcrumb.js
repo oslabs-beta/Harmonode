@@ -1,5 +1,7 @@
 export class Breadcrumb {
-  constructor() {}
+  constructor() {
+    this.nextFile;
+  }
 
   fileName(fileName) {
     this.fileName = fileName;
@@ -13,11 +15,6 @@ export class Breadcrumb {
 
   method(method) {
     this.method = method;
-    return this;
-  }
-
-  nextFile(nextFile) {
-    this.nextFile = nextFile;
     return this;
   }
 }

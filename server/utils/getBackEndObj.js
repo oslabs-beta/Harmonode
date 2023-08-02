@@ -7,9 +7,9 @@ import {FileObj, pathFileObj} from '../types';
 // helper function to extract array of strings for paths in each file
 const getPathArray = (routeString) => {
   const pathParts = routeString.split(path.sep);
-  // const last = pathParts[pathParts.length - 1];
-  // if (last.includes('.'))
-  //   pathParts[pathParts.length - 1] = last.slice(0, last.indexOf('.'));
+  const last = pathParts[pathParts.length - 1];
+  if (last.includes('.'))
+    pathParts[pathParts.length - 1] = last.slice(0, last.indexOf('.'));
   return pathParts;
 };
 
@@ -26,9 +26,7 @@ const fullBackEndCreator = (codefiles, serverPath) => {
   const breadCrumbs = [];
 
   for (let file of codefiles) {
-    const pathArray = getPathArray(file.fullPath);
-    allPathArrays.push('/' + pathArray[pathArray.length - 1]);
-    console.log(allPathArrays, '!!!!APA!!!!');
+    allPathArrays.push(getPathArray(file.fullPath));
     pathFileObjs.push({path: getPathArray(file.fullPath), file});
 
     // parse the server file first and get each endpoint and where it will go next
