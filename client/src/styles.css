@@ -29,6 +29,7 @@ h5,
 h6 {
   font-family: 'Roboto', sans-serif;
   font-weight: 700;
+  text-decoration: none;
 }
 
 .app {
@@ -66,7 +67,10 @@ button {
 }
 
 button:hover {
-  background-color: #54a257;
+  background-color: #4e9750;
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+    0 17px 50px 0 rgba(0, 0, 0, 0.19);
+  transition-duration: 0.4s;
 }
 
 /*

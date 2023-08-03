@@ -16,7 +16,7 @@ function ProjectsPage() {
         <>
           <ListProjects />
           <button className='projPageButtons' onClick={() => setShowNew(true)}>
-            Add new project
+            Add New Project
           </button>
         </>
       )}

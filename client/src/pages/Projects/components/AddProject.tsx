@@ -152,14 +152,14 @@ function AddProject({ hideNew }) {
         </button>
         {projectFolder && (
           <>
-            <h3>Project Folder: {projectFolder}</h3>
+            <h3 className='projFolderHeader'>Project Folder: {projectFolder}</h3>
             <button className='projPageButtons' onClick={getFile}>
               Choose Server File
             </button>
             {serverPath && (
               <>
                 <form className='project-form' onSubmit={formSubmit}>
-                  <h3>Server File: {serverPath}</h3>
+                  <h3 className='serverHeader'>Server File: {serverPath}</h3>
                   <div
                     style={{ display: 'flex', justifyContent: 'space-around' }}
                   >
@@ -169,11 +169,12 @@ function AddProject({ hideNew }) {
                     />
                     <ApprovedExtensions setApproved={setApproved} />
                   </div>
-                  <h3>Number of Files to be Monitored: {fileCount}</h3>
+                  <h3 className='numOfFilesHeader'>Number of Files to be Monitored: {fileCount}</h3>
                   <div className='project-name-container'>
                     <h3 className='project-name-header'> Project Name: </h3>
                     <input
                       name='projectName'
+                      className='inputBox'
                       placeholder='Project name...'
                       defaultValue={projectNameFormat(projectName)}
                     />
