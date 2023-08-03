@@ -17,4 +17,9 @@ export class Breadcrumb {
     this.method = method;
     return this;
   }
+
+  fullPath(path) {
+    this.fullPath = path;
+    return this;
+  }
 }

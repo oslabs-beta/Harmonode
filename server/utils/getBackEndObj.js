@@ -31,9 +31,11 @@ const fullBackEndCreator = (codefiles, serverPath) => {
 
     // parse the server file first and get each endpoint and where it will go next
     if (file.fullPath === serverPath) {
-      serverFilePaths = endpointParse(file.contents, file.fileName).filter(
-        (path) => path !== undefined
-      );
+      serverFilePaths = endpointParse(
+        file.contents,
+        file.fileName,
+        file.fullPath
+      ).filter((path) => path !== undefined);
       breadCrumbs.push(...serverFilePaths);
     }
   }
@@ -74,11 +76,17 @@ const fullBackEndCreator = (codefiles, serverPath) => {
     // for getting stuff out of routes
     if (breadcrumb.nextFile) {
       const routerFile = navToOtherFile(serverPath, breadcrumb.nextFile);
+      console.log(routerFile, '!!!!ROUTER FILE!!!!!!');
       if (typeof routerFile === 'string') continue;
-      const newCrumbs = endpointParse(routerFile.contents, routerFile.fileName);
+      const newCrumbs = endpointParse(
+        routerFile.contents,
+        routerFile.fileName,
+        routerFile.fullPath
+      );
       breadCrumbs.push(...newCrumbs);
     }
   }
+  // console.log(breadCrumbs, '!!!!!BREAD CRUMBS');
   return breadCrumbs;
 };
 

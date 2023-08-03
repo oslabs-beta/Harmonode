@@ -15,15 +15,21 @@ import ReactFlow, {
   useNodesInitialized,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import PathNode from './PathNode';
+import FetchFileNode from './FetchFileNode';
 import GetEdge from './GetEdge';
 import PostEdge from './PostEdge';
 import PutEdge from './PutEdge';
 import PatchEdge from './PatchEdge';
 import DeleteEdge from './DeleteEdge';
 import CodeEditor from '../../../components/CodeEditor';
+import EndpointFileNode from './EndpointFileNode';
+import EndpointNode from './EndpointNode';
 
-const nodeTypes = {pathNode: PathNode};
+const nodeTypes = {
+  fetchFileNode: FetchFileNode,
+  endpointFileNode: EndpointFileNode,
+  endpointNode: EndpointNode,
+};
 const edgeTypes = {
   getEdge: GetEdge,
   postEdge: PostEdge,
@@ -40,12 +46,7 @@ function Diagram() {
 
   if (activeProject.ast.fetches.length === 0) return <h1>No project loaded</h1>;
   // eventually going to use this paths to generate all of the path nodes and all of the edges
-  const paths = [...activeProject.ast.fetches, ...activeProject.ast.endpoints];
-  const ast = activeProject.ast;
-  const fetchFilesLength = ast.fetchFiles.length - 1;
-  const fetchesLength = ast.endpointFiles[0].endpoints.length - 1;
-  const spacing = paths.length * 100;
-  console.log(paths, '!!!!PATHS!!!!!');
+
   function clickEdit(file) {
     setEditorFile(file);
     setShowEditor(true);
@@ -55,7 +56,7 @@ function Diagram() {
 
   const nodeColor = (node) => {
     switch (node.type) {
-      case 'pathNode':
+      case 'fetchFileNode':
         return '#19A7CE';
       case 'endpointNode':
         return '#98DFD6';
@@ -77,14 +78,23 @@ function Diagram() {
   };
 
   const endpointNode = {
-    border: '3px solid #1B9C85',
-    background: '#98DFD6',
+    border: '3px solid #db7d3e',
+    background: '#ccb022',
+    color: 'black',
+    fontSize: '.75em',
+    width: '12.5em',
+    display: 'flex',
+    justifyContent: 'center',
     borderRadius: 15,
   };
 
-  const defaultNodeStyle3 = {
-    border: '3px solid #FFEA11',
-    background: '#FFF89C',
+  const endpointFileNode = {
+    border: '3px solid #32c371',
+    background: '#1a934e',
+    fontSize: '.85em',
+    width: '11.25em',
+    display: 'flex',
+    justifyContent: 'center',
     borderRadius: 15,
   };
 
@@ -95,6 +105,24 @@ function Diagram() {
   };
   // State for switching between vertical and horizontal view
   const [orientation, setOrientation] = useState('horizontal');
+  const uniquePaths = getUniquePaths(activeProject);
+  const allPaths = [
+    ...activeProject.ast.endpoints,
+    ...activeProject.ast.fetches,
+  ];
+
+  function getUniquePaths(project) {
+    const tempCache = {};
+    console.log(project.ast);
+    // get all of the paths and remove duplicates
+    return [...project.ast.fetches, ...project.ast.endpoints]
+      .map((path) => {
+        if (tempCache[path.id]) return null;
+        tempCache[path.id] = true;
+        return {path: path.path, id: path.id};
+      })
+      .filter((path) => path !== null);
+  }
 
   function generateEndpointFiles(paths) {
     const pathCache: any = {};
@@ -111,55 +139,86 @@ function Diagram() {
   }
   function generateNodes(project = activeProject, orientation) {
     // Common spacing for horizontal/vertical stacking
-    const paths = [...project.ast.fetches, ...project.ast.endpoints];
-    const initialFetchNodes = project.ast.fetchFiles.map((file, idx) => {
-      const position =
-        orientation === 'horizontal'
-          ? {x: idx * (spacing / fetchFilesLength), y: 0}
-          : {x: 0, y: idx * (spacing / fetchFilesLength / 2)};
 
+    // Generate the nodes
+    const initEndpointNodes: any = uniquePaths.map((path: any) => {
       return {
-        id: file.id, // This is fetchFiles.id
-        position,
+        id: path.id,
         animated: true,
-        // position: { x: idx * 200, y: 0 },
-        data: {label: file.fileName, file: file, showEditor: clickEdit}, //each file needs an id and we'll use the id to connect the nodes
-        style: fetchFileNode,
-        type: 'pathNode',
+        data: {label: path.path},
+        style: endpointNode,
+        type: 'endpointNode',
       };
     });
 
-    let offsetInd = 0;
-    const endpointCache = {};
-    const initialEndpointNodes = project.ast.endpointFiles.flatMap((file) => {
-      return file.endpoints
-        .map((file) => {
-          if (endpointCache.hasOwnProperty(file.id)) return null;
-          endpointCache[file.id] = true;
-          offsetInd++;
-          const position =
-            orientation === 'horizontal'
-              ? {
-                  x: offsetInd * (spacing / fetchesLength),
-                  y: 300,
-                }
-              : {
-                  x: spacing / fetchesLength,
-                  y: offsetInd * (spacing / 2 / fetchesLength),
-                };
-          return {
-            id: file.id, // This is endpoints.id
-            position,
-            animated: true,
-            // position: { x: idx * 200, y: 200 },
-            data: {label: file.path},
-            style: endpointNode,
-          };
-        })
-        .filter((endpoint) => endpoint !== null);
+    const initFetchFileNodes = project.ast.fetchFiles.map((file) => {
+      return {
+        id: file.id, // This is fetchFiles.id
+        animated: true,
+        data: {label: file.fileName, file: file, showEditor: clickEdit}, //each file needs an id and we'll use the id to connect the nodes
+        style: fetchFileNode,
+        type: 'fetchFileNode',
+      };
     });
 
-    return [...initialFetchNodes, ...initialEndpointNodes];
+    const initEndpointFileNodes = project.ast.endpointFiles.map((file) => {
+      return {
+        id: file.id,
+        animated: true,
+        data: {label: file.fileName, file: file, showEditor: clickEdit},
+        style: endpointFileNode,
+        type: 'endpointFileNode',
+      };
+    });
+    // Apply spacing based on the longest node length
+
+    // get the count of all the files
+    const endpointCount = initEndpointNodes.length - 1;
+    const fetchFileCount = initFetchFileNodes.length - 1;
+    const endpointFileCount = initEndpointFileNodes.length - 1;
+    // get the max length to control spacing
+    const diagSpacing = Math.max(endpointCount, fetchFileCount) * 160;
+
+    // endpoint spacing
+    initEndpointNodes.forEach((node, i) => {
+      const position =
+        orientation === 'horizontal'
+          ? {
+              x: i * (diagSpacing / endpointCount),
+              y: 200,
+            }
+          : {
+              x: diagSpacing / endpointCount,
+              y: i * (diagSpacing / 2 / endpointCount),
+            };
+      node.position = position;
+      // console.log(node);
+    });
+
+    // fetchFile spacing
+    initFetchFileNodes.forEach((node, i) => {
+      const position =
+        orientation === 'horizontal'
+          ? {x: i * (diagSpacing / fetchFileCount), y: 0}
+          : {x: 0, y: i * (diagSpacing / fetchFileCount / 2)};
+
+      node.position = position;
+    });
+
+    // endPointFile spacing
+    initEndpointFileNodes.forEach((node, i) => {
+      const position =
+        orientation === 'horizontal'
+          ? {x: i * (diagSpacing / endpointFileCount), y: 400}
+          : {x: 0, y: i * (diagSpacing / fetchFileCount / 2)};
+      node.position = position;
+    });
+
+    return [
+      ...initFetchFileNodes,
+      ...initEndpointNodes,
+      ...initEndpointFileNodes,
+    ];
   }
 
   function returnEdgeType(method) {
@@ -186,9 +245,12 @@ function Diagram() {
     return project.ast.fetchFiles.flatMap((file, idx) => {
       return file.fetches
         .map((fetch) => {
-          const endpoint = project.ast.endpointFiles[0].endpoints.find(
-            (endpoint) => endpoint.path === fetch.path
-          );
+          let endpoint;
+          if (!endpoint) {
+            endpoint = allPaths.find(
+              (endpoint) => endpoint.path === fetch.path
+            );
+          }
           if (endpoint) {
             const edgeTypeArray = returnEdgeType(fetch.method); // 'GET'
             return {
@@ -198,9 +260,11 @@ function Diagram() {
               source: file.id,
               type: edgeTypeArray[0],
               sourceHandle: edgeTypeArray[1],
+              targetHandle: edgeTypeArray[1],
               data: {file: fetch},
             };
           }
+          endpoint = null;
           return null;
         })
         .filter((edge) => edge !== null);

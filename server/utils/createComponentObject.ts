@@ -44,7 +44,6 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
       const serverObj = endpointParse(file.contents).serverEndPoints.filter(
         (path) => path[0] !== '.'
       );
-      // console.log(serverObj);
       const parsedEndpointsArray = serverObj;
       const endpointsArray = parsedEndpointsArray.map((endpoint) => {
         return {
@@ -98,20 +97,19 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
     }
   }
   const backendCreation = fullBackEndCreator(codeFiles, serverPath);
+  // console.log(backendCreation, '!!!!BACKEND CREATION!!!!!!!');
   const backendRoutes = backendAdd(backendCreation, paths);
-
+  console.log(backendRoutes, '!!!!BACKEND ROUTES!!!!!!');
   for (const route of backendRoutes) {
     const pathsProp = `${route.path}-${route.method}`;
     const idProp = `${route.path}-id`;
-    if (paths.hasOwnProperty(idProp))
-      console.log(paths[idProp], idProp, '!!!HASID!!!');
     if (!paths.hasOwnProperty(idProp)) {
       paths[idProp] = uuid();
     }
-    console.log(paths[idProp], idProp, '!!!!!!ID!!!!!!');
     if (paths.hasOwnProperty(pathsProp)) {
       paths[pathsProp] = {
         ...paths[pathsProp],
+        fullPath: route.fullPath,
         fileName: route.fileName,
       };
     } else {
@@ -119,6 +117,7 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
         method: route.method,
         path: route.path,
         fileName: route.fileName,
+        fullPath: route.fullPath,
         id: paths[idProp],
       };
     }
@@ -130,11 +129,13 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
   const serverAndEndpoints = [...endpoints];
   const endpointCache: any = {};
   for (const endpoint of serverAndEndpoints) {
+    console.log(endpoint, '!!!!!ENDPOINT!!!!!!!');
     if (endpoint.method !== 'GLOBAL') {
       const idProp = `${endpoint.path}-id`;
       if (!endpointCache.hasOwnProperty(endpoint.fileName)) {
         endpointCache[endpoint.fileName] = {
           fileName: endpoint.fileName,
+          fullPath: endpoint.fullPath,
           id: uuid(),
           endpoints: [
             {method: endpoint.method, path: endpoint.path, id: paths[idProp]},
@@ -236,8 +237,8 @@ function getEndpoint(url) {
 
 function backendAdd(backendCreation, paths) {
   let pathCache: any = [];
+
   for (const creation of backendCreation) {
-    console.log(creation);
     let method = creation.method === 'USE' ? '' : creation.method;
     const pathArray = creation.fileName.split('.');
     const pathCacheFind = pathCache.find((path) => {
@@ -247,19 +248,23 @@ function backendAdd(backendCreation, paths) {
       nextFile = nextFile[nextFile.length - 1];
       return nextFile === pathArray[0];
     });
-    // console.log(pathArray[0], '!!!PATH COMPARE!!!!');
-    // console.log(pathCacheFind, '!!!PCF!!!!');
+
     if (pathCacheFind && method) {
       const creationPath = creation.path.endsWith('/')
         ? creation.path.slice(0, creation.path.length - 1)
         : creation.path;
+
       pathCache.push({...pathCacheFind});
+
       delete pathCacheFind.nextFile;
+
       pathCacheFind.path = `${pathCacheFind.path}${creationPath}`;
       pathCacheFind.method = method;
       pathCacheFind.fileName = creation.fileName;
+      pathCacheFind.fullPath = creation.fullPath;
     } else {
       const newPathObj: any = {};
+
       if (creation.nextFile) newPathObj.nextFile = creation.nextFile;
       pathCache.push({
         ...newPathObj,
