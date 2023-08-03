@@ -9,6 +9,7 @@ import {
 } from '../types';
 import {v4 as uuid} from 'uuid';
 import {getPathArray} from './pathUtils';
+import fullBackEndCreator from './getBackEndObj';
 
 // module that creates the component object that will be sent to the front end
 
@@ -24,21 +25,25 @@ export default function createComponentObject(codeFiles, serverPath) {
   // call the helper function to push the data we need to into our component object
   pushFilesToCompObj(codeFiles, componentObj, serverPath);
   createFetchArray(componentObj);
-  createEndpointArray(componentObj);
   // this will be the object we eventually return to the front end
   return componentObj;
 }
 
 function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
   const paths = {};
+  const endpoints: any = [];
   const allPathArrays: Array<Array<string>> = [];
+
   for (const file of codeFiles) {
+    // getting the AST for fetches
     allPathArrays.push(getPathArray(file.fullPath, serverPath));
     // if it's the server path, let's load the server stuff into an ast
     if (file.fullPath === serverPath) {
       // get the AST for the server
-      const serverObj = endpointParse(file.contents);
-      const parsedEndpointsArray = serverObj.serverEndPoints;
+      const serverObj = endpointParse(file.contents).serverEndPoints.filter(
+        (path) => path[0] !== '.'
+      );
+      const parsedEndpointsArray = serverObj;
       const endpointsArray = parsedEndpointsArray.map((endpoint) => {
         return {
           method: 'GLOBAL',
@@ -46,34 +51,37 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
           id: uuid(),
         };
       });
-      if (parsedEndpointsArray.length > 0) {
-        componentObj.endpointFiles.push({
-          fileName: file.fileName,
-          fullPath: file.fullPath,
-          filePath: file.filePath,
-          id: uuid(),
-          lastUpdated: file.mDate,
-          isServer: true,
-          endpoints: endpointsArray,
-        });
-
-        componentObj.fromImports = serverObj;
-      }
+      // if (parsedEndpointsArray.length > 0) {
+      //   componentObj.endpointFiles.push({
+      //     fileName: file.fileName,
+      //     fullPath: file.fullPath,
+      //     filePath: file.filePath,
+      //     id: uuid(),
+      //     lastUpdated: file.mDate,
+      //     isServer: true,
+      //     endpoints: endpointsArray,
+      //   });
+      //   // endpoints.push(...endpointsArray);
+      //   componentObj.fromImports = serverObj;
+      // }
 
       continue; // skip the rest since we have what we need
     }
     // getting the AST for fetches
     const parsedFetchesArray = fetchParser(file.contents);
     const fetchesArray = parsedFetchesArray.map((fetch) => {
-      const fetchStore = `${fetch.path}-${fetch.method}`;
+      const endpoint = getEndpoint(fetch.path);
+      const fetchStore = `${endpoint}-${fetch.method}`;
+      const idProp = `${endpoint}-id`;
+      if (!paths.hasOwnProperty(idProp)) paths[idProp] = uuid();
       if (!paths.hasOwnProperty(fetchStore)) {
         paths[fetchStore] = {
           ...fetch,
           path: getEndpoint(fetch.path),
-          id: uuid(),
+          id: paths[idProp],
         };
       }
-
+      // endpoints.push(paths[fetchStore]);
       return paths[fetchStore];
     });
     if (parsedFetchesArray.length > 0) {
@@ -87,6 +95,67 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
       });
     }
   }
+  const backendCreation = fullBackEndCreator(codeFiles, serverPath);
+  const backendRoutes = backendAdd(backendCreation, paths);
+
+  for (const route of backendRoutes) {
+    const pathsProp = `${route.path}-${route.method}`;
+    const idProp = `${route.path}-id`;
+    if (!paths.hasOwnProperty(idProp)) {
+      paths[idProp] = uuid();
+    }
+    if (paths.hasOwnProperty(pathsProp)) {
+      paths[pathsProp] = {
+        ...paths[pathsProp],
+        fullPath: route.fullPath,
+        fileName: route.fileName,
+        lastUpdated: route.lastUpdated,
+      };
+    } else {
+      paths[pathsProp] = {
+        method: route.method,
+        path: route.path,
+        fileName: route.fileName,
+        fullPath: route.fullPath,
+        lastUpdated: route.lastUpdated,
+        id: paths[idProp],
+      };
+    }
+    endpoints.push(paths[pathsProp]);
+  }
+  // console.log(endpoints, '!!!!!ENDPOINTS!!!!!!!!');
+  componentObj.endpoints.push(...endpoints);
+  const endpointFiles: any = [];
+  const serverAndEndpoints = [...endpoints];
+  const endpointCache: any = {};
+  for (const endpoint of serverAndEndpoints) {
+    if (endpoint.method !== 'GLOBAL') {
+      const idProp = `${endpoint.path}-id`;
+      if (!endpointCache.hasOwnProperty(endpoint.fileName)) {
+        endpointCache[endpoint.fileName] = {
+          fileName: endpoint.fileName,
+          fullPath: endpoint.fullPath,
+          lastUpdated: endpoint.lastUpdated,
+          id: uuid(),
+          endpoints: [
+            {method: endpoint.method, path: endpoint.path, id: paths[idProp]},
+          ],
+        };
+      } else {
+        endpointCache[endpoint.fileName].endpoints.push({
+          method: endpoint.method,
+          path: endpoint.path,
+          id: paths[idProp],
+        });
+      }
+    }
+  }
+  for (const key of Object.keys(endpointCache)) {
+    // console.log(endpointCache[key], '!!!ENDPOINT CACHE!!!!!!');
+    endpointFiles.push(endpointCache[key]);
+  }
+  componentObj.endpointFiles.push(...endpointFiles);
+  // console.log(endpoints, '!!!!!ENDPOINTS!!!!!!');
 }
 
 function createFetchArray(componentObj) {
@@ -112,14 +181,6 @@ function createFetchArray(componentObj) {
   }
   for (const key of Object.keys(fetches)) {
     componentObj.fetches.push(fetches[key]);
-  }
-}
-
-function createEndpointArray(componentObj) {
-  const endpoints = {};
-  for (const endpointFile of componentObj.endpointFiles) {
-    for (const endpoint of endpointFile.endpoints) {
-    }
   }
 }
 
@@ -164,4 +225,46 @@ function getEndpoint(url) {
 
   // It's a non-local URL, return it as is
   return url;
+}
+
+function backendAdd(backendCreation, paths) {
+  let pathCache: any = [];
+
+  for (const creation of backendCreation) {
+    let method = creation.method === 'USE' ? '' : creation.method;
+    const pathArray = creation.fileName.split('.');
+    const pathCacheFind = pathCache.find((path) => {
+      let nextFile = path.nextFile;
+      if (!path.nextFile) return false;
+      nextFile = nextFile.split('/');
+      nextFile = nextFile[nextFile.length - 1];
+      return nextFile === pathArray[0];
+    });
+
+    if (pathCacheFind && method) {
+      const creationPath = creation.path.endsWith('/')
+        ? creation.path.slice(0, creation.path.length - 1)
+        : creation.path;
+
+      pathCache.push({...pathCacheFind});
+
+      delete pathCacheFind.nextFile;
+
+      pathCacheFind.path = `${pathCacheFind.path}${creationPath}`;
+      pathCacheFind.method = method;
+      pathCacheFind.fileName = creation.fileName;
+      pathCacheFind.fullPath = creation.fullPath;
+      pathCacheFind.lastUpdated = creation.lastUpdated;
+    } else {
+      const newPathObj: any = {};
+
+      if (creation.nextFile) newPathObj.nextFile = creation.nextFile;
+      pathCache.push({
+        ...newPathObj,
+        path: creation.path,
+        method: method,
+      });
+    }
+  }
+  return pathCache.filter((path) => path.method != '');
 }

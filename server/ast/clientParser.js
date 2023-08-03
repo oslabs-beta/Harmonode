@@ -60,7 +60,6 @@ function fetchParser(input) {
   // Function to retrieve the body of a fetch request
   function getFetchBody(body, path) {
     const bodyDetails = {stringified: false, keys: []};
-    console.log(body.type);
     if (body.type === 'CallExpression') {
       if (
         body.callee.object.name === 'JSON' &&
@@ -139,7 +138,5 @@ function fetchParser(input) {
   // Return the array of parsed fetch calls
   return fetchCalls;
 }
-
-// console.log(fetchParser(input)[0]);
 
 export default fetchParser;
