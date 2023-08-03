@@ -4,7 +4,7 @@ const trav = require('@babel/traverse').default;
 import {Breadcrumb} from './Breadcrumb';
 import find from './importsFinder';
 
-const endpointParse = (codeString, fileName, fullPath) => {
+const endpointParse = (codeString, fileName, fullPath, lastUpdated) => {
   const ast = babelParser.parse(codeString, {
     sourceType: 'module',
     plugins: ['jsx'],
@@ -45,7 +45,8 @@ const endpointParse = (codeString, fileName, fullPath) => {
         .fileName(fileName)
         .path(current.arguments[0].value)
         .method(method.toUpperCase())
-        .fullPath(fullPath);
+        .fullPath(fullPath)
+        .lastUpdated(lastUpdated);
       if (current.arguments[1] && current.arguments[1].type === 'Identifier') {
         const nextNodeInLine = current.arguments[1];
         breadcrumb.nextFile = findOriginalVal(nextNodeInLine.name);

@@ -9,7 +9,8 @@ const handleStyles: any = [
   {left: 104},
   {left: 135},
 ];
-const idList = ['a', 'b', 'c', 'd', 'e'];
+const idListTop = ['a', 'b', 'c', 'd', 'e'];
+const idListBottom = ['f', 'g', 'h', 'i', 'j'];
 
 function EndpointNode({data, isConnectable}) {
   return (
@@ -19,7 +20,7 @@ function EndpointNode({data, isConnectable}) {
           <Handle
             key={uuid()}
             type='target'
-            id={idList[i]}
+            id={idListTop[i]}
             style={style}
             position={Position.Top}
             isConnectable={isConnectable}
@@ -32,7 +33,7 @@ function EndpointNode({data, isConnectable}) {
           <Handle
             key={uuid()}
             type='target'
-            id={idList[i]}
+            id={idListBottom[i]}
             style={style}
             position={Position.Bottom}
             isConnectable={isConnectable}

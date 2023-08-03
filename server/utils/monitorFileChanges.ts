@@ -82,7 +82,6 @@ export default function monitorFiles(astRootObj, codeFileObj) {
     */
 
     for (const file of endpointFiles) {
-      if (!file.isServer) continue; // we only want to set this watch on the server, so skip if it's not
       const watcher = fs.watch(file.fullPath, async (eventType, filename) => {
         let fsStats: fs.Stats;
 
@@ -107,7 +106,6 @@ export default function monitorFiles(astRootObj, codeFileObj) {
         }
         // get the last modified time
         const mTime = fsStats.mtime;
-
         // we have to do this check to avoid two change events firing
         // which VSCode and other code editors emit sometimes
 

@@ -25,7 +25,7 @@ const fullBackEndCreator = (codefiles, serverPath) => {
   let serverFilePaths = {};
   const breadCrumbs = [];
 
-  for (let file of codefiles) {
+  for (const file of codefiles) {
     allPathArrays.push(getPathArray(file.fullPath));
     pathFileObjs.push({path: getPathArray(file.fullPath), file});
 
@@ -34,7 +34,8 @@ const fullBackEndCreator = (codefiles, serverPath) => {
       serverFilePaths = endpointParse(
         file.contents,
         file.fileName,
-        file.fullPath
+        file.fullPath,
+        file.mDate
       ).filter((path) => path !== undefined);
       breadCrumbs.push(...serverFilePaths);
     }
@@ -76,17 +77,17 @@ const fullBackEndCreator = (codefiles, serverPath) => {
     // for getting stuff out of routes
     if (breadcrumb.nextFile) {
       const routerFile = navToOtherFile(serverPath, breadcrumb.nextFile);
-      console.log(routerFile, '!!!!ROUTER FILE!!!!!!');
       if (typeof routerFile === 'string') continue;
       const newCrumbs = endpointParse(
         routerFile.contents,
         routerFile.fileName,
-        routerFile.fullPath
+        routerFile.fullPath,
+        breadcrumb.lastUpdated
       );
+      // console.log(newCrumbs, '!!!! NEW CRUMBS !!!!');
       breadCrumbs.push(...newCrumbs);
     }
   }
-  // console.log(breadCrumbs, '!!!!!BREAD CRUMBS');
   return breadCrumbs;
 };
 

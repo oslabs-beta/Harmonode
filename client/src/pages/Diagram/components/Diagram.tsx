@@ -113,7 +113,6 @@ function Diagram() {
 
   function getUniquePaths(project) {
     const tempCache = {};
-    console.log(project.ast);
     // get all of the paths and remove duplicates
     return [...project.ast.fetches, ...project.ast.endpoints]
       .map((path) => {
@@ -223,17 +222,17 @@ function Diagram() {
   function returnEdgeType(method) {
     switch (method) {
       case 'GET':
-        return ['getEdge', 'a'];
+        return ['getEdge', 'a', 'f'];
       case 'POST':
-        return ['postEdge', 'b'];
+        return ['postEdge', 'b', 'g'];
       case 'PUT':
-        return ['putEdge', 'c'];
+        return ['putEdge', 'c', 'h'];
       case 'PATCH':
-        return ['patchEdge', 'd'];
+        return ['patchEdge', 'd', 'i'];
       case 'DELETE':
-        return ['deleteEdge', 'e'];
+        return ['deleteEdge', 'e', 'j'];
       default:
-        return ['getEdge', 'a'];
+        return ['getEdge', 'a', 'f'];
     }
   }
 
@@ -241,7 +240,7 @@ function Diagram() {
   // it will create nodes based on what is necesscary
   // We determine how many nodes are necesscary based on what user selected and on fileLoad for count?
   function generateEdges(project = activeProject) {
-    return project.ast.fetchFiles.flatMap((file, idx) => {
+    const fetchFileEdges = project.ast.fetchFiles.flatMap((file, idx) => {
       return file.fetches
         .map((fetch) => {
           let endpoint;
@@ -268,6 +267,34 @@ function Diagram() {
         })
         .filter((edge) => edge !== null);
     });
+
+    const endpointFileEdges = project.ast.endpointFiles.flatMap((file) => {
+      return file.endpoints
+        .map((endpoint) => {
+          let endpt;
+          if (!endpt) {
+            endpt = allPaths.find((endpnt) => endpnt.path === endpoint.path);
+          }
+          if (endpt) {
+            const edgeTypeArray = returnEdgeType(endpoint.method);
+            return {
+              id: uuid(),
+              animated: true,
+              target: endpt.id,
+              source: file.id,
+              type: edgeTypeArray[0],
+              sourceHandle: edgeTypeArray[1],
+              targetHandle: edgeTypeArray[2],
+              data: {file: endpoint},
+            };
+          }
+          endpt = null;
+          return null;
+        })
+        .filter((edge) => edge !== null);
+    });
+
+    return [...endpointFileEdges, ...fetchFileEdges];
   }
 
   // State Management for nodes and edges (connectors)

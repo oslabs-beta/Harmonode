@@ -22,4 +22,9 @@ export class Breadcrumb {
     this.fullPath = path;
     return this;
   }
+
+  lastUpdated(time) {
+    this.lastUpdated = time;
+    return this;
+  }
 }

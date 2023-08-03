@@ -25,7 +25,6 @@ export default function createComponentObject(codeFiles, serverPath) {
   // call the helper function to push the data we need to into our component object
   pushFilesToCompObj(codeFiles, componentObj, serverPath);
   createFetchArray(componentObj);
-  createEndpointArray(componentObj);
   // this will be the object we eventually return to the front end
   return componentObj;
 }
@@ -97,9 +96,8 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
     }
   }
   const backendCreation = fullBackEndCreator(codeFiles, serverPath);
-  // console.log(backendCreation, '!!!!BACKEND CREATION!!!!!!!');
   const backendRoutes = backendAdd(backendCreation, paths);
-  console.log(backendRoutes, '!!!!BACKEND ROUTES!!!!!!');
+
   for (const route of backendRoutes) {
     const pathsProp = `${route.path}-${route.method}`;
     const idProp = `${route.path}-id`;
@@ -111,6 +109,7 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
         ...paths[pathsProp],
         fullPath: route.fullPath,
         fileName: route.fileName,
+        lastUpdated: route.lastUpdated,
       };
     } else {
       paths[pathsProp] = {
@@ -118,6 +117,7 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
         path: route.path,
         fileName: route.fileName,
         fullPath: route.fullPath,
+        lastUpdated: route.lastUpdated,
         id: paths[idProp],
       };
     }
@@ -129,13 +129,13 @@ function pushFilesToCompObj(codeFiles, componentObj, serverPath) {
   const serverAndEndpoints = [...endpoints];
   const endpointCache: any = {};
   for (const endpoint of serverAndEndpoints) {
-    console.log(endpoint, '!!!!!ENDPOINT!!!!!!!');
     if (endpoint.method !== 'GLOBAL') {
       const idProp = `${endpoint.path}-id`;
       if (!endpointCache.hasOwnProperty(endpoint.fileName)) {
         endpointCache[endpoint.fileName] = {
           fileName: endpoint.fileName,
           fullPath: endpoint.fullPath,
+          lastUpdated: endpoint.lastUpdated,
           id: uuid(),
           endpoints: [
             {method: endpoint.method, path: endpoint.path, id: paths[idProp]},
@@ -181,14 +181,6 @@ function createFetchArray(componentObj) {
   }
   for (const key of Object.keys(fetches)) {
     componentObj.fetches.push(fetches[key]);
-  }
-}
-
-function createEndpointArray(componentObj) {
-  const endpoints = {};
-  for (const endpointFile of componentObj.endpointFiles) {
-    for (const endpoint of endpointFile.endpoints) {
-    }
   }
 }
 
@@ -262,6 +254,7 @@ function backendAdd(backendCreation, paths) {
       pathCacheFind.method = method;
       pathCacheFind.fileName = creation.fileName;
       pathCacheFind.fullPath = creation.fullPath;
+      pathCacheFind.lastUpdated = creation.lastUpdated;
     } else {
       const newPathObj: any = {};
 
