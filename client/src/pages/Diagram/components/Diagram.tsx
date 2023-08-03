@@ -1,7 +1,7 @@
-import React, { useCallback, useState, useContext, useEffect } from 'react';
-import { v4 as uuid } from 'uuid';
+import React, {useCallback, useState, useContext, useEffect} from 'react';
+import {v4 as uuid} from 'uuid';
 import './diagram.css';
-import { ProjectsContext } from '../../../context/contextStore';
+import {ProjectsContext} from '../../../context/contextStore';
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -21,24 +21,15 @@ import PostEdge from './PostEdge';
 import PutEdge from './PutEdge';
 import PatchEdge from './PatchEdge';
 import DeleteEdge from './DeleteEdge';
-<<<<<<< HEAD
-=======
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
->>>>>>> dev
 import CodeEditor from '../../../components/CodeEditor';
 import EndpointFileNode from './EndpointFileNode';
 import EndpointNode from './EndpointNode';
 
-<<<<<<< HEAD
 const nodeTypes = {
   fetchFileNode: FetchFileNode,
   endpointFileNode: EndpointFileNode,
   endpointNode: EndpointNode,
 };
-=======
-const nodeTypes = { pathNode: PathNode };
->>>>>>> dev
 const edgeTypes = {
   getEdge: GetEdge,
   postEdge: PostEdge,
@@ -48,8 +39,8 @@ const edgeTypes = {
 };
 
 function Diagram() {
-  const { fitView } = useReactFlow();
-  const { activeProject } = useContext(ProjectsContext);
+  const {fitView} = useReactFlow();
+  const {activeProject} = useContext(ProjectsContext);
   const [showEditor, setShowEditor] = useState(false);
   const [editorFile, setEditorFile] = useState({});
 
@@ -149,21 +140,11 @@ function Diagram() {
   function generateNodes(project = activeProject, orientation) {
     // Common spacing for horizontal/vertical stacking
 
-<<<<<<< HEAD
     // Generate the nodes
     const initEndpointNodes: any = uniquePaths.map((path: any) => {
-=======
-    const initialFetchNodes = project.ast.fetchFiles.map((file, idx) => {
-      const position =
-        orientation === 'horizontal'
-          ? { x: idx * (spacing / fetchFilesLength), y: 0 }
-          : { x: 0, y: idx * (spacing / fetchFilesLength / 2) };
-
->>>>>>> dev
       return {
         id: path.id,
         animated: true,
-<<<<<<< HEAD
         data: {label: path.path},
         style: endpointNode,
         type: 'endpointNode',
@@ -179,37 +160,6 @@ function Diagram() {
         type: 'fetchFileNode',
       };
     });
-=======
-        // position: { x: idx * 200, y: 0 },
-        data: { label: file.fileName, file: file, showEditor: clickEdit }, //each file needs an id and we'll use the id to connect the nodes
-        style: fetchFileNode,
-        type: 'pathNode',
-      };
-    });
-
-    const initialEndpointNodes = project.ast.endpointFiles[0].endpoints.map(
-      (file, idx) => {
-        const position =
-          orientation === 'horizontal'
-            ? {
-                x: idx * (spacing / fetchesLength),
-                y: spacing / fetchesLength,
-              }
-            : {
-                x: spacing / fetchesLength,
-                y: idx * (spacing / 2 / fetchesLength),
-              };
-        return {
-          id: file.id, // This is endpoints.id
-          position,
-          animated: true,
-          // position: { x: idx * 200, y: 200 },
-          data: { label: file.path },
-          style: endpointNode,
-        };
-      }
-    );
->>>>>>> dev
 
     const initEndpointFileNodes = project.ast.endpointFiles.map((file) => {
       return {
@@ -242,7 +192,6 @@ function Diagram() {
               y: i * (diagSpacing / 2 / endpointCount),
             };
       node.position = position;
-      // console.log(node);
     });
 
     // fetchFile spacing
@@ -310,12 +259,8 @@ function Diagram() {
               source: file.id,
               type: edgeTypeArray[0],
               sourceHandle: edgeTypeArray[1],
-<<<<<<< HEAD
               targetHandle: edgeTypeArray[1],
               data: {file: fetch},
-=======
-              data: { file: fetch },
->>>>>>> dev
             };
           }
           endpoint = null;
@@ -380,7 +325,7 @@ function Diagram() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        proOptions={{ hideAttribution: true }}
+        proOptions={{hideAttribution: true}}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
       >
@@ -393,34 +338,34 @@ function Diagram() {
         >
           <div
             className='diagram-legend-item'
-            style={{ backgroundColor: 'limegreen' }}
+            style={{backgroundColor: 'limegreen'}}
           />
           GET
           <li>
             <div
               className='diagram-legend-item'
-              style={{ backgroundColor: 'blue' }}
+              style={{backgroundColor: 'blue'}}
             />
             POST
           </li>
           <li>
             <div
               className='diagram-legend-item'
-              style={{ backgroundColor: 'violet' }}
+              style={{backgroundColor: 'violet'}}
             />
             PUT
           </li>
           <li>
             <div
               className='diagram-legend-item'
-              style={{ backgroundColor: 'orange' }}
+              style={{backgroundColor: 'orange'}}
             />
             PATCH
           </li>
           <li>
             <div
               className='diagram-legend-item'
-              style={{ backgroundColor: 'red' }}
+              style={{backgroundColor: 'red'}}
             />
             DELETE
           </li>
