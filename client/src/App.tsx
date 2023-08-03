@@ -11,7 +11,7 @@ import { ProjectsContext } from './context/contextStore';
 import Topbar from './components/Topbar';
 import DiagramPage from './pages/Diagram/DiagramPage';
 import HomePage from './pages/Home/HomePage';
-import TestSidebar from './components/TestSidebar';
+import Sidebar from './components/Sidebar';
 const { ipcRenderer } = window.require('electron');
 
 const App = () => {
@@ -40,7 +40,7 @@ const App = () => {
     <main className='main'>
       <Topbar />
       <div className='app'>
-        <TestSidebar />
+        <Sidebar />
 
         <Routes>
           <Route path='/home' element={<HomePage />} />

@@ -27,7 +27,7 @@ function ListProjects() {
 
   return (
     <div>
-      <h1>Projects :</h1>
+      <h1 className='project-header'>Projects</h1>
       {projectComponents}
       <button className='projPageButtons' onClick={navigateElsewhere}>
         Clear Project List

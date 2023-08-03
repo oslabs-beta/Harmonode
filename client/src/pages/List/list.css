@@ -24,12 +24,20 @@ FrontEndList Styles
 Fetch File List Card
 =================
 */
+.listHeader {
+  text-align: center;
+}
+
+.fetchFilesHeader {
+  text-align: center;
+}
 
 .fetch-file-card {
   background-color: var(--primary-color);
   min-width: 25em;
   padding: .5em;
   margin: 0.5em;
+  border-radius: 0.95em;
 
 }
 
@@ -39,7 +47,6 @@ Fetch File List Card
   width: 100%;
   flex-direction:column;
   margin-left: 0em;
-  
 }
 
 .fetch-file-card-header h2 {
@@ -48,6 +55,7 @@ Fetch File List Card
   justify-content: center;
   padding-right: .5em;
   margin: 0;
+  
 }
 
 .fetch-file-card-header h5 {
@@ -58,8 +66,10 @@ Fetch File List Card
   margin: 0;
 }
 
-
-
+.filesContainer {
+  align-items: center;
+  padding-right: 3em;
+}
 .fetch-file-card-body {
   display: flex;
 }
@@ -71,6 +81,7 @@ Fetch File List Card
 
 .fetch-file-card-path-label {
   font-weight: bold;
+  
 }
 
 .fetch-file-card-path {
@@ -90,9 +101,8 @@ Fetch File List Card
 }
 
 .fetches-header {
- font-weight: bold;
-  
- 
+ font-weight: bold; 
+ padding-left: 0.3em;
 }
 
 .file-name {

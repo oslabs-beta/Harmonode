@@ -4,7 +4,6 @@
   border: 15px solid var(--secondary-color);
   width: 35%;
 }
-
 /*
 =================
 AddProject Styles
@@ -20,6 +19,13 @@ AddProject Styles
   color: var(--font-main-color);
 }
 
+.project-header {
+  font: 'Roboto' sans-serif;
+  color: var(--font-main-color);
+  text-align: center;
+  padding-right: 1.8em;
+}
+
 /*
 =================
 Project List Card
@@ -31,6 +37,7 @@ Project List Card
   min-width: 25em;
   padding: 0.5em;
   margin: 0.5em;
+  border-radius: 0.95em;
 }
 
 .project-card-header {
@@ -72,12 +79,42 @@ Project List Card
 
 .chooseProjHeader {
   text-align: center;
+  padding-right: 1em;
+}
+.serverHeader {
+  text-align: center;
 }
 
+.project-name-container {
+  /* align-items: center; */
+  padding-right: 3.5em;
+  padding-bottom: 0.5em;
+  text-align: center;
+}
+
+.inputBox {
+  /* align-items: center; */
+  border: 0;
+  outline: 0;
+  font: 'Roboto' sans-serif;
+  width: 12em;
+  height: 1.9em;
+  border-radius: 0.25em;
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.numOfFilesHeader {
+  text-align: center;
+}
+
+.projFolderHeader {
+  text-align: center;
+}
 .projPageButtons {
   align-items: center;
   margin-left: 25%;
-  width: 45%;
+  width: 40%;
 }
 
 .loadButton {
