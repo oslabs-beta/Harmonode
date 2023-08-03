@@ -29,6 +29,7 @@ h5,
 h6 {
   font-family: 'Roboto', sans-serif;
   font-weight: 700;
+  text-decoration: none;
 }
 
 .app {
@@ -66,7 +67,10 @@ button {
 }
 
 button:hover {
-  background-color: #54a257;
+  background-color: #4e9750;
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+    0 17px 50px 0 rgba(0, 0, 0, 0.19);
+  transition-duration: 0.4s;
 }
 
 /*
@@ -77,7 +81,7 @@ button:hover {
 .code-editor {
   display: flex;
   flex-direction: column;
-  background: black;
+  background: rgb(29, 28, 28);
   border-radius: 15px;
   min-width: 35rem;
 }
@@ -86,6 +90,12 @@ button:hover {
   max-height: 60vh;
   overflow-y: auto;
   cursor: default;
+}
+
+.editor-name {
+  padding: 0.4em;
+  margin: 0;
+  user-select: none;
 }
 
 .token.operator {
@@ -104,4 +114,19 @@ button:hover {
 
 .editor-close-btn {
   background-color: rgb(156, 10, 10);
+}
+
+.editor-save-btn,
+.editor-close-btn {
+  margin: 0.5em 1em 0.5em 1em;
+}
+
+.code-editor-save-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--primary-color);
+  color: var(--font-main-color);
+  padding: 1em;
 }

@@ -25,8 +25,8 @@ function FrontEndList({file}) {
 
 
   return (
-    <ul>
-      <h2>Fetch Files</h2> 
+    <ul className='filesContainer'>
+      <h2 className='fetchFilesHeader'>Fetch Files</h2> 
       {fetchFilesComponents}
     </ul>
   )

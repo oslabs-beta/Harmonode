@@ -6,14 +6,13 @@ import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism.min.css'; //Example style, you can use another
 import '../styles.css';
 import {saveStringCode, stringCode} from '../ipcRenderer';
-import e from 'express';
 
 function CodeEditor({file, close}) {
   const [code, setCode] = useState('');
-
   const [position, setPosition] = useState({x: 0, y: 0});
   const [initialPosition, setInitialPosition] = useState({x: 0, y: 0});
   const [isDragging, setIsDragging] = useState(false);
+  const [showSave, setShowSave] = useState(false);
 
   useEffect(() => {
     async function getStringCode() {
@@ -23,6 +22,15 @@ function CodeEditor({file, close}) {
     getStringCode();
   }, []);
 
+  useEffect(() => {
+    console.log('Show Save');
+    if (showSave) {
+      setTimeout(() => {
+        setShowSave(false);
+      }, 1500);
+    }
+  }, [showSave]);
+
   function handleClose() {
     close();
     setCode('');
@@ -30,6 +38,7 @@ function CodeEditor({file, close}) {
 
   function handleSave() {
     saveStringCode(file.fullPath, code);
+    setShowSave(true);
   }
 
   const handleMouseDown = (e) => {
@@ -76,17 +85,19 @@ function CodeEditor({file, close}) {
     >
       <div
         style={{
-          height: '1.5em',
           width: '100%',
           backgroundColor: 'var(--primary-color)',
           cursor: isDragging ? 'grabbing' : 'grab',
+          display: 'flex',
+          justifyContent: 'center',
+          userSelect: 'none',
         }}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
-      />
-      <button className='editor-close-btn' onClick={handleClose}>
-        Close / Discard Unsaved Changes
-      </button>
+      >
+        <h2 className='editor-name'>{file.fileName}</h2>
+        <p> (last updated: {new Date(file.lastUpdated).toLocaleString()} )</p>
+      </div>
       <div className='editor-container'>
         <Editor
           value={code}
@@ -98,8 +109,20 @@ function CodeEditor({file, close}) {
             fontSize: 12,
           }}
         />
+        {showSave && (
+          <div className='code-editor-save-modal'>
+            <p>Code is saved!</p>
+          </div>
+        )}
       </div>
-      <button onClick={handleSave}>Save</button>
+      <div style={{display: 'flex'}}>
+        <button className='editor-close-btn' onClick={handleClose}>
+          Close / Discard Unsaved Changes
+        </button>
+        <button className='editor-save-btn' onClick={handleSave}>
+          Save
+        </button>
+      </div>
     </div>
   );
 }

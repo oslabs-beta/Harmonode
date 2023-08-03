@@ -1,7 +1,7 @@
-import React, {useCallback, useState, useContext, useEffect} from 'react';
-import {v4 as uuid} from 'uuid';
+import React, { useCallback, useState, useContext, useEffect } from 'react';
+import { v4 as uuid } from 'uuid';
 import './diagram.css';
-import {ProjectsContext} from '../../../context/contextStore';
+import { ProjectsContext } from '../../../context/contextStore';
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -21,11 +21,11 @@ import PostEdge from './PostEdge';
 import PutEdge from './PutEdge';
 import PatchEdge from './PatchEdge';
 import DeleteEdge from './DeleteEdge';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faPenToSquare} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import CodeEditor from '../../../components/CodeEditor';
 
-const nodeTypes = {pathNode: PathNode};
+const nodeTypes = { pathNode: PathNode };
 const edgeTypes = {
   getEdge: GetEdge,
   postEdge: PostEdge,
@@ -37,8 +37,8 @@ const edgeTypes = {
 const editIcon = <FontAwesomeIcon icon={faPenToSquare} />;
 
 function Diagram() {
-  const {fitView} = useReactFlow();
-  const {activeProject} = useContext(ProjectsContext);
+  const { fitView } = useReactFlow();
+  const { activeProject } = useContext(ProjectsContext);
   const [showEditor, setShowEditor] = useState(false);
   const [editorFile, setEditorFile] = useState({});
 
@@ -106,15 +106,15 @@ function Diagram() {
     const initialFetchNodes = project.ast.fetchFiles.map((file, idx) => {
       const position =
         orientation === 'horizontal'
-          ? {x: idx * (spacing / fetchFilesLength), y: 0}
-          : {x: 0, y: idx * (spacing / fetchFilesLength / 2)};
+          ? { x: idx * (spacing / fetchFilesLength), y: 0 }
+          : { x: 0, y: idx * (spacing / fetchFilesLength / 2) };
 
       return {
         id: file.id, // This is fetchFiles.id
         position,
         animated: true,
         // position: { x: idx * 200, y: 0 },
-        data: {label: file.fileName, file: file, showEditor: clickEdit}, //each file needs an id and we'll use the id to connect the nodes
+        data: { label: file.fileName, file: file, showEditor: clickEdit }, //each file needs an id and we'll use the id to connect the nodes
         style: fetchFileNode,
         type: 'pathNode',
       };
@@ -137,7 +137,7 @@ function Diagram() {
           position,
           animated: true,
           // position: { x: idx * 200, y: 200 },
-          data: {label: file.path},
+          data: { label: file.path },
           style: endpointNode,
         };
       }
@@ -182,6 +182,7 @@ function Diagram() {
               source: file.id,
               type: edgeTypeArray[0],
               sourceHandle: edgeTypeArray[1],
+              data: { file: fetch },
             };
           }
           return null;
@@ -245,7 +246,7 @@ function Diagram() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        proOptions={{hideAttribution: true}}
+        proOptions={{ hideAttribution: true }}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
       >
@@ -256,63 +257,36 @@ function Diagram() {
             listStyleType: 'none',
           }}
         >
-          {/* <li> */}
           <div
-            style={{
-              height: '1em',
-              width: '2em',
-              backgroundColor: 'limegreen',
-              display: 'inline-block',
-              marginRight: '0.5em',
-            }}
+            className='diagram-legend-item'
+            style={{ backgroundColor: 'limegreen' }}
           />
           GET
-          {/* </li> */}
           <li>
             <div
-              style={{
-                height: '1em',
-                width: '2em',
-                backgroundColor: 'blue',
-                display: 'inline-block',
-                marginRight: '0.5em',
-              }}
+              className='diagram-legend-item'
+              style={{ backgroundColor: 'blue' }}
             />
             POST
           </li>
           <li>
             <div
-              style={{
-                height: '1em',
-                width: '2em',
-                backgroundColor: 'violet',
-                display: 'inline-block',
-                marginRight: '0.5em',
-              }}
+              className='diagram-legend-item'
+              style={{ backgroundColor: 'violet' }}
             />
             PUT
           </li>
           <li>
             <div
-              style={{
-                height: '1em',
-                width: '2em',
-                backgroundColor: 'orange',
-                display: 'inline-block',
-                marginRight: '0.5em',
-              }}
+              className='diagram-legend-item'
+              style={{ backgroundColor: 'orange' }}
             />
             PATCH
           </li>
           <li>
             <div
-              style={{
-                height: '1em',
-                width: '2em',
-                backgroundColor: 'red',
-                display: 'inline-block',
-                marginRight: '0.5em',
-              }}
+              className='diagram-legend-item'
+              style={{ backgroundColor: 'red' }}
             />
             DELETE
           </li>
@@ -326,20 +300,20 @@ function Diagram() {
           </button>
         </Panel>
         <Controls />
-        <MiniMap nodeColor={nodeColor} zoomable pannable />
-        <Background
+        <MiniMap nodeColor={nodeColor} />
+        {/* <Background
           id='1'
-          gap={10}
-          color='#f1f1f1'
-          variant={BackgroundVariant.Dots}
+          gap={20}
+          color='#071014'
+          // variant={BackgroundVariant.Dots}
         />
         <Background
           id='2'
-          gap={100}
+          // gap={10}
           // offset={1}
-          color='#ccc'
-          variant={BackgroundVariant.Cross}
-        />
+          // color='#ccc'
+          // variant={BackgroundVariant.Cross}
+        /> */}
       </ReactFlow>
     </div>
   );

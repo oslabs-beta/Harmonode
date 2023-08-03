@@ -12,6 +12,7 @@ export default function GetEdge({
   targetPosition,
   style = {},
   markerEnd,
+  data,
 }: EdgeProps) {
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
