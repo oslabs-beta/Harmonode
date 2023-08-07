@@ -1,7 +1,7 @@
-import React, { useCallback, useState, useContext, useEffect } from 'react';
-import { v4 as uuid } from 'uuid';
+import React, {useCallback, useState, useContext, useEffect} from 'react';
+import {v4 as uuid} from 'uuid';
 import './diagram.css';
-import { ProjectsContext } from '../../../context/contextStore';
+import {ProjectsContext} from '../../../context/contextStore';
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -15,17 +15,21 @@ import ReactFlow, {
   useNodesInitialized,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import PathNode from './PathNode';
+import FetchFileNode from './FetchFileNode';
 import GetEdge from './GetEdge';
 import PostEdge from './PostEdge';
 import PutEdge from './PutEdge';
 import PatchEdge from './PatchEdge';
 import DeleteEdge from './DeleteEdge';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import CodeEditor from '../../../components/CodeEditor';
+import EndpointFileNode from './EndpointFileNode';
+import EndpointNode from './EndpointNode';
 
-const nodeTypes = { pathNode: PathNode };
+const nodeTypes = {
+  fetchFileNode: FetchFileNode,
+  endpointFileNode: EndpointFileNode,
+  endpointNode: EndpointNode,
+};
 const edgeTypes = {
   getEdge: GetEdge,
   postEdge: PostEdge,
@@ -34,21 +38,14 @@ const edgeTypes = {
   deleteEdge: DeleteEdge,
 };
 
-const editIcon = <FontAwesomeIcon icon={faPenToSquare} />;
-
 function Diagram() {
-  const { fitView } = useReactFlow();
-  const { activeProject } = useContext(ProjectsContext);
+  const {fitView} = useReactFlow();
+  const {activeProject} = useContext(ProjectsContext);
   const [showEditor, setShowEditor] = useState(false);
   const [editorFile, setEditorFile] = useState({});
 
   if (activeProject.ast.fetches.length === 0) return <h1>No project loaded</h1>;
   // eventually going to use this paths to generate all of the path nodes and all of the edges
-  const paths = [...activeProject.ast.fetches, ...activeProject.ast.endpoints];
-  const ast = activeProject.ast;
-  const fetchFilesLength = ast.fetchFiles.length - 1;
-  const fetchesLength = ast.endpointFiles[0].endpoints.length - 1;
-  const spacing = 1000;
 
   function clickEdit(file) {
     setEditorFile(file);
@@ -59,7 +56,7 @@ function Diagram() {
 
   const nodeColor = (node) => {
     switch (node.type) {
-      case 'pathNode':
+      case 'fetchFileNode':
         return '#19A7CE';
       case 'endpointNode':
         return '#98DFD6';
@@ -81,14 +78,23 @@ function Diagram() {
   };
 
   const endpointNode = {
-    border: '3px solid #1B9C85',
-    background: '#98DFD6',
+    border: '3px solid #db7d3e',
+    background: '#ccb022',
+    color: 'black',
+    fontSize: '.75em',
+    width: '12.5em',
+    display: 'flex',
+    justifyContent: 'center',
     borderRadius: 15,
   };
 
-  const defaultNodeStyle3 = {
-    border: '3px solid #FFEA11',
-    background: '#FFF89C',
+  const endpointFileNode = {
+    border: '3px solid #32c371',
+    background: '#1a934e',
+    fontSize: '.85em',
+    width: '11.25em',
+    display: 'flex',
+    justifyContent: 'center',
     borderRadius: 15,
   };
 
@@ -99,67 +105,134 @@ function Diagram() {
   };
   // State for switching between vertical and horizontal view
   const [orientation, setOrientation] = useState('horizontal');
+  const uniquePaths = getUniquePaths(activeProject);
+  const allPaths = [
+    ...activeProject.ast.endpoints,
+    ...activeProject.ast.fetches,
+  ];
 
+  function getUniquePaths(project) {
+    const tempCache = {};
+    // get all of the paths and remove duplicates
+    return [...project.ast.fetches, ...project.ast.endpoints]
+      .map((path) => {
+        if (tempCache[path.id]) return null;
+        tempCache[path.id] = true;
+        return {path: path.path, id: path.id};
+      })
+      .filter((path) => path !== null);
+  }
+
+  function generateEndpointFiles(paths) {
+    const pathCache: any = {};
+    const pathsArray: any = [];
+    for (const path of paths) {
+      pathCache[path].hasOwnProperty('method')
+        ? pathCache[path].method.push(path.method)
+        : (pathCache[path] = {method: [path.method]});
+    }
+    for (const key of Object.keys(pathCache)) {
+      pathsArray.push(pathCache[key]);
+    }
+    return pathsArray;
+  }
   function generateNodes(project = activeProject, orientation) {
     // Common spacing for horizontal/vertical stacking
 
-    const initialFetchNodes = project.ast.fetchFiles.map((file, idx) => {
-      const position =
-        orientation === 'horizontal'
-          ? { x: idx * (spacing / fetchFilesLength), y: 0 }
-          : { x: 0, y: idx * (spacing / fetchFilesLength / 2) };
-
+    // Generate the nodes
+    const initEndpointNodes: any = uniquePaths.map((path: any) => {
       return {
-        id: file.id, // This is fetchFiles.id
-        position,
+        id: path.id,
         animated: true,
-        // position: { x: idx * 200, y: 0 },
-        data: { label: file.fileName, file: file, showEditor: clickEdit }, //each file needs an id and we'll use the id to connect the nodes
-        style: fetchFileNode,
-        type: 'pathNode',
+        data: {label: path.path},
+        style: endpointNode,
+        type: 'endpointNode',
       };
     });
 
-    const initialEndpointNodes = project.ast.endpointFiles[0].endpoints.map(
-      (file, idx) => {
-        const position =
-          orientation === 'horizontal'
-            ? {
-                x: idx * (spacing / fetchesLength),
-                y: spacing / fetchesLength,
-              }
-            : {
-                x: spacing / fetchesLength,
-                y: idx * (spacing / 2 / fetchesLength),
-              };
-        return {
-          id: file.id, // This is endpoints.id
-          position,
-          animated: true,
-          // position: { x: idx * 200, y: 200 },
-          data: { label: file.path },
-          style: endpointNode,
-        };
-      }
-    );
+    const initFetchFileNodes = project.ast.fetchFiles.map((file) => {
+      return {
+        id: file.id, // This is fetchFiles.id
+        animated: true,
+        data: {label: file.fileName, file: file, showEditor: clickEdit}, //each file needs an id and we'll use the id to connect the nodes
+        style: fetchFileNode,
+        type: 'fetchFileNode',
+      };
+    });
 
-    return [...initialFetchNodes, ...initialEndpointNodes];
+    const initEndpointFileNodes = project.ast.endpointFiles.map((file) => {
+      return {
+        id: file.id,
+        animated: true,
+        data: {label: file.fileName, file: file, showEditor: clickEdit},
+        style: endpointFileNode,
+        type: 'endpointFileNode',
+      };
+    });
+    // Apply spacing based on the longest node length
+
+    // get the count of all the files
+    const endpointCount = initEndpointNodes.length - 1;
+    const fetchFileCount = initFetchFileNodes.length - 1;
+    const endpointFileCount = initEndpointFileNodes.length - 1;
+    // get the max length to control spacing
+    const diagSpacing = Math.max(endpointCount, fetchFileCount) * 160;
+
+    // endpoint spacing
+    initEndpointNodes.forEach((node, i) => {
+      const position =
+        orientation === 'horizontal'
+          ? {
+              x: i * (diagSpacing / endpointCount),
+              y: 200,
+            }
+          : {
+              x: diagSpacing / endpointCount,
+              y: i * (diagSpacing / 2 / endpointCount),
+            };
+      node.position = position;
+    });
+
+    // fetchFile spacing
+    initFetchFileNodes.forEach((node, i) => {
+      const position =
+        orientation === 'horizontal'
+          ? {x: i * (diagSpacing / fetchFileCount), y: 0}
+          : {x: 0, y: i * (diagSpacing / fetchFileCount / 2)};
+
+      node.position = position;
+    });
+
+    // endPointFile spacing
+    initEndpointFileNodes.forEach((node, i) => {
+      const position =
+        orientation === 'horizontal'
+          ? {x: i * (diagSpacing / endpointFileCount), y: 400}
+          : {x: 0, y: i * (diagSpacing / fetchFileCount / 2)};
+      node.position = position;
+    });
+
+    return [
+      ...initFetchFileNodes,
+      ...initEndpointNodes,
+      ...initEndpointFileNodes,
+    ];
   }
 
   function returnEdgeType(method) {
     switch (method) {
       case 'GET':
-        return ['getEdge', 'a'];
+        return ['getEdge', 'a', 'f'];
       case 'POST':
-        return ['postEdge', 'b'];
+        return ['postEdge', 'b', 'g'];
       case 'PUT':
-        return ['putEdge', 'c'];
+        return ['putEdge', 'c', 'h'];
       case 'PATCH':
-        return ['patchEdge', 'd'];
+        return ['patchEdge', 'd', 'i'];
       case 'DELETE':
-        return ['deleteEdge', 'e'];
+        return ['deleteEdge', 'e', 'j'];
       default:
-        return ['getEdge', 'a'];
+        return ['getEdge', 'a', 'f'];
     }
   }
 
@@ -167,12 +240,15 @@ function Diagram() {
   // it will create nodes based on what is necesscary
   // We determine how many nodes are necesscary based on what user selected and on fileLoad for count?
   function generateEdges(project = activeProject) {
-    return project.ast.fetchFiles.flatMap((file, idx) => {
+    const fetchFileEdges = project.ast.fetchFiles.flatMap((file, idx) => {
       return file.fetches
         .map((fetch) => {
-          const endpoint = project.ast.endpointFiles[0].endpoints.find(
-            (endpoint) => endpoint.path === fetch.path
-          );
+          let endpoint;
+          if (!endpoint) {
+            endpoint = allPaths.find(
+              (endpoint) => endpoint.path === fetch.path
+            );
+          }
           if (endpoint) {
             const edgeTypeArray = returnEdgeType(fetch.method); // 'GET'
             return {
@@ -182,13 +258,43 @@ function Diagram() {
               source: file.id,
               type: edgeTypeArray[0],
               sourceHandle: edgeTypeArray[1],
-              data: { file: fetch },
+              targetHandle: edgeTypeArray[1],
+              data: {file: fetch},
             };
           }
+          endpoint = null;
           return null;
         })
         .filter((edge) => edge !== null);
     });
+
+    const endpointFileEdges = project.ast.endpointFiles.flatMap((file) => {
+      return file.endpoints
+        .map((endpoint) => {
+          let endpt;
+          if (!endpt) {
+            endpt = allPaths.find((endpnt) => endpnt.path === endpoint.path);
+          }
+          if (endpt) {
+            const edgeTypeArray = returnEdgeType(endpoint.method);
+            return {
+              id: uuid(),
+              animated: true,
+              target: endpt.id,
+              source: file.id,
+              type: edgeTypeArray[0],
+              sourceHandle: edgeTypeArray[1],
+              targetHandle: edgeTypeArray[2],
+              data: {file: endpoint},
+            };
+          }
+          endpt = null;
+          return null;
+        })
+        .filter((edge) => edge !== null);
+    });
+
+    return [...endpointFileEdges, ...fetchFileEdges];
   }
 
   // State Management for nodes and edges (connectors)
@@ -246,7 +352,7 @@ function Diagram() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        proOptions={{ hideAttribution: true }}
+        proOptions={{hideAttribution: true}}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
       >
@@ -259,34 +365,34 @@ function Diagram() {
         >
           <div
             className='diagram-legend-item'
-            style={{ backgroundColor: 'limegreen' }}
+            style={{backgroundColor: 'limegreen'}}
           />
           GET
           <li>
             <div
               className='diagram-legend-item'
-              style={{ backgroundColor: 'blue' }}
+              style={{backgroundColor: 'blue'}}
             />
             POST
           </li>
           <li>
             <div
               className='diagram-legend-item'
-              style={{ backgroundColor: 'violet' }}
+              style={{backgroundColor: 'violet'}}
             />
             PUT
           </li>
           <li>
             <div
               className='diagram-legend-item'
-              style={{ backgroundColor: 'orange' }}
+              style={{backgroundColor: 'orange'}}
             />
             PATCH
           </li>
           <li>
             <div
               className='diagram-legend-item'
-              style={{ backgroundColor: 'red' }}
+              style={{backgroundColor: 'red'}}
             />
             DELETE
           </li>

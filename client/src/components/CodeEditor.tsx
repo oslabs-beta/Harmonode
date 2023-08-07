@@ -23,7 +23,6 @@ function CodeEditor({file, close}) {
   }, []);
 
   useEffect(() => {
-    console.log('Show Save');
     if (showSave) {
       setTimeout(() => {
         setShowSave(false);

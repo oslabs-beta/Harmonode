@@ -11,7 +11,7 @@ const handleStyle5 = {left: 135};
 
 const editIcon = <FontAwesomeIcon icon={faPenToSquare} />;
 
-function PathNode({data, isConnectable}) {
+function EndpointFileNode({data, isConnectable}) {
   function handleClick() {
     data.showEditor(data.file);
   }
@@ -20,7 +20,7 @@ function PathNode({data, isConnectable}) {
     <div className='text-updater-node'>
       <Handle
         type='target'
-        position={Position.Top}
+        position={Position.Bottom}
         isConnectable={isConnectable}
       />
       <div className='diagram-node'>
@@ -32,35 +32,35 @@ function PathNode({data, isConnectable}) {
 
       <Handle
         type='source'
-        position={Position.Bottom}
+        position={Position.Top}
         id='a'
         style={handleStyle}
         isConnectable={isConnectable}
       />
       <Handle
         type='source'
-        position={Position.Bottom}
+        position={Position.Top}
         id='b'
         style={handleStyle2}
         isConnectable={isConnectable}
       />
       <Handle
         type='source'
-        position={Position.Bottom}
+        position={Position.Top}
         id='c'
         style={handleStyle3}
         isConnectable={isConnectable}
       />
       <Handle
         type='source'
-        position={Position.Bottom}
+        position={Position.Top}
         id='d'
         style={handleStyle4}
         isConnectable={isConnectable}
       />
       <Handle
         type='source'
-        position={Position.Bottom}
+        position={Position.Top}
         id='e'
         style={handleStyle5}
         isConnectable={isConnectable}
@@ -69,4 +69,4 @@ function PathNode({data, isConnectable}) {
   );
 }
 
-export default PathNode;
+export default EndpointFileNode;

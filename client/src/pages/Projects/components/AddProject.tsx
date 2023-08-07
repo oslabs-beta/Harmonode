@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import ProjectDirectories from './ProjectDirectories';
-import { DirectoryTree, Directory } from '../../../types';
+import {DirectoryTree, Directory} from '../../../types';
 import ApprovedExtensions from './ApprovedExtensions';
-import { v4 as uuid } from 'uuid';
-import { ProjectsContext } from '../../../context/contextStore';
-const { ipcRenderer } = window.require('electron');
+import {v4 as uuid} from 'uuid';
+import {ProjectsContext} from '../../../context/contextStore';
+const {ipcRenderer} = window.require('electron');
 
 interface projectObj {
   folder: string;
@@ -17,7 +17,7 @@ interface projectObj {
 }
 
 // Component to add a new project
-function AddProject({ hideNew }) {
+function AddProject({hideNew}) {
   const {
     projects,
     dispatchProjects,
@@ -39,7 +39,6 @@ function AddProject({ hideNew }) {
   const [approvedExts, setApprovedExts] = useState<string[]>([]);
   const [fileCount, setFileCount] = useState<number>(0);
 
-  console.log(activeProject, 'ACTIVE PROJECT');
   // function that finds all the files that will be loaded so we can display
   // the file count on the project load page
   async function fileLoad() {
@@ -126,9 +125,8 @@ function AddProject({ hideNew }) {
         return;
       }
     }
-    console.log(projectObj);
     setActiveProject(projectObj);
-    dispatchProjects({ type: 'add', payload: projectObj });
+    dispatchProjects({type: 'add', payload: projectObj});
     hideNew();
   }
 
@@ -152,7 +150,9 @@ function AddProject({ hideNew }) {
         </button>
         {projectFolder && (
           <>
-            <h3 className='projFolderHeader'>Project Folder: {projectFolder}</h3>
+            <h3 className='projFolderHeader'>
+              Project Folder: {projectFolder}
+            </h3>
             <button className='projPageButtons' onClick={getFile}>
               Choose Server File
             </button>
@@ -161,7 +161,7 @@ function AddProject({ hideNew }) {
                 <form className='project-form' onSubmit={formSubmit}>
                   <h3 className='serverHeader'>Server File: {serverPath}</h3>
                   <div
-                    style={{ display: 'flex', justifyContent: 'space-around' }}
+                    style={{display: 'flex', justifyContent: 'space-around'}}
                   >
                     <ProjectDirectories
                       dirPath={projectFolder}
@@ -169,7 +169,9 @@ function AddProject({ hideNew }) {
                     />
                     <ApprovedExtensions setApproved={setApproved} />
                   </div>
-                  <h3 className='numOfFilesHeader'>Number of Files to be Monitored: {fileCount}</h3>
+                  <h3 className='numOfFilesHeader'>
+                    Number of Files to be Monitored: {fileCount}
+                  </h3>
                   <div className='project-name-container'>
                     <h3 className='project-name-header'> Project Name: </h3>
                     <input

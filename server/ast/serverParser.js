@@ -1,6 +1,8 @@
 const babelParser = require('@babel/parser');
 const trav = require('@babel/traverse').default;
 
+import find from './importsFinder';
+
 const endpointParse = (codeString) => {
   const ast = babelParser.parse(codeString, {
     sourceType: 'module',
@@ -8,7 +10,7 @@ const endpointParse = (codeString) => {
   });
 
   const routesObj = {serverEndPoints: []};
-  const importedRoutes = {};
+  const importedRoutes = find(ast);
 
   trav(ast, {
     enter(path) {
@@ -48,7 +50,9 @@ const endpointParse = (codeString) => {
             current.arguments[1].type === 'Identifier'
           ) {
             const nextInLine = current.arguments[1];
-            // routesObj.serverEndPoints.push(findOriginalVal(current.arguments[1].name));
+            routesObj.serverEndPoints.push(
+              findOriginalVal(current.arguments[1].name)
+            );
             routesObj[nextInLine.name] = findOriginalVal(nextInLine.name);
           }
         }
