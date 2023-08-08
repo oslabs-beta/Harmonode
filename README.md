@@ -17,10 +17,10 @@ Enter Harmonode — an Electron-powered development tool that lightens the c
 
 ## Table of Contents
 
-- [About](#about)
-- [Features](#features)
-- [Contributors](#contributors)
 - [Usage](#usage)
+- [Features](#features)
+- [getting started](#gettingstarted)
+- [Contributors](#contributors)
 - [Installation](#installation)
 
 <a name="contributors"></a>
