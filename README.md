@@ -22,6 +22,10 @@ Enter Harmonode — an Electron-powered development tool that lightens the c
 - [Contributors](#contributors)
 - [Installation](#installation)
 
+<a name="usage"></a>
+## Usage
+![output](https://github.com/oslabs-beta/Harmonode/assets/68034977/80f09dfd-5e43-47ce-becd-7ed7aaaa44fa)
+
 <a name="contributors"></a>
 ## Contributors
 
