@@ -24,9 +24,10 @@ Enter Harmonode — an Electron-powered development tool that lightens the c
 
 <a name="usage"></a>
 ## Usage
-![output](https://github.com/oslabs-beta/Harmonode/assets/68034977/80f09dfd-5e43-47ce-becd-7ed7aaaa44fa)
+![output1](https://github.com/oslabs-beta/Harmonode/assets/68034977/8a070763-f7b4-475f-908e-999afe2b2361)
 
 <a name="contributors"></a>
+
 ## Contributors
 
 The founding fathers of Harmonode:
