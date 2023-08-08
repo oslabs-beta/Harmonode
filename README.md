@@ -14,7 +14,7 @@ Enter Harmonode — an Electron-powered development tool that lightens the c
 
 ---
 
-## Table of Contents
+## Contents
 
 - [Usage](#usage)
 - [Getting started](#gettingstarted)
