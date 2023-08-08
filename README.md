@@ -27,8 +27,8 @@ Enter Harmonode — an Electron-powered development tool that lightens the c
 
 The founding fathers of Harmonode:
 
-- Hamza Chowdry
-- Eric Dalio
+- Hamza Chowdry | [@hmz44](https://github.com/hmz44)
+- Eric Dalio | [@EricDalio](https://github.com/EricDalio)
 - Ken Johnston | [@kfiddle](https://github.com/kfiddle) 
 - Sebastian Sarmiento | [@sebastiansarm](https://github.com/sebastiansarm/)
 - Tim Weidinger | [@timweidinger](https://github.com/timweidinger) 
