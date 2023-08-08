@@ -24,6 +24,9 @@ Enter Harmonode — an Electron-powered development tool that lightens the c
 
 <a name="usage"></a>
 ## Usage
+
+From the home screen, navigate to "Projects", and click "Add New Project". Follow the prompts to load your project code base, and be sure to designate the name of your backend server file. Fetch requests that are made directly within React components will be readable by Harmonode, which will then render a visual using React Flow of the paths of these requests through the file structure. 
+---
 ![harmonodeMainScreen](https://github.com/oslabs-beta/Harmonode/assets/68034977/2493946b-c7f6-4f5f-a7c9-03d575f8f0be)
 
 ![output1](https://github.com/oslabs-beta/Harmonode/assets/68034977/8a070763-f7b4-475f-908e-999afe2b2361)
