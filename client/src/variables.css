@@ -10,14 +10,13 @@ Original Color Palette
 :root {
   --primary-color: #164b60;
   --secondary-color: #1b6b93;
-  --tertiary-color: #4caf50;
-  --quaternary-color: #4caf50;
+  --tertiary-color: #42a186;
+  --quaternary-color: #42a186;
   --inactive-color: #868484;
   --font-main-color: #f6fff5;
   --diagram-bg-color: #071014;
 }
 .something {
- color:  #173e4d;
- color: #4caf50;
-
+  color: #173e4d;
+  color: #4caf50;
 }
