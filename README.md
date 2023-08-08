@@ -17,10 +17,9 @@ Enter Harmonode — an Electron-powered development tool that lightens the c
 ## Table of Contents
 
 - [Usage](#usage)
-- [Features](#features)
-- [getting started](#gettingstarted)
+- [Getting started](#gettingstarted)
 - [Contributors](#contributors)
-- [Installation](#installation)
+
 
 <a name="usage"></a>
 ## Usage
@@ -40,6 +39,15 @@ From the home screen, navigate to "Projects", and click "Add New Project". Follo
 
 
 ![output1](https://github.com/oslabs-beta/Harmonode/assets/68034977/8a070763-f7b4-475f-908e-999afe2b2361)
+
+---
+
+<a name="gettingstarted"></a>
+
+## Getting Started
+
+
+After cloning, run ```npm install```, and make sure that typescript is installed globally. ```npm run dev``` will start the electron app on your local system. Click on "Projects" in the sidebar, then "Add New Project", and load any standard project built with a React frontend and a Node.js backend, preferably with Express. Click on Diagram to view a React Flow visual of fetch paths, or List to view a more detailed view. Various viewing options are available in Settings.
 
 <a name="contributors"></a>
 
