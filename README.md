@@ -29,8 +29,10 @@ The founding fathers of Harmonode:
 
 - Hamza Chowdry
 - Eric Dalio
-- Ken Johnston
-- Sebastian Sarmiento
-- Tim Weidinger
+- Ken Johnston | [@kfiddle](https://github.com/kfiddle) 
+- Sebastian Sarmiento | [@sebastiansarm](https://github.com/sebastiansarm/)
+- Tim Weidinger | [@timweidinger](https://github.com/timweidinger) 
+
+
 
 <!-- Rest of the content -->
