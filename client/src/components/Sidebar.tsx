@@ -23,11 +23,11 @@ const menuItems = [
     icon: <FolderOutlinedIcon />,
     path: '/projects',
   },
-  {
-    label: 'Dashboard',
-    icon: <DashboardOutlinedIcon />,
-    path: '/dashboard',
-  },
+  // {
+  //   label: 'Dashboard',
+  //   icon: <DashboardOutlinedIcon />,
+  //   path: '/dashboard',
+  // },
   {
     label: 'Diagram',
     icon: <PolylineOutlinedIcon />,
