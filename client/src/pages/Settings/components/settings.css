@@ -1,0 +1,40 @@
+.row {
+  display: flex;
+}
+
+.primaryButtonInactive {
+  width: 350px;
+  text-align: center;
+  font-size: 14pt;
+  background-color: var(--inactive-color);
+}
+
+.primaryButtonActive {
+  width: 350px;
+  text-align: center;
+  font-size: 14pt;
+  background-color: var(--secondary-color);
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  height: 10px;
+  margin-left: 20px;
+  font-size: 14pt;
+  width: 300px;
+  justify-items: center;
+  row-gap: 10px;
+  column-gap: 10px;
+}
+
+.container {
+  margin-left: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  align-items: start;
+  justify-items: center;
+  row-gap: 10px;
+  column-gap: 10px;
+  font-size: 14pt;
+}
