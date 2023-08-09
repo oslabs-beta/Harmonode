@@ -48,8 +48,9 @@ From the home screen, navigate to "Projects", and click "Add New Project". Follo
 
 ## Getting Started
 
+Either clone straight from this repo, or download the app directly from [harmonode.com](https://harmonode.com/) and follow the installation directions.
 
-After cloning, run ```npm install```, and make sure that typescript is installed globally. ```npm run dev``` will start the electron app on your local system. Click on "Projects" in the sidebar, then "Add New Project", and load any standard project built with a React frontend and a Node.js backend, preferably with Express. Click on Diagram to view a React Flow visual of fetch paths, or List to view a more detailed view. Various viewing options are available in Settings.
+If cloning from here, run ```npm install```, and make sure that typescript is installed globally. ```npm run dev``` will start the electron app on your local system. Click on "Projects" in the sidebar, then "Add New Project", and load any standard project built with a React frontend and a Node.js backend, preferably with Express. Click on Diagram to view a React Flow visual of fetch paths, or List to view a more detailed view. Various viewing options are available in Settings.
 
 <a name="contributors"></a>
 
