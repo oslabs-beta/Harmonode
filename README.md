@@ -57,7 +57,7 @@ After cloning, run ```npm install```, and make sure that typescript is installed
 
 The founding fathers of Harmonode:
 
-- Hamza Chowdry | [@hmz44](https://github.com/hmz44)
+- Hamza Chaudhry | [@hmz44](https://github.com/hmz44)
 - Eric Dalio | [@EricDalio](https://github.com/EricDalio)
 - Ken Johnston | [@kfiddle](https://github.com/kfiddle) 
 - Sebastian Sarmiento | [@sebastiansarm](https://github.com/sebastiansarm/)
