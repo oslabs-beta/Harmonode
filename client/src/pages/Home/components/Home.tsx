@@ -1,14 +1,17 @@
 import React from 'react';
 import icon from '../../../../../server/icon.png';
+import fullnameIcon from '../../../../../server/harmonode_logo_fullname.png';
+
 
 function Home() {
   const ImageCenter: React.CSSProperties = {
     textAlign: 'center',
   };
   const image: React.CSSProperties = {
-    width: '150px',
+    width: '450px',
     marginTop: 25,
     marginBottom: 0,
+    marginRight: '8rem'
   };
   const titleText: React.CSSProperties = {
     fontStyle: 'bold',
@@ -20,16 +23,17 @@ function Home() {
   };
   const italicText: React.CSSProperties = {
     fontStyle: 'italic',
-    fontSize: 25,
+    fontSize: 35,
     margin: 0,
     textAlign: 'center',
-    color: '#868484',
+    // color: '#868484',
   };
   const subTitleText: React.CSSProperties = {
     fontSize: 25,
     margin: 0,
     textAlign: 'center',
     marginTop: 10,
+    color: '#42A186',
   };
   const headingText: React.CSSProperties = {
     fontStyle: 'bold',
@@ -40,23 +44,42 @@ function Home() {
   };
   const pText: React.CSSProperties = {
     fontSize: 18,
-    margin: 2,
+    margin: "1rem",
     paddingLeft: 20,
   };
+  const bannerContainer: React.CSSProperties = {
+    display: 'flex',
+    marginBottom: '5rem',
+    // justifyContent: 'space-around'
+  };
+
+  const bannerTextContainer: React.CSSProperties = {
+    display: "flex", 
+    // alignItems: "flex-start", 
+    flexDirection: "column", 
+    justifyContent: "center",
+    paddingTop: "2.5rem"
+  };
+
+  const contentContainer: React.CSSProperties = {
+    marginLeft: "2.7rem", 
+  };
+
+
 
   return (
     <div>
-      <div style={ImageCenter}>
-        <img style={image} src={icon} alt='Image' />
-      </div>
-
-      <h1 style={titleText}>Harmonode</h1>
-      <p style={italicText}> "Harmonize your code with Harmonode!</p>
-      <p style={subTitleText}>
-        A tool to visualize the flow between front end fetch requests and
+      <div style={bannerContainer}>
+        <img style={image} src={fullnameIcon} alt='Image' />
+        <div style={bannerTextContainer} >
+        <p style={italicText}> "Harmonize your code with Harmonode!"</p>
+       <p style={subTitleText}>
+        A tool to visualize the flow between front end fetch requests <br /> and
         backend routes.
-        <h1></h1>
       </p>
+        </div>
+      </div>  
+      <div style={contentContainer}>
       <p style={headingText}>Currently:</p>
       <ul>
         <li style={pText}>Load any project from your file system</li>
@@ -86,7 +109,7 @@ function Home() {
           that have fetch calls and the endpoints that they are fetching
         </li>
       </ul>
-      <p style={headingText}>Next:</p>
+      <p style={headingText}>Next in Development:</p>
       <ul>
         <li style={pText}>
           Show the data structure that the frontend is sending to the backend
@@ -103,21 +126,9 @@ function Home() {
           by variable)
         </li>
         <li style={pText}>Write unit tests</li>
-      </ul>
-      <p style={headingText}>Stretch:</p>
-      <ul>
         <li style={pText}>Include other fetch utilities like axios.</li>
-        <li style={pText}>
-          Set up a local SQLite DB to store all of the data and store data in
-          tables
-        </li>
-        <ul>
-          <li>
-            Will be able to streamline responses a bit easier with table joins
-          </li>
-        </ul>
-        <li style={pText}>Finish typescripting everything</li>
       </ul>
+    </div>
     </div>
   );
 }
