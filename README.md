@@ -52,6 +52,12 @@ Either clone straight from this repo, or download the app directly from [harmono
 
 If cloning from here, run ```npm install```, and make sure that typescript is installed globally. ```npm run dev``` will start the electron app on your local system. Click on "Projects" in the sidebar, then "Add New Project", and load any standard project built with a React frontend and a Node.js backend, preferably with Express. Click on Diagram to view a React Flow visual of fetch paths, or List to view a more detailed view. Various viewing options are available in Settings.
 
+Currently, simple fetch requests which are passed either strings or complete variables as the url, e.g...
+fetch(someUrl, {method: 'POST', etc...}), or 
+fetch('localserver://users') 
+
+...will suffice, although we are building additional functionality for more real-world usability, so in the future, requests which are being passed concatenated variables will work also.
+
 <a name="contributors"></a>
 
 ## Contributors
