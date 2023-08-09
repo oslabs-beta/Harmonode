@@ -33,9 +33,9 @@ From the home screen, navigate to "Projects", and click "Add New Project". Follo
 ---
 
 
+![homePageScreenShot](https://github.com/oslabs-beta/Harmonode/assets/68034977/3087b770-6a33-4c80-b60a-c274ef4235f2)
 
 
-![harmonodeMainScreen](https://github.com/oslabs-beta/Harmonode/assets/68034977/2493946b-c7f6-4f5f-a7c9-03d575f8f0be)
 
 ---
 
