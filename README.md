@@ -57,7 +57,7 @@ If cloning from here, run ```npm install```, and make sure that typescript is in
 Currently, simple fetch requests which are passed either strings or complete variables as the url, e.g...<br>
 <br>
 fetch(someUrl, {method: 'POST', etc...}), or <br>
-fetch('localserver://users') 
+fetch('localhost:3000/users') 
 
 ...will suffice, although we are building additional functionality for more real-world usability. So, in the future, requests which are being passed concatenated variables will work, as will requests made from util methods being called in frontend components.  
 
