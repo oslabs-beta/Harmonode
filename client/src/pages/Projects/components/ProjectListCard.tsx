@@ -1,14 +1,14 @@
-import React, { useContext } from 'react';
-import { ProjectsContext } from '../../../context/contextStore';
-import { loadProject } from '../../../ipcRenderer';
+import React, {useContext} from 'react';
+import {ProjectsContext} from '../../../context/contextStore';
+import {loadProject} from '../../../ipcRenderer';
 import '../../Projects/projects.css';
 
-function ProjectListCard({ project }) {
-  const { dispatchProjects, activeProject, setActiveProject } =
+function ProjectListCard({project}) {
+  const {dispatchProjects, activeProject, setActiveProject} =
     useContext(ProjectsContext);
 
   function handleDelete(e) {
-    dispatchProjects({ type: 'delete', payload: project });
+    dispatchProjects({type: 'delete', payload: project});
     if (project.id === activeProject.id) setActiveProject({});
   }
 
@@ -24,7 +24,7 @@ function ProjectListCard({ project }) {
       ast: files,
     };
 
-    dispatchProjects({ type: 'update', payload: newProject });
+    dispatchProjects({type: 'update', payload: newProject});
     setActiveProject(newProject);
   }
 
@@ -51,7 +51,7 @@ function ProjectListCard({ project }) {
             Load
           </button>
           <button className='deleteButton' onClick={handleDelete}>
-            Delete
+            Remove
           </button>
         </div>
       </div>

@@ -43,6 +43,7 @@ function Diagram() {
   const {activeProject} = useContext(ProjectsContext);
   const [showEditor, setShowEditor] = useState(false);
   const [editorFile, setEditorFile] = useState({});
+  const [firstPass, setFirstPass] = useState(false);
 
   if (activeProject.ast.fetches.length === 0) return <h1>No project loaded</h1>;
   // eventually going to use this paths to generate all of the path nodes and all of the edges
@@ -313,7 +314,10 @@ function Diagram() {
   }, [activeProject, orientation]);
 
   useEffect(() => {
-    fitView();
+    if (!firstPass) {
+      fitView();
+      setFirstPass(true);
+    }
   }, [nodesInitialized]);
 
   const onConnect = useCallback(
